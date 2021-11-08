@@ -1,0 +1,58 @@
+// Change configuration
+$gutter: 1rem;
+
+// Add dependencies
+@import 'node_modules/primeflex/primeflex.scss';
+
+// Add custom font
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+
+$mainFont: 'Manrope', sans-serif;
+$mainFontSize: 14px;
+$labelFontWeight: 600;
+$labelFontColor: #666;
+
+*,
+body,
+:root {
+  font-family: $mainFont;
+  font-size: $mainFontSize;
+}
+
+.layout-content.layout-content-fixed {
+  width: 1200px;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+// TODO: Make this better.
+.p-dropdown-label,
+.p-inputtext {
+  font-family: $mainFont;
+  font-size: $mainFontSize;
+}
+
+label {
+  color: $labelFontColor;
+  font-weight: $labelFontWeight;
+}
+
+.app-base-progress-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+
+  .p-progress-spinner-circle {
+    stroke: rgb(33, 150, 243) !important;
+  }
+}
+
+@import './overrides.scss';
+@import './register.scss';
+@import './account.scss';
+@import './footer.scss';
+@import './topbar.scss';

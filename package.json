@@ -1,0 +1,59 @@
+{
+  "name": "scio-lup4ldn-frontend",
+  "version": "1.0.0",
+  "homepage": "https://scio.systems",
+  "private": true,
+  "dependencies": {
+    "@amcharts/amcharts4": "^4.10.18",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@n8tb1t/use-scroll-position": "^2.0.3",
+    "axios": "^0.21.1",
+    "classnames": "^2.2.6",
+    "i18next": "^20.2.4",
+    "primeflex": "^2.0.0",
+    "primeicons": "^4.1.0",
+    "primereact": "^6.5.1",
+    "react": "^17.0.1",
+    "react-app-polyfill": "^2.0.0",
+    "react-dom": "^17.0.1",
+    "react-i18next": "^11.8.15",
+    "react-query": "^3.18.1",
+    "react-router-dom": "^5.2.0",
+    "react-transition-group": "^4.4.2"
+  },
+  "scripts": {
+    "start": "REACT_APP_ENVIRONMENT=development react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .js,.jsx"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.23.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.23.2",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "node-sass": "^6.0.1",
+    "pre-commit": "^1.2.2",
+    "react-scripts": "^4.0.3"
+  }
+}

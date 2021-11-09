@@ -37,6 +37,7 @@ module.exports = {
         functions: 'never',
       },
     ],
+    'react/jsx-props-no-spreading': 0,
     'function-paren-newline': 0,
     'object-curly-newline': 0,
     'react/jsx-curly-newline': 0,

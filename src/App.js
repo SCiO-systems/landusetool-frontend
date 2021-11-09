@@ -12,6 +12,7 @@ import AppTopBar from './AppTopbar';
 import Footer from './components/Footer';
 import AccountSettings from './pages/AccountSettings';
 import Dashboard from './pages/Dashboard';
+import CreateProject from './pages/CreateProject';
 import { logout, verify } from './services/auth';
 import { ToastContext, UserContext } from './store';
 
@@ -60,6 +61,12 @@ const App = () => {
       meta: {
         breadcrumb: [{ parent: t('ACCOUNT_SETTINGS'), label: t('ACCOUNT_SETTINGS') }],
       },
+    },
+    {
+      path: '/create-project',
+      component: CreateProject,
+      exact: true,
+      meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('NEW_PROJECT') }] },
     },
   ];
 

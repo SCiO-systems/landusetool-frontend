@@ -34,10 +34,21 @@ const AppMenu = ({ onMenuClick }) => {
       <div className="layout-menu-container">
         <ul className="layout-menu" role="menu">
           <li className="layout-root-menuitem" role="menuitem">
+            <div className="layout-root-menuitem">
+              <div className="layout-menuitem-root-text" style={{ textTransform: 'uppercase' }}>
+                {t('MY_PROJECTS')}
+              </div>
+            </div>
             <ul className="layout-menu" role="menu">
               <li className="" role="menuitem">
+                <NavLink to="/create-project" activeClassName="p-button" exact>
+                  <i className="layout-menuitem-icon fad fa-file-plus" />
+                  <span className="layout-menuitem-text">{t('CREATE_NEW')}</span>
+                </NavLink>
+              </li>
+              <li className="" role="menuitem">
                 <NavLink to="/" activeClassName="p-button" exact>
-                  <i className="layout-menuitem-icon pi pi-fw pi-home" />
+                  <i className="layout-menuitem-icon fad fa-columns" />
                   <span className="layout-menuitem-text">{t('DASHBOARD')}</span>
                 </NavLink>
               </li>

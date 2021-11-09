@@ -15,7 +15,7 @@ import { login, verify } from '../services/auth';
 import { UserContext } from '../store';
 
 const authProviders = [
-  { label: 'Scribe', value: 'scribe' },
+  { label: 'LUP4LDN', value: 'local' },
   { label: 'ORCID', value: 'orcid' },
 ];
 
@@ -50,7 +50,7 @@ const Login = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const authWithScribe = async () => {
+  const authWithLocal = async () => {
     try {
       const { data: responseData } = await login(email, password);
       setUser({
@@ -83,8 +83,8 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     switch (authProvider) {
-      case 'scribe':
-        await authWithScribe();
+      case 'local':
+        await authWithLocal();
         break;
       case 'orcid':
         await authWithORCID();
@@ -125,7 +125,7 @@ const Login = () => {
                 </div>
               </div>
               <div className="p-grid p-fluid p-formgrid p-justify-center">
-                {authProvider === 'scribe' && (
+                {authProvider === 'local' && (
                   <div className="p-col-12 p-md-8">
                     <InputText
                       id="email"

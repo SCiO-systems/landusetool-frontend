@@ -43,7 +43,7 @@ const AccountSettings = () => {
           />
           {/* UI Preferences */}
           {/* <UserInterfacePreferences /> */}
-          {identityProvider === 'scribe' && <UserPassword userId={id} />}
+          {identityProvider === 'local' && <UserPassword userId={id} />}
         </div>
       </div>
       <Footer />

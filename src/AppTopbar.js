@@ -1,17 +1,64 @@
 import { Button } from 'primereact/button';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import AppBreadcrumb from './AppBreadcrumb';
 import MiniLogo from './assets/img/LUP4LDN-LOGO_small.png';
-import { UserContext } from './store';
+import { getInvites, updateInvite } from './services/users';
+import { UserContext, ToastContext } from './store';
+import { handleError } from './utilities/errors';
+
+const FETCH_INVITE_INTERVAL_TIME = 5000;
 
 const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
   const { t } = useTranslation();
   const [notificationMenuVisible, setNotificationMenuVisible] = useState(false);
-  const [invitations] = useState([]);
-  const [loadingInvitation] = useState(0);
+  const [invitations, setInvitations] = useState([]);
+  const [loadingInvitation, setLoadingInvitation] = useState(0);
+  const { setError } = useContext(ToastContext);
   const { avatar_url: avatarUrl } = useContext(UserContext);
+
+  const acceptInvite = async (invitationId) => {
+    setLoadingInvitation(invitationId);
+    try {
+      await updateInvite(invitationId, { status: 'accepted' });
+    } catch (e) {
+      setError(handleError(e));
+    } finally {
+      fetchInvites();
+    }
+  };
+
+  const rejectInvite = async (invitationId) => {
+    setLoadingInvitation(invitationId);
+    try {
+      await updateInvite(invitationId, { status: 'rejected' });
+    } catch (e) {
+      setError(handleError(e));
+    } finally {
+      fetchInvites();
+    }
+  };
+
+  const fetchInvites = async () => {
+    try {
+      const { data } = await getInvites();
+      setInvitations(data);
+      if (data.length === 0) {
+        setNotificationMenuVisible(false);
+      }
+    } catch (e) { /* sh! fail silently */ }
+  };
+
+  useEffect(() => {
+    fetchInvites();
+    const interval = setInterval(() => {
+      fetchInvites();
+    }, FETCH_INVITE_INTERVAL_TIME);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div className="layout-topbar">
@@ -64,7 +111,7 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
                     <li key={i.id} role="menuitem" className="p-mb-2">
                       <div className="p-d-flex p-jc-between">
                         <div style={{ paddingRight: '.5rem' }}>
-                          {t('INVITED_TEXT')} <strong>{i.team.name}</strong> {t('BY')}{' '}
+                          {t('INVITED_TEXT')} <strong>{i.project.title}</strong> {t('BY')}{' '}
                           <strong>{`${i.inviter.firstname} ${i.inviter.lastname}`}</strong>.
                         </div>
                         <div className="actionable-buttons">
@@ -73,14 +120,14 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
                             disabled={loadingInvitation === i.id}
                             icon="pi pi-check"
                             className="p-button-success p-button-sm"
-                            onClick={() => {}}
+                            onClick={() => acceptInvite(i.id)}
                           />
                           <Button
                             title={t('REJECT_INVITE')}
                             disabled={loadingInvitation === i.id}
                             icon="pi pi-times"
                             className="p-button-danger p-button-sm p-ml-2"
-                            onClick={() => {}}
+                            onClick={() => rejectInvite(i.id)}
                           />
                         </div>
                       </div>

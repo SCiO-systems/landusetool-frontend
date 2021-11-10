@@ -37,6 +37,7 @@ module.exports = {
         functions: 'never',
       },
     ],
+    camelcase: 0,
     'react/jsx-props-no-spreading': 0,
     'function-paren-newline': 0,
     'object-curly-newline': 0,

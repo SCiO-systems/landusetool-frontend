@@ -39,11 +39,17 @@ const t = {
     SAVE_CHANGES: 'Save Changes',
     SAVE_CONTINUE: 'Save & Continue',
     FIELD_IS_REQUIRED: 'This field is required.',
+    EDIT_PROJECT: 'Edit Project',
     PROJECT_DETAILS: 'Project Details',
     PROJECT_DETAILS_SUBTITLE: 'Basic information for the new project',
     PROJECT_TITLE: 'Project Title',
     PROJECT_ACRONYM: 'Project Acronym',
     PROJECT_DESCRIPTION: 'Project Description',
+    INVITE_MEMBERS_TO_PROJECT: 'Invite members to project',
+    SEARCH_MEMBERS_BY_NAME: 'Search members by their name',
+    SEND_INVITES: 'Send Invites',
+    INVITED_TEXT: 'You were invited to join the team',
+    BY: 'by',
   },
 };
 

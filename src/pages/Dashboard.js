@@ -1,9 +1,9 @@
+import { Button } from 'primereact/button';
+import { Card } from 'primereact/card';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import { listProjects } from '../services/projects';
 import InviteProjectMembersDialog from '../components/dialogs/InviteProjectMembersDialog';
+import { listProjects, PROJECT_OWNER } from '../services/projects';
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -23,37 +23,39 @@ const Dashboard = () => {
     history.push(`/projects/${id}`);
   };
 
-  const inviteToProject = (project) => {
-    setSelectedProject(project);
+  const inviteToProject = (id) => {
+    setSelectedProject(projects.filter((p) => p?.id === id)?.pop());
     setInviteDialogOpen(true);
   };
 
   return (
     <div className="layout-dashboard">
       <div className="p-grid">
-        {projects.length > 0 && projects.map((p) => (
-          <div key={p.id} className="p-col-4">
+        {projects.map(({ id, title, acronym, description, role }) => (
+          <div key={id} className="p-col-4">
             <Card
-              title={p.title}
-              subTitle={p.acronym}
-              footer={(
+              title={title}
+              subTitle={acronym}
+              footer={() => (
                 <>
                   <Button
-                    onClick={() => goToProject(p.id)}
+                    onClick={() => goToProject(id)}
                     label="Edit"
                     icon="pi pi-cog"
-                    style={{ marginRight: '.25em' }}
+                    className="p-mr-2"
                   />
-                  <Button
-                    onClick={() => inviteToProject(p)}
-                    label="Invite Members"
-                    icon="pi pi-user-plus"
-                    className="p-button-secondary"
-                  />
+                  {role === PROJECT_OWNER && (
+                    <Button
+                      onClick={() => inviteToProject(id)}
+                      label="Invite Members"
+                      icon="pi pi-user-plus"
+                      className="p-mr-2 p-button-secondary"
+                    />
+                  )}
                 </>
               )}
             >
-              {p.description}
+              {description || <div>&nbsp;</div>}
             </Card>
           </div>
         ))}

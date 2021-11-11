@@ -1,10 +1,11 @@
 import apiClient from '../utilities/api-client';
 
-export const getProject = async (id) =>
-  apiClient.get(`/projects/${id}`);
+export const PROJECT_OWNER = 'owner';
+export const PROJECT_USER = 'user';
 
-export const listProjects = async () =>
-  apiClient.get('/projects');
+export const getProject = async (id) => apiClient.get(`/projects/${id}`);
+
+export const listProjects = async () => apiClient.get('/projects');
 
 export const createProject = async ({ title, acronym, description }) =>
   apiClient.post('/projects', { title, acronym, description });

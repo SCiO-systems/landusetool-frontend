@@ -22,11 +22,7 @@ module.exports = {
         depth: 3,
       },
     ],
-    'operator-linebreak': [
-      'error',
-      'after',
-      { overrides: { '?': 'before', ':': 'before' } },
-    ],
+    'operator-linebreak': ['error', 'after', { overrides: { '?': 'before', ':': 'before' } }],
     'comma-dangle': [
       'error',
       {

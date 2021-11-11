@@ -4,7 +4,7 @@ import { Dialog } from 'primereact/dialog';
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { inviteUsers } from '../../services/projects';
-import { searchUsers } from '../../services/users';
+import { IDENTITY_PROVIDER_LOCAL, searchUsers } from '../../services/users';
 import { ToastContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 import { useDebounce } from '../../utilities/hooks';
@@ -32,8 +32,11 @@ const InviteProjectMembersDialog = ({ project, dialogOpen, setDialogOpen }) => {
       const { existing_users } = await inviteUsers(project.id, users);
       if (existing_users.length > 0) {
         const str = existing_users.map((eu) => eu.email).join(',');
-        setSuccess('Invites', `The invitations were sent! The following users are already in this
-          project: ${str}`);
+        setSuccess(
+          'Invites',
+          `The invitations were sent! The following users are already in this
+          project: ${str}`
+        );
       } else {
         setSuccess('Invites', 'The invitations were sent!');
       }
@@ -55,7 +58,7 @@ const InviteProjectMembersDialog = ({ project, dialogOpen, setDialogOpen }) => {
   };
 
   const itemTemplate = ({ firstname, lastname, identity_provider: idp, email }) => {
-    if (idp === 'scribe') {
+    if (idp === IDENTITY_PROVIDER_LOCAL) {
       return `${firstname} ${lastname} (${email})`;
     }
     return `${firstname} ${lastname} (${idp.toString().toUpperCase()})`;

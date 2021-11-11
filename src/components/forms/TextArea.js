@@ -1,24 +1,25 @@
+import { InputTextarea } from 'primereact/inputtextarea';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputTextarea } from 'primereact/inputtextarea';
 
-const TextArea = ({ rows, cols, register, errors, name, label, required = false }) => {
+const TextArea = ({ rows, cols, value, register, errors, name, label, required = false }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="p-field">
-      <label htmlFor={name} className="p-d-block">{label}</label>
+    <div className="p-field p-fluid">
+      <label htmlFor={name}>{label}</label>
       <InputTextarea
         className={errors[name]?.type === 'required' ? 'p-invalid' : ''}
         rows={rows}
         cols={cols}
         autoResize
         id={name}
-        style={{ width: '100%' }}
-        {...register(name, { required })}
+        {...register(name, { required, value })}
       />
       {errors[name]?.type === 'required' && (
-        <small id={`${name}-help`} className="p-error p-d-block">{t('FIELD_IS_REQUIRED')}</small>
+        <small id={`${name}-help`} className="p-error p-d-block">
+          {t('FIELD_IS_REQUIRED')}
+        </small>
       )}
     </div>
   );

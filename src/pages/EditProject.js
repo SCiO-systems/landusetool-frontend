@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
 import { Card } from 'primereact/card';
+import React, { useContext, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import ProjectDetails from '../components/forms/ProjectDetails';
 import Loading from '../components/Loading';
@@ -13,7 +13,11 @@ const EditProject = () => {
   const { t } = useTranslation();
   const { id } = useParams();
   const [project, setProject] = useState(null);
-  const { register, formState: { errors }, handleSubmit } = useForm();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const { setError, setSuccess } = useContext(ToastContext);
 
   const onSubmit = async (data) => {

@@ -40,7 +40,7 @@ const Dashboard = () => {
                 <>
                   <Button
                     onClick={() => goToProject(id)}
-                    label="Edit"
+                    label="Edit Project Details"
                     icon="pi pi-cog"
                     className="p-mr-2"
                   />

@@ -29,6 +29,7 @@ const t = {
     MY_PROJECTS: 'My Projects',
     CREATE_NEW: 'Create New',
     NEW_PROJECT: 'New Project',
+    CREATE_PROJECT: 'Create Project',
     ACCOUNT_SETTINGS: 'Account Settings',
     NAME: 'Name',
     OLD_PASSWORD: 'Old Password',
@@ -50,6 +51,11 @@ const t = {
     SEND_INVITES: 'Send Invites',
     INVITED_TEXT: 'You were invited to join the team',
     BY: 'by',
+    REGION_OF_INTEREST: 'Region of Interest',
+    SELECT_COUNTRY: 'Select Country',
+    DEFINE_THE_ROI: 'Define the ROI',
+    NEXT: 'Next',
+    PREVIOUS: 'Previous',
   },
 };
 

@@ -131,7 +131,7 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
           <CountrySelector setCountry={setCountry} />
           <div className="p-d-flex p-jc-between p-mt-6 p-mb-2">
             <Button className="p-button-secondary" type="button" disabled={activeIndex === 0} label={t('PREVIOUS')} icon="pi pi-angle-left" />
-            <Button className="p-button-secondary" type="button" label={t('NEXT')} icon="pi pi-angle-right" />
+            <Button className="p-button-secondary" type="button" label={t('NEXT')} icon="pi pi-angle-right" iconPos="right" />
           </div>
         </>
       )}

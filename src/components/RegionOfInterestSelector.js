@@ -2,7 +2,6 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4maps from '@amcharts/amcharts4/maps';
 import am4geodata_worldHigh from '@amcharts/amcharts4-geodata/worldHigh';
 import am4geodata_data_countries2 from '@amcharts/amcharts4-geodata/data/countries2';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
 import React, { useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
@@ -16,8 +15,6 @@ const CountrySelector = ({ setCountry }) => {
 
     let selectedCOUNTRYid;
     let selectedAREAid;
-
-    am4core.useTheme(am4themes_animated);
 
     // Create map instance
     const chart = am4core.create('country-selector', am4maps.MapChart);

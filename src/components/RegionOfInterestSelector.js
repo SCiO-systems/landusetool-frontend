@@ -7,9 +7,12 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Steps } from 'primereact/steps';
 import { useTranslation } from 'react-i18next';
+
+import Glowglobe from './glowglobe';
+import { getCountryAdminLevelArea, getByCoordinates } from '../services/polygons';
 import CountryCodes from '../data/country-codes';
 
-const CountrySelector = ({ setCountry }) => {
+const CountrySelector = ({ setCountry, setAdminLevel }) => {
   useEffect(() => {
     let selectedCOUNTRY = '';
 
@@ -101,17 +104,18 @@ const CountrySelector = ({ setCountry }) => {
       //  ev.target.series.chart.zoomToMapObject(ev.target);
 
       if ((cid3 === 'USA') || (cid3 === 'CAN') || (cid3 === 'BRA') || (cid3 === 'ARG') ||
-    (cid3 === 'CHL') || (cid3 === 'AUS') || (cid3 === 'CHN') || (cid3 === 'RUS')) {
+        (cid3 === 'CHL') || (cid3 === 'AUS') || (cid3 === 'CHN') || (cid3 === 'RUS')) {
         selectedCOUNTRY = cid3;
 
         const { map } = ev.target.dataItem.dataContext;
         if (map) {
-      ev.target.isHover = false; // eslint-disable-line
+          ev.target.isHover = false; // eslint-disable-line
           countrySeries.geodataSource.url = `https://www.amcharts.com/lib/4/geodata/json/${map}.json`;
           countrySeries.geodataSource.load();
         }
       } else {
-        setCountry({ country_code_iso3: cid3, admin_area_code_iso3: '' });
+        setCountry(cid3);
+        setAdminLevel(1);
       }
     });
 
@@ -124,7 +128,8 @@ const CountrySelector = ({ setCountry }) => {
 
       const aid = ev.target.dataItem.dataContext.id;
 
-      setCountry({ country_code_iso3: selectedCOUNTRY, admin_area_code_iso3: aid });
+      setCountry(selectedCOUNTRY);
+      setAdminLevel(aid);
     });
 
     // Set up data for countries
@@ -180,7 +185,7 @@ const CountrySelector = ({ setCountry }) => {
     const smallSeries = chart.smallMap.series.getIndex(0);
     smallSeries.mapPolygons.template.stroke = smallSeries.mapPolygons.template.fill;
     smallSeries.mapPolygons.template.strokeWidth = 1;
-  }, [setCountry]);
+  }, [setCountry, setAdminLevel]);
 
   return <div id="country-selector" style={{ height: '600px' }} />;
 };
@@ -189,12 +194,53 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [country, setCountry] = useState(undefined);
+  const [adminLevel, setAdminLevel] = useState(1);
+  const [layers, setLayers] = useState([]);
 
   register('country', { required: true });
+  register('adminLevel', { required: true });
+  register('selectedPolygon', { required: true });
 
   useEffect(() => {
     setValue('country', country);
-  }, [country, setValue]);
+    setValue('adminLevel', adminLevel);
+    if (country) {
+      getCountryAdminLevelArea(country, adminLevel)
+        .then((res) => {
+          setLayers([{
+            layer: {
+              type: 'geojson',
+              data: res.polygon,
+            },
+          }]);
+          setActiveIndex(1);
+        });
+    }
+  }, [country, adminLevel, setValue]);
+
+  const glowglobeOptions = {
+    mode: 'select_administration_area',
+    mask: true,
+  };
+
+  const resetSelections = () => {
+    setCountry(undefined);
+    setAdminLevel(1);
+    setLayers([]);
+    setActiveIndex(0);
+  };
+
+  const handleOutput = (pin) => {
+    getByCoordinates(pin.point, adminLevel).then((res) => {
+      setLayers([{
+        layer: {
+          type: 'geojson',
+          data: res.polygon,
+        },
+      }]);
+      setValue('selectedPolygon', res.polygon);
+    });
+  };
 
   const steps = [
     {
@@ -221,14 +267,27 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
         className="p-mb-4"
       />
       {activeIndex === 0 && (
-        <>
-          <CountrySelector setCountry={setCountry} />
-          <div className="p-d-flex p-jc-between p-mt-6 p-mb-2">
-            <Button className="p-button-secondary" type="button" disabled={activeIndex === 0} label={t('PREVIOUS')} icon="pi pi-angle-left" />
-            <Button className="p-button-secondary" type="button" label={t('NEXT')} icon="pi pi-angle-right" iconPos="right" />
-          </div>
-        </>
+        <CountrySelector setCountry={setCountry} setAdminLevel={setAdminLevel} />
       )}
+      {activeIndex === 1 && (
+        <Glowglobe
+          options={glowglobeOptions}
+          output={handleOutput}
+          layers={layers}
+          setAdminLevel={setAdminLevel}
+        />
+      )}
+      <div className="p-d-flex p-jc-between p-mt-6 p-mb-2">
+        <Button
+          className="p-button-secondary"
+          type="button"
+          disabled={activeIndex === 0}
+          onClick={(_e) => resetSelections()}
+          label={t('PREVIOUS')}
+          icon="pi pi-angle-left"
+        />
+        <Button className="p-button-secondary" type="button" disabled={activeIndex === 1} label={t('NEXT')} icon="pi pi-angle-right" iconPos="right" />
+      </div>
     </>
   );
 };

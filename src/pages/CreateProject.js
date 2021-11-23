@@ -25,8 +25,8 @@ const CreateProject = () => {
   };
 
   useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === 'country' && value[name] !== undefined) {
+    const subscription = watch((value) => {
+      if (value?.country && value?.selectedPolygon) {
         setReadyToSubmit(true);
       }
     });

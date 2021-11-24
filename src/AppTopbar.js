@@ -8,8 +8,6 @@ import { getInvites, updateInvite } from './services/users';
 import { UserContext, ToastContext } from './store';
 import { handleError } from './utilities/errors';
 
-const FETCH_INVITE_INTERVAL_TIME = 5000;
-
 const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
   const { t } = useTranslation();
   const [notificationMenuVisible, setNotificationMenuVisible] = useState(false);
@@ -54,7 +52,7 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
     fetchInvites();
     const interval = setInterval(() => {
       fetchInvites();
-    }, FETCH_INVITE_INTERVAL_TIME);
+    }, process.env.REACT_APP_INVITATION_POLLING_FREQUENCY * 1000);
     return () => {
       clearInterval(interval);
     };

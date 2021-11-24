@@ -19,8 +19,8 @@ export const createProject = async ({
     title,
     acronym,
     description,
-    country,
-    admin_level: adminLevel,
+    country_iso_code_3: country,
+    administrative_level: adminLevel,
     polygon,
   });
 

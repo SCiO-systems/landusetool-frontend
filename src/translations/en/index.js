@@ -56,6 +56,10 @@ const t = {
     DEFINE_THE_ROI: 'Define the ROI',
     NEXT: 'Next',
     PREVIOUS: 'Previous',
+    ACTIVE_PROJECT: 'Active Project',
+    COUNTRY_LEVEL: 'Country Level',
+    UNCCD_ANNEX: 'UNCCD Annex',
+    RISK_PROFILES: 'Risk Profiles',
   },
 };
 

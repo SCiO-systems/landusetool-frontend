@@ -12,6 +12,7 @@ import AppTopBar from './AppTopbar';
 import Footer from './components/Footer';
 import AccountSettings from './pages/AccountSettings';
 import CreateProject from './pages/CreateProject';
+import RiskProfiles from './pages/RiskProfiles';
 import Dashboard from './pages/Dashboard';
 import EditProject from './pages/EditProject';
 import { logout, verify } from './services/auth';
@@ -76,6 +77,12 @@ const App = () => {
       meta: {
         breadcrumb: [{ parent: t('DASHBOARD'), label: t('EDIT_PROJECT') }],
       },
+    },
+    {
+      path: '/risk-profiles',
+      component: RiskProfiles,
+      exact: true,
+      meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('RISK_PROFILES') }] },
     },
   ];
 

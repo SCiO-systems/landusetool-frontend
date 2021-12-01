@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
+import { Dropdown } from 'primereact/dropdown';
+
+import { getCountryLevelLinks } from './services/countries';
+import { UserContext } from './store';
 import Logo from './assets/img/LUP4LDN-LOGO_small.png';
 
 const AppMenu = ({ onMenuClick }) => {
   const { t } = useTranslation();
+  const { availableProjects, currentProject, countryLevelLinks, setUser } = useContext(UserContext);
+
+  const setCurrentProject = async (e) => {
+    const selectedProject = availableProjects.filter((p) => p.id === e.value)[0];
+    if (selectedProject) {
+      try {
+        const countryLevelLinksResponse =
+          await getCountryLevelLinks(selectedProject.countryIsoCode3);
+        setUser({
+          currentProject: selectedProject,
+          countryLevelLinks: countryLevelLinksResponse,
+        });
+      } catch (_e) {
+        setUser({
+          currentProject: selectedProject,
+          countryLevelLinks: null,
+        });
+        // eslint-disable-next-line
+        console.error(`Couldn't fetch country level links.`);
+      }
+    }
+  };
 
   return (
     <div className="layout-sidebar" role="button" tabIndex="0" onClick={onMenuClick}>
@@ -28,6 +54,29 @@ const AppMenu = ({ onMenuClick }) => {
 
       <div className="layout-menu-container">
         <ul className="layout-menu" role="menu">
+          {(availableProjects && availableProjects.length > 0) && (
+            <>
+              <li className="layout-root-menuitem" role="menuitem">
+                <div className="layout-root-menuitem">
+                  <div className="layout-menuitem-root-text">{t('ACTIVE_PROJECT')}</div>
+                </div>
+                <ul className="layout-menu" role="menu">
+                  <li className="p-mb-1 p-fluid" role="menuitem">
+                    <Dropdown
+                      className="p p-mb-2"
+                      options={availableProjects}
+                      optionLabel="shortTitle"
+                      optionValue="id"
+                      value={currentProject?.id}
+                      onChange={setCurrentProject}
+                      placeholder="Select Project"
+                    />
+                  </li>
+                </ul>
+              </li>
+              <li className="menu-separator" role="separator" />
+            </>
+          )}
           <li className="layout-root-menuitem" role="menuitem">
             <div className="layout-root-menuitem">
               <div className="layout-menuitem-root-text">{t('MY_PROJECTS')}</div>
@@ -47,6 +96,30 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </ul>
           </li>
+          <li className="menu-separator" role="separator" />
+          { (currentProject && countryLevelLinks) && (
+            <li className="layout-root-menuitem" role="menuitem">
+              <div className="layout-root-menuitem">
+                <div className="layout-menuitem-root-text">{t('COUNTRY_LEVEL')}</div>
+              </div>
+              <ul className="layout-menu" role="menu">
+                {(countryLevelLinks && countryLevelLinks.unccd_annex !== '') && (
+                  <li className="p-mb-1" role="menuitem">
+                    <a href={countryLevelLinks.unccd_annex} target="_blank" rel="noreferrer">
+                      <i className="layout-menuitem-icon fad fa-bullseye-arrow" />
+                      <span className="layout-menuitem-text">{t('UNCCD_ANNEX')}</span>
+                    </a>
+                  </li>
+                )}
+                <li className="p-mb-1" role="menuitem">
+                  <NavLink to="/risk-profiles" activeClassName="p-button" exact>
+                    <i className="layout-menuitem-icon fad fa-analytics" />
+                    <span className="layout-menuitem-text">{t('RISK_PROFILES')}</span>
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
+          ) }
         </ul>
       </div>
     </div>

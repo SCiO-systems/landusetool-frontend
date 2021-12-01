@@ -11,19 +11,16 @@ const initialState = {
   email: null,
   role: null,
   avatar_url: null,
-  ui_language: null,
-  ui_language_display_format: null,
-  ui_date_display_format: null,
-  currentlyViewingTeam: null,
-  ownTeams: [],
-  sharedTeams: [],
+  currentProject: null,
+  availableProjects: [],
+  countryLevelLinks: null,
 };
 
 export const UserContext = createContext(initialState);
 
 export const UserProvider = ({ children }) => {
-  // md5sum: scio-lup4ldn-v1.0.0
-  const localStorageKey = 'user-ff8622851795652528c2419281b42d28';
+  // md5sum: scio-lup4ldn-v1.1.0
+  const localStorageKey = 'user-d73aa625946ff9ac5a168ffc60fb8449';
   const [userData, setUserData] = useLocalStorage(
     localStorageKey,
     initialState

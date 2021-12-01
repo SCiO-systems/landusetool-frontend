@@ -1,23 +1,32 @@
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import InviteProjectMembersDialog from '../components/dialogs/InviteProjectMembersDialog';
 import { listProjects, PROJECT_OWNER } from '../services/projects';
+import { UserContext } from '../store';
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState({});
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const { setUser } = useContext(UserContext);
   const history = useHistory();
 
   useEffect(() => {
     const fetchProjects = async () => {
       const { data } = await listProjects();
       setProjects(data);
+      setUser({
+        availableProjects: data.map((p) => ({
+          id: p.id,
+          shortTitle: `${p.title} (${p.acronym})`,
+          countryIsoCode3: p.country_iso_code_3,
+        })),
+      });
     };
     fetchProjects();
-  }, []);
+  }, []); // eslint-disable-line
 
   const goToProject = (id) => {
     history.push(`/projects/${id}`);
@@ -40,7 +49,7 @@ const Dashboard = () => {
                 <>
                   <Button
                     onClick={() => goToProject(id)}
-                    label="Edit Project Details"
+                    label="Edit Project"
                     icon="pi pi-cog"
                     className="p-mr-2"
                   />

@@ -19,8 +19,8 @@ const initialState = {
 export const UserContext = createContext(initialState);
 
 export const UserProvider = ({ children }) => {
-  // md5sum: scio-lup4ldn-v1.1.0
-  const localStorageKey = 'user-d73aa625946ff9ac5a168ffc60fb8449';
+  // md5sum: scio-lup4ldn-v1.1.1
+  const localStorageKey = 'user-b39a003c4f46514a5fa4c7e3983271c5';
   const [userData, setUserData] = useLocalStorage(
     localStorageKey,
     initialState

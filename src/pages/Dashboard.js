@@ -20,7 +20,7 @@ const Dashboard = () => {
       setUser({
         availableProjects: data.map((p) => ({
           id: p.id,
-          shortTitle: `${p.title} (${p.acronym})`,
+          shortTitle: `${p.acronym}`,
           countryIsoCode3: p.country_iso_code_3,
         })),
       });

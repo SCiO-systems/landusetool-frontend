@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import AccountSettings from './pages/AccountSettings';
 import CreateProject from './pages/CreateProject';
 import RiskProfiles from './pages/RiskProfiles';
+import LandUsePlanning from './pages/LandUsePlanning';
 import Dashboard from './pages/Dashboard';
 import EditProject from './pages/EditProject';
 import { logout, verify } from './services/auth';
@@ -83,6 +84,12 @@ const App = () => {
       component: RiskProfiles,
       exact: true,
       meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('RISK_PROFILES') }] },
+    },
+    {
+      path: '/land-use-planning',
+      component: LandUsePlanning,
+      exact: true,
+      meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('LAND_USE_PLANNING') }] },
     },
   ];
 

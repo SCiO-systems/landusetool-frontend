@@ -96,29 +96,49 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </ul>
           </li>
-          <li className="menu-separator" role="separator" />
           { (currentProject && countryLevelLinks) && (
-            <li className="layout-root-menuitem" role="menuitem">
-              <div className="layout-root-menuitem">
-                <div className="layout-menuitem-root-text">{t('COUNTRY_LEVEL')}</div>
-              </div>
-              <ul className="layout-menu" role="menu">
-                {(countryLevelLinks && countryLevelLinks.unccd_annex !== '') && (
+            <>
+              <li className="menu-separator" role="separator" />
+              <li className="layout-root-menuitem" role="menuitem">
+                <div className="layout-root-menuitem">
+                  <div className="layout-menuitem-root-text">{t('COUNTRY_LEVEL')}</div>
+                </div>
+                <ul className="layout-menu" role="menu">
+                  {(countryLevelLinks && countryLevelLinks.unccd_annex !== '') && (
+                    <li className="p-mb-1" role="menuitem">
+                      <a href={countryLevelLinks.unccd_annex} target="_blank" rel="noreferrer">
+                        <i className="layout-menuitem-icon fad fa-bullseye-arrow" />
+                        <span className="layout-menuitem-text">{t('UNCCD_ANNEX')}</span>
+                      </a>
+                    </li>
+                  )}
                   <li className="p-mb-1" role="menuitem">
-                    <a href={countryLevelLinks.unccd_annex} target="_blank" rel="noreferrer">
-                      <i className="layout-menuitem-icon fad fa-bullseye-arrow" />
-                      <span className="layout-menuitem-text">{t('UNCCD_ANNEX')}</span>
-                    </a>
+                    <NavLink to="/risk-profiles" activeClassName="p-button" exact>
+                      <i className="layout-menuitem-icon fad fa-analytics" />
+                      <span className="layout-menuitem-text">{t('RISK_PROFILES')}</span>
+                    </NavLink>
                   </li>
-                )}
-                <li className="p-mb-1" role="menuitem">
-                  <NavLink to="/risk-profiles" activeClassName="p-button" exact>
-                    <i className="layout-menuitem-icon fad fa-analytics" />
-                    <span className="layout-menuitem-text">{t('RISK_PROFILES')}</span>
-                  </NavLink>
-                </li>
-              </ul>
-            </li>
+                </ul>
+              </li>
+            </>
+          ) }
+          { (currentProject) && (
+            <>
+              <li className="menu-separator" role="separator" />
+              <li className="layout-root-menuitem" role="menuitem">
+                <div className="layout-root-menuitem">
+                  <div className="layout-menuitem-root-text">{t('REGION_OF_INTEREST')}</div>
+                </div>
+                <ul className="layout-menu" role="menu">
+                  <li className="p-mb-1" role="menuitem">
+                    <NavLink to="/land-use-planning" activeClassName="p-button" exact>
+                      <i className="layout-menuitem-icon fad fa-abacus" />
+                      <span className="layout-menuitem-text">{t('LAND_USE_PLANNING')}</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              </li>
+            </>
           ) }
         </ul>
       </div>

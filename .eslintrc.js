@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
+    'no-param-reassign': ['error', { props: false }],
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
     quotes: ['error', 'single', { allowTemplateLiterals: true }],
     'jsx-a11y/label-has-associated-control': [

@@ -87,6 +87,11 @@ const t = {
     DEGRADATION: 'Degradation',
     SELECT_STATUS: 'Select Status',
     LU_TRANSITION_IMPACT_MATRIX: 'LU Transition Impact Matrix',
+    APPLICABLE_WOCAT_SLM_TECHNOLOGIES: 'Applicable WOCAT SLM Technologies',
+    ENTER_KEYWORD: 'Search using keywords',
+    SEARCH: 'Search',
+    NO_WOCAT_TECHNOLOGIES_FOUND:
+      'No appplicable WOCAT Technologies were found. Please search using keywords.',
   },
 };
 

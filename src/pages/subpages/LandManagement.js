@@ -58,7 +58,7 @@ const LandManagement = () => {
       <div className="p-col-6">
         <form onSubmit={onSearch}>
           <div className="p-grid p-formgrid p-fluid">
-            <label className="p-col-2 p-d-flex p-ai-center" htmlFor="keyword">
+            <label className="p-col-2 p-d-flex p-ai-center p-jc-end" htmlFor="keyword">
               {t('SEARCH')}:
             </label>
             <div className="p-col-10">
@@ -82,9 +82,9 @@ const LandManagement = () => {
   const itemTemplate = (tech) => (
     <div className="p-col-12">
       <div className="p-d-flex p-ai-center">
-        <div className="p-col-2">
+        <div className="p-col-2 p-text-center">
           <img
-            style={{ width: '150px' }}
+            style={{ width: '250px', maxWidth: '100%' }}
             src={tech?.images[0]?.url}
             alt={tech?.images[0]?.caption}
           />
@@ -115,8 +115,8 @@ const LandManagement = () => {
           </div>
         </div>
         <div className="p-col-2">
-          <Button label="Map" icon="pi pi-map-marker" className="p-button-secondary" />
-          <Button label="Choose" className="p-my-2" icon="pi pi-check" />
+          <Button label="Map" className="p-button-secondary p-d-block" icon="pi pi-map-marker" />
+          <Button label="Choose" className="p-my-2 p-d-block" icon="pi pi-check" />
         </div>
       </div>
     </div>

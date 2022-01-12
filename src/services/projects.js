@@ -29,3 +29,9 @@ export const editProject = async (id, { title, acronym, description }) =>
 
 export const inviteUsers = async (id, users) =>
   apiClient.post(`/projects/${id}/invites`, { user_ids: users });
+
+export const getProjectWocatTechnologies = async (id) =>
+  apiClient.get(`/projects/${id}/wocat_technologies`);
+
+export const chooseProjectWocatTechnology = async (id, technologyId) =>
+  apiClient.post(`/projects/${id}/choose_wocat_technology`, { technology_id: technologyId });

@@ -4,12 +4,14 @@ import { InputText } from 'primereact/inputtext';
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getWocatTechnologies } from '../../services/landuse';
-import { ToastContext } from '../../store';
+import { chooseProjectWocatTechnology, getProjectWocatTechnologies } from '../../services/projects';
+import { ToastContext, UserContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 
 const LandManagement = () => {
   const { t } = useTranslation();
   const { setError } = useContext(ToastContext);
+  const { currentProject } = useContext(UserContext);
 
   // Chunk size for each search.
   const ITEMS_CHUNK_SIZE = 10;
@@ -26,6 +28,17 @@ const LandManagement = () => {
 
   // Data.
   const [technologies, setTechnologies] = useState([]);
+  // TODO: Finish the chosen technologies.
+  const [chosenTechnologies, setChosenTechnologies] = useState([]);
+
+  const onChooseTechnology = async (techId) => {
+    try {
+      const { data } = await chooseProjectWocatTechnology(currentProject?.id, techId);
+      setChosenTechnologies(data);
+    } catch (error) {
+      setError(handleError(error));
+    }
+  };
 
   const onSearch = async (e) => {
     e?.preventDefault();
@@ -43,6 +56,21 @@ const LandManagement = () => {
     }
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    const getProjectTechnologies = async () => {
+      try {
+        const { data } = await getProjectWocatTechnologies(currentProject?.id);
+        setChosenTechnologies(data);
+      } catch (error) {
+        setError(handleError(error));
+      }
+    };
+
+    if (currentProject) {
+      getProjectTechnologies();
+    }
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (keyword !== '') {
@@ -116,7 +144,12 @@ const LandManagement = () => {
         </div>
         <div className="p-col-2">
           <Button label="Map" className="p-button-secondary p-d-block" icon="pi pi-map-marker" />
-          <Button label="Choose" className="p-my-2 p-d-block" icon="pi pi-check" />
+          <Button
+            label="Choose"
+            onClick={() => onChooseTechnology(tech?.id)}
+            className="p-my-2 p-d-block"
+            icon="pi pi-check"
+          />
         </div>
       </div>
     </div>

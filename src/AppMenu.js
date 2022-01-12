@@ -1,11 +1,10 @@
+import { Dropdown } from 'primereact/dropdown';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { Dropdown } from 'primereact/dropdown';
-
+import Logo from './assets/img/LUP4LDN-LOGO_small.png';
 import { getCountryLevelLinks } from './services/countries';
 import { UserContext } from './store';
-import Logo from './assets/img/LUP4LDN-LOGO_small.png';
 
 const AppMenu = ({ onMenuClick }) => {
   const { t } = useTranslation();
@@ -15,8 +14,9 @@ const AppMenu = ({ onMenuClick }) => {
     const selectedProject = availableProjects.filter((p) => p.id === e.value)[0];
     if (selectedProject) {
       try {
-        const countryLevelLinksResponse =
-          await getCountryLevelLinks(selectedProject.countryIsoCode3);
+        const countryLevelLinksResponse = await getCountryLevelLinks(
+          selectedProject.countryIsoCode3
+        );
         setUser({
           currentProject: selectedProject,
           countryLevelLinks: countryLevelLinksResponse,
@@ -54,7 +54,7 @@ const AppMenu = ({ onMenuClick }) => {
 
       <div className="layout-menu-container">
         <ul className="layout-menu" role="menu">
-          {(availableProjects && availableProjects.length > 0) && (
+          {availableProjects && availableProjects.length > 0 && (
             <>
               <li className="layout-root-menuitem" role="menuitem">
                 <div className="layout-root-menuitem">
@@ -96,7 +96,7 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </ul>
           </li>
-          { (currentProject && countryLevelLinks) && (
+          {currentProject && countryLevelLinks && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">
@@ -104,7 +104,7 @@ const AppMenu = ({ onMenuClick }) => {
                   <div className="layout-menuitem-root-text">{t('COUNTRY_LEVEL')}</div>
                 </div>
                 <ul className="layout-menu" role="menu">
-                  {(countryLevelLinks && countryLevelLinks.unccd_annex !== '') && (
+                  {countryLevelLinks && countryLevelLinks.unccd_annex !== '' && (
                     <li className="p-mb-1" role="menuitem">
                       <a href={countryLevelLinks.unccd_annex} target="_blank" rel="noreferrer">
                         <i className="layout-menuitem-icon fad fa-bullseye-arrow" />
@@ -121,8 +121,8 @@ const AppMenu = ({ onMenuClick }) => {
                 </ul>
               </li>
             </>
-          ) }
-          { (currentProject) && (
+          )}
+          {currentProject && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">
@@ -130,6 +130,12 @@ const AppMenu = ({ onMenuClick }) => {
                   <div className="layout-menuitem-root-text">{t('REGION_OF_INTEREST')}</div>
                 </div>
                 <ul className="layout-menu" role="menu">
+                  <li className="p-mb-1" role="menuitem">
+                    <NavLink to="/current-state" activeClassName="p-button" exact>
+                      <i className="layout-menuitem-icon fad fa-check-double" />
+                      <span className="layout-menuitem-text">{t('CURRENT_STATE')}</span>
+                    </NavLink>
+                  </li>
                   <li className="p-mb-1" role="menuitem">
                     <NavLink to="/land-use-planning" activeClassName="p-button" exact>
                       <i className="layout-menuitem-icon fad fa-abacus" />
@@ -139,7 +145,7 @@ const AppMenu = ({ onMenuClick }) => {
                 </ul>
               </li>
             </>
-          ) }
+          )}
         </ul>
       </div>
     </div>

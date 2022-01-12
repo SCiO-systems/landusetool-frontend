@@ -92,6 +92,19 @@ const t = {
     SEARCH: 'Search',
     NO_WOCAT_TECHNOLOGIES_FOUND:
       'No applicable WOCAT Technologies were found. Please search using keywords.',
+    CURRENT_STATE: 'Current State',
+    LAND_USE_SUITABILITY: 'Land Use Suitability',
+    LAND_MANAGEMENT_SUSTAINABILITY: 'Land Management Sustainability',
+    USE_DEFAULT_DATA: 'Use default data',
+    USE_CUSTOM_DATA: 'Use custom data',
+    LU_TYPE_IN_ROI: 'LU Type in ROI',
+    SUITABLE: 'Suitable',
+    PARTIALLY_SUITABLE: 'Partially Suitable',
+    NON_SUITABLE: 'Non Suitable',
+    LM_SUSTAINABILITY_IMPACT_INDICATORS: 'LM Sustainability Impact Indicators',
+    DEFINE_FOCUS_AREAS_IN_ROI: 'Define Focus Area(s) in ROI',
+    FOCUS_AREA_LM_ASSESMENT: 'Focus Area LM Assesment',
+    ASSESSMENT_CRITERIA: 'Assessment Criteria',
   },
 };
 

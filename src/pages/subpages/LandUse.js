@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { UserContext } from '../../store';
 import initialScenarioData from '../../data/initial-scenario';
 import ScenarioToolbar from '../../components/ScenarioToolbar';
 import TransitionImpactMatrix from '../../components/TransitionImpactMatrix';
@@ -8,6 +9,7 @@ import NewScenarioDialog from '../../components/dialogs/NewScenario';
 
 const LandUse = () => {
   const { t } = useTranslation();
+  const { currentProject } = useContext(UserContext);
   const [scenarios, setScenarios] = useState([]);
   const [canAddNewScenarios, setCanAddNewScenarios] = useState(true);
   const [scenarioModalVisible, setScenarioModalVisible] = useState(false);
@@ -55,9 +57,8 @@ const LandUse = () => {
         onReset={resetScenarios}
       />
       <div className="p-mt-4">
-        <h5>{ t('LU_TRANSITION_IMPACT_MATRIX') }</h5>
+        <TransitionImpactMatrix title={t('LU_TRANSITION_IMPACT_MATRIX')} currentProject={currentProject} />
       </div>
-      <TransitionImpactMatrix />
       <NewScenarioDialog
         dialogOpen={scenarioModalVisible}
         setDialogOpen={setScenarioModalVisible}

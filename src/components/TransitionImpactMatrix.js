@@ -1,20 +1,67 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useTranslation } from 'react-i18next';
 
-import landCoverDefaults from '../data/land-cover-defaults';
+import { generateLUImpactMatrixSchema } from '../utilities/schema-generators';
 
-const TransitionImpactMatrix = () => {
+const StatusEditor = ({ rowData, field, onStatusEditorValueChange }) => {
   const { t } = useTranslation();
-  const [landCoverItem, setLandCoverItem] = useState(landCoverDefaults);
+  const [dropdownValue, setDropdownValue] = useState('');
+
+  useEffect(() => {
+    rowData.row.forEach((item) => {
+      if (item.id === field) {
+        setDropdownValue(item.value);
+      }
+    });
+  }, [setDropdownValue, field, rowData.row]);
+
+  const statuses = [
+    { label: t('IMPROVEMENT'), value: '+' },
+    { label: t('STABLE'), value: '' },
+    { label: t('DEGRADATION'), value: '-' },
+  ];
+
+  return (
+    <Dropdown
+      value={dropdownValue}
+      options={statuses}
+      onChange={(e) => {
+        setDropdownValue(e.value);
+        onStatusEditorValueChange(rowData, field, e.value);
+      }}
+      style={{ width: '100%' }}
+      placeholder={t('SELECT_STATUS')}
+      itemTemplate={(option) => {
+        let classBadge = 'lowstock';
+        if (option.value === '+') {
+          classBadge = 'instock';
+        } else if (option.value === '-') {
+          classBadge = 'outofstock';
+        }
+
+        return <span className={`product-badge status-${classBadge}`}>{option.label}</span>;
+      }}
+    />
+  );
+};
+
+const TransitionImpactMatrix = ({ currentProject, title }) => {
+  const { t } = useTranslation();
+  const [landCoverItem, setLandCoverItem] =
+    useState(
+      generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification)
+  );
   const [selectedlandCoverItem, setSelectedlandCoverItem] = useState(null);
   const [trendsEarthStatus, setTrendsEarthStatus] = useState(true);
 
   const loadTrendsEarthDefault = () => {
-    setLandCoverItem(landCoverDefaults);
+    setLandCoverItem(
+      generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification)
+    );
     setTrendsEarthStatus(true);
   };
 
@@ -25,35 +72,8 @@ const TransitionImpactMatrix = () => {
         if (item.id === data.id) {
           item.row.forEach(
             (itemRow) => {
-              const idRow = itemRow.id;
-              if (idRow === 'treecovered') {
-                if (data.treecovered !== undefined) {
-                  itemRow.value = data.treecovered;
-                }
-              } else if (idRow === 'grassland') {
-                if (data.grassland !== undefined) {
-                  itemRow.value = data.grassland;
-                }
-              } else if (idRow === 'cropland') {
-                if (data.cropland !== undefined) {
-                  itemRow.value = data.cropland;
-                }
-              } else if (idRow === 'wetland') {
-                if (data.wetland !== undefined) {
-                  itemRow.value = data.wetland;
-                }
-              } else if (idRow === 'artificialarea') {
-                if (data.artificialarea !== undefined) {
-                  itemRow.value = data.artificialarea;
-                }
-              } else if (idRow === 'bareland') {
-                if (data.bareland !== undefined) {
-                  itemRow.value = data.bareland;
-                }
-              } else if (idRow === 'waterbody') {
-                if (data.waterbody !== undefined) {
-                  itemRow.value = data.waterbody;
-                }
+              if (data[itemRow.id] !== undefined) {
+                itemRow.value = data[itemRow.id];
               }
             }
           );
@@ -74,44 +94,13 @@ const TransitionImpactMatrix = () => {
     });
   };
 
-  const statusEditor = ({ rowData, field }) => {
-    let selectValue = '';
-    rowData.row.forEach((item) => {
-      if (item.id === field) {
-        selectValue = item.value;
-      }
-    });
-
-    const statuses = [
-      { label: t('IMPROVEMENT'), value: '+' },
-      { label: t('STABLE'), value: '' },
-      { label: t('DEGRADATION'), value: '-' },
-    ];
-
-    return (
-      <Dropdown
-        value={selectValue}
-        options={statuses}
-        onChange={
-          (e) => {
-            onStatusEditorValueChange(rowData, field, e.value);
-          }
-        }
-        style={{ width: '100%' }}
-        placeholder={t('SELECT_STATUS')}
-        itemTemplate={(option) => {
-          let classBadge = 'lowstock';
-          if (option.value === '+') {
-            classBadge = 'instock';
-          } else if (option.value === '-') {
-            classBadge = 'outofstock';
-          }
-
-          return <span className={`product-badge status-${classBadge}`}>{option.label}</span>;
-        }}
-      />
-    );
-  };
+  const statusEditor = ({ rowData, field }) => (
+    <StatusEditor
+      rowData={rowData}
+      field={field}
+      onStatusEditorValueChange={onStatusEditorValueChange}
+    />
+  )
 
   const statusColumn = (data, index) => {
     let className = 'medium';
@@ -131,14 +120,21 @@ const TransitionImpactMatrix = () => {
 
   const landCoverTableHeader = (
     <div className="table-header">
-      <div>
-        <div className="p-grid p-col-12 p-justify-end">
-          <Button
-            label={t('LOAD_TRENDS_EARTH_DEFAULTS')}
-            onClick={loadTrendsEarthDefault}
-            disabled={trendsEarthStatus}
-          />
+      <div className="p-d-flex p-justify-between p-ai-center p-py-2 p-px-2">
+        <div>
+          <h4 className="p-mb-0">{title}</h4>
         </div>
+        {currentProject.uses_default_lu_classification && (
+          <div>
+            <Button
+              className="p-button-warning"
+              icon="pi pi-refresh"
+              label={t('LOAD_TRENDS_EARTH_DEFAULTS')}
+              onClick={loadTrendsEarthDefault}
+              disabled={trendsEarthStatus}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -160,48 +156,14 @@ const TransitionImpactMatrix = () => {
         field="name"
         header=""
       />
-      <Column
-        field="treecovered"
-        header="Tree-covered"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 0)}
-      />
-      <Column
-        field="grassland"
-        header="Grassland"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 1)}
-      />
-      <Column
-        field="cropland"
-        header="Cropland"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 2)}
-      />
-      <Column
-        field="wetland"
-        header="Wetland"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 3)}
-      />
-      <Column
-        field="artificialarea"
-        header="Artificial area"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 4)}
-      />
-      <Column
-        field="bareland"
-        header="Bare land"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 5)}
-      />
-      <Column
-        field="waterbody"
-        header="Water body"
-        editor={(props) => statusEditor(props)}
-        body={(rowData) => statusColumn(rowData, 6)}
-      />
+      {landCoverItem.map((lci, index) => (
+        <Column
+          key={lci.id}
+          header={lci.name}
+          editor={(props) => statusEditor(props)}
+          body={(rowData) => statusColumn(rowData, index)}
+        />
+      ))}
       <Column rowEditor headerStyle={{ width: '7rem' }} bodyStyle={{ textAlign: 'center' }} />
     </DataTable>
   );

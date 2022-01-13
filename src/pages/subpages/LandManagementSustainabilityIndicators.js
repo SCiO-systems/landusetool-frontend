@@ -3,7 +3,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import StepNavigation from '../../components/navigation/StepNavigation';
 import { getIndicators } from '../../services/indicators';
-import { getProjectIndicators, saveProjectIndicators } from '../../services/projects';
+import {
+  getProjectIndicators,
+  PROJECT_OWNER,
+  PROJECT_USER,
+  saveProjectIndicators,
+} from '../../services/projects';
 import { ToastContext, UserContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 
@@ -78,7 +83,12 @@ const LandManagementSustainabilityIndicators = ({ onForward }) => {
       const selectedIndicatorIds = Object.values(selected)
         .flat()
         .map(({ id }) => id);
-      await saveProjectIndicators(currentProject?.id, selectedIndicatorIds);
+
+      // Save the indicators if the owner is the one making the changes.
+      if (currentProject?.role === PROJECT_OWNER) {
+        await saveProjectIndicators(currentProject?.id, selectedIndicatorIds);
+      }
+
       onForward();
     } catch (error) {
       setError(handleError(error));
@@ -119,7 +129,20 @@ const LandManagementSustainabilityIndicators = ({ onForward }) => {
             <div className="p-col-12">
               {indicator?.children?.map((impact) => (
                 <div key={impact?.id} className="p-grid p-fluid p-pb-4">
-                  <div className="p-col-12">
+                  <div className="p-col-12" style={{ position: 'relative' }}>
+                    {currentProject?.role === PROJECT_USER && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          right: 0,
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'rgba(255,255,255,0.5)',
+                          zIndex: 99,
+                        }}
+                      />
+                    )}
                     <PickList
                       sourceHeader={impact?.name}
                       showSourceControls={false}

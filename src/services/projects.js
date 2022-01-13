@@ -14,6 +14,8 @@ export const createProject = async ({
   adminLevel,
   country,
   polygon,
+  defaultLuClasses,
+  luClasses,
 }) =>
   apiClient.post('/projects', {
     title,
@@ -22,6 +24,8 @@ export const createProject = async ({
     country_iso_code_3: country,
     administrative_level: adminLevel,
     polygon,
+    uses_default_lu_classification: defaultLuClasses,
+    lu_classes: luClasses,
   });
 
 export const editProject = async (id, { title, acronym, description }) =>

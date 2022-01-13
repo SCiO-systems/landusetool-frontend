@@ -17,13 +17,7 @@ const Dashboard = () => {
     const fetchProjects = async () => {
       const { data } = await listProjects();
       setProjects(data);
-      setUser({
-        availableProjects: data.map((p) => ({
-          id: p.id,
-          shortTitle: `${p.acronym}`,
-          countryIsoCode3: p.country_iso_code_3,
-        })),
-      });
+      setUser({ availableProjects: data });
     };
     fetchProjects();
   }, []); // eslint-disable-line

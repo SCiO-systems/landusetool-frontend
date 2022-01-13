@@ -11,21 +11,15 @@ const AppMenu = ({ onMenuClick }) => {
   const { availableProjects, currentProject, countryLevelLinks, setUser } = useContext(UserContext);
 
   const setCurrentProject = async (e) => {
-    const selectedProject = availableProjects.filter((p) => p.id === e.value)[0];
+    const selectedProject = availableProjects.filter(({ id }) => id === e.value)[0];
     if (selectedProject) {
       try {
         const countryLevelLinksResponse = await getCountryLevelLinks(
-          selectedProject.countryIsoCode3
+          selectedProject.country_iso_code_3
         );
-        setUser({
-          currentProject: selectedProject,
-          countryLevelLinks: countryLevelLinksResponse,
-        });
+        setUser({ currentProject: selectedProject, countryLevelLinks: countryLevelLinksResponse });
       } catch (_e) {
-        setUser({
-          currentProject: selectedProject,
-          countryLevelLinks: null,
-        });
+        setUser({ currentProject: selectedProject, countryLevelLinks: null });
         // eslint-disable-next-line
         console.error(`Couldn't fetch country level links.`);
       }
@@ -54,7 +48,7 @@ const AppMenu = ({ onMenuClick }) => {
 
       <div className="layout-menu-container">
         <ul className="layout-menu" role="menu">
-          {availableProjects && availableProjects.length > 0 && (
+          {availableProjects?.length > 0 && (
             <>
               <li className="layout-root-menuitem" role="menuitem">
                 <div className="layout-root-menuitem">
@@ -65,7 +59,7 @@ const AppMenu = ({ onMenuClick }) => {
                     <Dropdown
                       className="p p-mb-2"
                       options={availableProjects}
-                      optionLabel="shortTitle"
+                      optionLabel="acronym"
                       optionValue="id"
                       value={currentProject?.id}
                       onChange={setCurrentProject}

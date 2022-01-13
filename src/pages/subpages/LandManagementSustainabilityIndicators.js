@@ -3,12 +3,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import StepNavigation from '../../components/navigation/StepNavigation';
 import { getIndicators } from '../../services/indicators';
-import { ToastContext } from '../../store';
+import { getProjectIndicators, saveProjectIndicators } from '../../services/projects';
+import { ToastContext, UserContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 
 const LandManagementSustainabilityIndicators = ({ onForward }) => {
   const { t } = useTranslation();
   const { setError } = useContext(ToastContext);
+  const { currentProject } = useContext(UserContext);
 
   const [indicators, setIndicators] = useState([]);
   const [selected, setSelected] = useState({});
@@ -35,12 +37,17 @@ const LandManagementSustainabilityIndicators = ({ onForward }) => {
       .concat(existing);
   };
 
-  const setDefaultSelectedIndicators = (allIndicators) => {
-    // Get all the indicators that are not transferable to the source.
+  const setDefaultSelectedIndicators = (allIndicators, projectIndicators) => {
+    // Convert the project indicators to IDs.
+    const projectIndicatorIds = projectIndicators.map((i) => i.id);
+
+    // Get all the indicators that need to be selected by default.
     const defaults = allIndicators
       .map((e) => e.children)
       .flat()
-      .map((c) => c.children.filter((e) => e.transferable === 0))
+      .map((c) =>
+        c.children.filter((e) => e.transferable === 0 || projectIndicatorIds.includes(e.id))
+      )
       .flat();
 
     // Create an empty object to hold them.
@@ -65,9 +72,13 @@ const LandManagementSustainabilityIndicators = ({ onForward }) => {
     setSelected({ ...selected, [id]: e.target.concat(nonTransferableSourceItems) });
   };
 
-  const onContinue = () => {
+  const onContinue = async () => {
     // Save the changes.
     try {
+      const selectedIndicatorIds = Object.values(selected)
+        .flat()
+        .map(({ id }) => id);
+      await saveProjectIndicators(currentProject?.id, selectedIndicatorIds);
       onForward();
     } catch (error) {
       setError(handleError(error));
@@ -77,25 +88,16 @@ const LandManagementSustainabilityIndicators = ({ onForward }) => {
   useEffect(() => {
     const fetchIndicators = async () => {
       try {
-        const response = await getIndicators();
-        setIndicators(response);
-        setDefaultSelectedIndicators(response);
+        const allIndicators = await getIndicators();
+        const projectIndicators = await getProjectIndicators(currentProject?.id);
+        setIndicators(allIndicators);
+        setDefaultSelectedIndicators(allIndicators, projectIndicators);
       } catch (error) {
         setError(handleError(error));
       }
     };
     fetchIndicators();
   }, []); // eslint-disable-line
-
-  useEffect(() => {
-    if (Object.keys(selected).length > 0) {
-      const ids = Object.values(selected)
-        .flat()
-        .map((item) => item.id);
-
-      // TODO: Save the items.
-    }
-  }, [selected]); // eslint-disable-line
 
   const itemTemplate = ({ transferable, name }) => (
     <div key={name}>
@@ -136,7 +138,7 @@ const LandManagementSustainabilityIndicators = ({ onForward }) => {
           </div>
         ))}
       </div>
-      <StepNavigation onForward={onForward} />
+      <StepNavigation onForward={onContinue} />
     </>
   );
 };

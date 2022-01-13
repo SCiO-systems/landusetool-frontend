@@ -40,5 +40,7 @@ export const getProjectWocatTechnologies = async (id) =>
 export const chooseProjectWocatTechnology = async (id, technologyId) =>
   apiClient.post(`/projects/${id}/choose_wocat_technology`, { technology_id: technologyId });
 
+export const getProjectIndicators = async (id) => apiClient.get(`/projects/${id}/indicators`);
+
 export const saveProjectIndicators = async (id, indicators) =>
   apiClient.put(`/projects/${id}/indicators`, { indicators });

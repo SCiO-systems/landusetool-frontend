@@ -127,7 +127,6 @@ const TransitionImpactMatrix = ({ currentProject, title }) => {
         {currentProject.uses_default_lu_classification && (
           <div>
             <Button
-              className="p-button-warning"
               icon="pi pi-refresh"
               label={t('LOAD_TRENDS_EARTH_DEFAULTS')}
               onClick={loadTrendsEarthDefault}

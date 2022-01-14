@@ -94,7 +94,7 @@ const TransitionImpactMatrix = ({ currentProject, title }) => {
     });
   };
 
-  const statusEditor = ({ rowData, field }) => (
+  const statusEditor = ({ rowData }, field) => (
     <StatusEditor
       rowData={rowData}
       field={field}
@@ -124,7 +124,7 @@ const TransitionImpactMatrix = ({ currentProject, title }) => {
         <div>
           <h4 className="p-mb-0">{title}</h4>
         </div>
-        {currentProject.uses_default_lu_classification && (
+        {(currentProject.uses_default_lu_classification === 1) && (
           <div>
             <Button
               icon="pi pi-refresh"
@@ -159,7 +159,7 @@ const TransitionImpactMatrix = ({ currentProject, title }) => {
         <Column
           key={lci.id}
           header={lci.name}
-          editor={(props) => statusEditor(props)}
+          editor={(props) => statusEditor(props, lci.id)}
           body={(rowData) => statusColumn(rowData, index)}
         />
       ))}

@@ -12,6 +12,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
   const [scenarioStart, setScenarioStart] = useState(null);
   const [scenarioEnd, setScenarioEnd] = useState(null);
   const [scenario, setScenario] = useState(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [scenarioName, setScenarioName] = useState(null)
   const [onChecked, setOnChecked] = useState(false)
   const [canSave, setCanSave] = useState(true)
@@ -145,7 +146,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
     setCanSave(false);
   }
 
-  const productsTableHeader = (
+  const scenarioTableHeader = (
     <div className="p-d-flex p-jc-between p-ai-center">
       <div>
         <h4 className="p-mb-0 p-ml-3">{scenarioName}</h4>
@@ -161,6 +162,12 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
           disabled={!canSave}
           tabIndex={-1}
           onChange={(e) => saveStatus(e.value)} />
+        <Button
+          icon={`pi ${isCollapsed ? 'pi-angle-right' : 'pi-angle-down'}`}
+          className="p-togglebutton p-ml-2"
+          label={isCollapsed ? t('EXPAND') : t('COLLAPSE')}
+          onClick={() => setIsCollapsed((v) => !v)}
+        />
       </div>
     </div>
   );
@@ -185,14 +192,14 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
             className="stm-parent-dt"
             dataKey="landId"
             onRowToggle={(e) => setExpandedRows(e.data)}
-            header={productsTableHeader}
+            header={scenarioTableHeader}
             rowExpansionTemplate={rowExpansionTemplate}
             rowHover
           >
-            <Column expander headerStyle={{ width: '3rem' }} />
-            <Column field="landType" header="Land Type" />
-            <Column style={{ textAlign: 'right' }} field="landCoverage" header={scenarioStart} body={startCoverageHeader} />
-            <Column style={{ textAlign: 'right' }} field="landCoverage" header={scenarioEnd} body={endCoverageHeader} />
+            {!isCollapsed && (<Column expander headerStyle={{ width: '3rem' }} />)}
+            {!isCollapsed && (<Column field="landType" header="Land Type" />)}
+            {!isCollapsed && (<Column style={{ textAlign: 'right' }} field="landCoverage" header={scenarioStart} body={startCoverageHeader} />)}
+            {!isCollapsed && (<Column style={{ textAlign: 'right' }} field="landCoverage" header={scenarioEnd} body={endCoverageHeader} />)}
           </DataTable>
         )}
       </div>

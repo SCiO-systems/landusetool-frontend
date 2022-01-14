@@ -37,5 +37,51 @@ export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
 export const generateScenarioSchema = (luClasses, usesDefault) => {
   if (usesDefault) return InitialSchenario;
   if (!luClasses || luClasses.length === 0) return InitialSchenario;
-  return {};
+  const scenario = {
+    scenarioName: 'Untitled',
+    scenarioPeriod: {
+      scenarioStart: 0,
+      scenarioEnd: 0,
+    },
+  };
+
+  const landTypes = [];
+  luClasses.forEach((lc, _index, luc) => {
+    const lt = {
+      landType: lc.key,
+      landId: camelize(lc.key),
+      landCoverage: {
+        value: 0,
+        unit: 'ha',
+      },
+      endLandCoverage: {
+        value: 0,
+        unit: 'ha',
+      },
+      breakDownLimit: {
+        value: 0,
+        unit: 'ha',
+      },
+    }
+
+    const breakDown = [];
+    luc.forEach((element) => {
+      if (element.key !== lc.key) {
+        breakDown.push({
+          landType: element.key,
+          landId: camelize(element.key),
+          landCoverage: {
+            value: 0,
+            unit: 'ha',
+          },
+        })
+      }
+    });
+    lt.breakDown = breakDown;
+
+    landTypes.push(lt);
+  });
+  scenario.landTypes = landTypes;
+
+  return scenario;
 };

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { UserContext } from '../../store';
-import initialScenarioData from '../../data/initial-scenario';
+import { generateScenarioSchema } from '../../utilities/schema-generators';
 import ScenarioToolbar from '../../components/ScenarioToolbar';
 import TransitionImpactMatrix from '../../components/TransitionImpactMatrix';
 import ScenarioTransitionMatrix from '../../components/ScenarioTransitionMatrix';
@@ -18,7 +18,7 @@ const LandUse = () => {
 
   const prepareScenario = (startYear, endYear) => {
     const scenario = {
-      ...initialScenarioData,
+      ...generateScenarioSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification),
       scenarioName: `${startYear} - ${endYear}`,
       scenarioPeriod: {
         scenarioStart: startYear,

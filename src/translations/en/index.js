@@ -114,6 +114,8 @@ const t = {
     USE_DEFAULT_LU_CLASSIFICATION: 'Use default LU classification',
     USE_CUSTOM_LU_CLASSIFICATION: 'Use custom LU classification',
     BECOMES: 'BECOMES',
+    COLLAPSE: 'Collapse',
+    EXPAND: 'Expand',
   },
 };
 

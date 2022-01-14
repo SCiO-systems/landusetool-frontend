@@ -38,6 +38,7 @@ const t = {
     REJECT_INVITE: 'Reject Invite',
     CHANGE_PICTURE: 'Change Picture',
     SAVE_CHANGES: 'Save Changes',
+    SAVED: 'Saved',
     SAVE_CONTINUE: 'Save & Continue',
     FIELD_IS_REQUIRED: 'This field is required.',
     EDIT_PROJECT: 'Edit Project',
@@ -112,6 +113,7 @@ const t = {
     VALUE: 'Value',
     USE_DEFAULT_LU_CLASSIFICATION: 'Use default LU classification',
     USE_CUSTOM_LU_CLASSIFICATION: 'Use custom LU classification',
+    BECOMES: 'BECOMES',
   },
 };
 

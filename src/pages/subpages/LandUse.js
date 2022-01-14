@@ -5,6 +5,7 @@ import { UserContext } from '../../store';
 import initialScenarioData from '../../data/initial-scenario';
 import ScenarioToolbar from '../../components/ScenarioToolbar';
 import TransitionImpactMatrix from '../../components/TransitionImpactMatrix';
+import ScenarioTransitionMatrix from '../../components/ScenarioTransitionMatrix';
 import NewScenarioDialog from '../../components/dialogs/NewScenario';
 
 const LandUse = () => {
@@ -58,6 +59,19 @@ const LandUse = () => {
       />
       <div className="p-mt-4">
         <TransitionImpactMatrix title={t('LU_TRANSITION_IMPACT_MATRIX')} currentProject={currentProject} />
+      </div>
+      <div className="p-mt-4">
+        {(scenarios.length > 0) && scenarios.map((s)=> (
+          <div className="p-mt-6" key={s.scenarioName} id={s.scenarioName}>
+            <ScenarioTransitionMatrix
+              inputScenario={s}
+              onSave={(e, sc) => {
+                // eslint-disable-next-line
+                console.log(e, sc);
+              }}
+            />
+          </div>
+        ))}
       </div>
       <NewScenarioDialog
         dialogOpen={scenarioModalVisible}

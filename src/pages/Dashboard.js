@@ -1,13 +1,16 @@
-import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InviteProjectMembersDialog from '../components/dialogs/InviteProjectMembersDialog';
+import ProjectsTable from '../components/tables/ProjectsTable';
 import { listProjects, PROJECT_OWNER } from '../services/projects';
+import { getCountryLevelLinks } from '../services/countries';
 import { UserContext } from '../store';
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState([]);
+  const { t } = useTranslation();
+  const [myProjects, setMyProjects] = useState([]);
+  const [sharedProjects, setSharedProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState({});
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const { setUser } = useContext(UserContext);
@@ -16,7 +19,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       const { data } = await listProjects();
-      setProjects(data);
+      setMyProjects(data.filter((p) => p.role === PROJECT_OWNER));
+      setSharedProjects(data.filter((p) => p.role !== PROJECT_OWNER));
       setUser({ availableProjects: data });
     };
     fetchProjects();
@@ -27,42 +31,45 @@ const Dashboard = () => {
   };
 
   const inviteToProject = (id) => {
-    setSelectedProject(projects.filter((p) => p?.id === id)?.pop());
+    setSelectedProject(myProjects.filter((p) => p?.id === id)?.pop());
     setInviteDialogOpen(true);
+  };
+
+  const setCurrentProject = async (project) => {
+    try {
+      const countryLevelLinksResponse = await getCountryLevelLinks(
+        project.country_iso_code_3
+      );
+      setUser({ currentProject: project, countryLevelLinks: countryLevelLinksResponse });
+    } catch (_e) {
+      setUser({ currentProject: project, countryLevelLinks: null });
+      // eslint-disable-next-line
+      console.error(`Couldn't fetch country level links.`);
+    }
+  };
+
+  const loadProject = (project) => {
+    setSelectedProject(project);
+    setCurrentProject(project);
   };
 
   return (
     <div className="layout-dashboard">
-      <div className="p-grid">
-        {projects.map(({ id, title, acronym, description, role }) => (
-          <div key={id} className="p-sm-6 p-md-6 p-lg-4">
-            <Card
-              title={title}
-              subTitle={acronym}
-              footer={() => (
-                <>
-                  <Button
-                    onClick={() => goToProject(id)}
-                    label="Edit"
-                    icon="pi pi-cog"
-                    className="p-mr-2 p-mt-2"
-                  />
-                  {role === PROJECT_OWNER && (
-                    <Button
-                      onClick={() => inviteToProject(id)}
-                      label="Invite Members"
-                      icon="pi pi-user-plus"
-                      className="p-mr-2 p-mt-2 p-button-secondary"
-                    />
-                  )}
-                </>
-              )}
-            >
-              {description || <div>&nbsp;</div>}
-            </Card>
-          </div>
-        ))}
-      </div>
+      <ProjectsTable
+        projects={myProjects}
+        title={t('MY_PROJECTS')}
+        goToProject={goToProject}
+        inviteToProject={inviteToProject}
+        loadProject={loadProject}
+        className="p-mb-4"
+      />
+      <ProjectsTable
+        projects={sharedProjects}
+        title={t('SHARED_PROJECTS')}
+        goToProject={goToProject}
+        inviteToProject={inviteToProject}
+        loadProject={loadProject}
+      />
       <InviteProjectMembersDialog
         project={selectedProject}
         dialogOpen={inviteDialogOpen}

@@ -1,4 +1,4 @@
-import { Dropdown } from 'primereact/dropdown';
+import { Tag } from 'primereact/tag';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
@@ -9,22 +9,6 @@ import { UserContext } from './store';
 const AppMenu = ({ onMenuClick }) => {
   const { t } = useTranslation();
   const { availableProjects, currentProject, countryLevelLinks, setUser } = useContext(UserContext);
-
-  const setCurrentProject = async (e) => {
-    const selectedProject = availableProjects.filter(({ id }) => id === e.value)[0];
-    if (selectedProject) {
-      try {
-        const countryLevelLinksResponse = await getCountryLevelLinks(
-          selectedProject.country_iso_code_3
-        );
-        setUser({ currentProject: selectedProject, countryLevelLinks: countryLevelLinksResponse });
-      } catch (_e) {
-        setUser({ currentProject: selectedProject, countryLevelLinks: null });
-        // eslint-disable-next-line
-        console.error(`Couldn't fetch country level links.`);
-      }
-    }
-  };
 
   return (
     <div className="layout-sidebar" role="button" tabIndex="0" onClick={onMenuClick}>
@@ -48,25 +32,19 @@ const AppMenu = ({ onMenuClick }) => {
 
       <div className="layout-menu-container">
         <ul className="layout-menu" role="menu">
-          {availableProjects?.length > 0 && (
+          {(availableProjects?.length > 0 && currentProject) && (
             <>
               <li className="layout-root-menuitem" role="menuitem">
                 <div className="layout-root-menuitem">
-                  <div className="layout-menuitem-root-text">{t('ACTIVE_PROJECT')}</div>
-                </div>
-                <ul className="layout-menu" role="menu">
-                  <li className="p-mb-1 p-fluid" role="menuitem">
-                    <Dropdown
-                      className="p p-mb-2"
-                      options={availableProjects}
-                      optionLabel="acronym"
-                      optionValue="id"
-                      value={currentProject?.id}
-                      onChange={setCurrentProject}
-                      placeholder="Select Project"
+                  <div className="layout-menuitem-root-text">
+                    {t('ACTIVE_PROJECT')}:&nbsp;
+                    <Tag
+                      className="p-px-1 p-py-0 p-block"
+                      style={{ wordBreak: 'break-all' }}
+                      value={currentProject ? currentProject.acronym : '-'}
                     />
-                  </li>
-                </ul>
+                  </div>
+                </div>
               </li>
               <li className="menu-separator" role="separator" />
             </>

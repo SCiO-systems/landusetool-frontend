@@ -172,7 +172,7 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
         <Button
           className="p-button-secondary"
           type="button"
-          disabled={activeIndex === 2}
+          disabled={activeIndex === 2 || country === undefined}
           label={t('NEXT')}
           onClick={(_e) => setActiveIndex((oldIndex) => (oldIndex + 1))}
           icon="pi pi-angle-right"

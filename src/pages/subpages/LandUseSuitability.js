@@ -84,6 +84,8 @@ const LandUseSuitabilityTable = ({ data }) => {
 const LandUseSuitability = () => {
   // State related.
   const [useDefaultData, setUseDefaultData] = useState(true);
+  // TODO: Fix the following
+  // eslint-disable-next-line
   const [data, setData] = useState([]);
 
   useEffect(() => {

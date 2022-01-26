@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import 'primereact/resources/primereact.min.css';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PROJECT_OWNER } from '../../services/projects';
+import { PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED } from '../../services/projects';
 
 const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProject, className }) => {
   const { t } = useTranslation();
@@ -45,24 +45,41 @@ const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProj
 
   const actionsTemplate = (rowData) => (
     <div>
-      <Button
-        icon="pi pi-folder-open"
-        className="p-mr-3"
-        onClick={() => loadProject(rowData)}
-        label={t('LOAD_PROJECT')}
-      />
+      {(rowData.role === PROJECT_OWNER) && (rowData.status === DRAFT) && (
+        <Button
+          icon="pi pi-cog"
+          className="p-mr-3"
+          onClick={() => loadProject(rowData)}
+          label={t('CONTINUE_SETUP')}
+        />
+      )}
+      {(rowData.role === PROJECT_USER ) && (rowData.status === DRAFT) && (
+        <span>{t('PROJECT_UNDER_PREPARATION')}</span>
+      )}
+      {(rowData.status === PUBLISHED) && (
+        <Button
+          icon="pi pi-folder-open"
+          className="p-mr-3"
+          onClick={() => loadProject(rowData)}
+          label={t('LOAD_PROJECT')}
+        />
+      )}
       {rowData.role === PROJECT_OWNER && (
         <>
           <Button
             icon="pi pi-user-plus"
             onClick={() => inviteToProject(rowData.id)}
             className="p-mr-3 p-button-secondary"
+            tooltip={t('INVITE_MEMBERS_TO_PROJECT')}
+            tooltipOptions={{ position: 'top' }}
             label=""
           />
           <Button
             icon="pi pi-times"
             className="p-button-danger p-mr-3"
             label=""
+            tooltip={t('DELETE_PROJECT')}
+            tooltipOptions={{ position: 'top' }}
             onClick={() => { }}
           />
         </>

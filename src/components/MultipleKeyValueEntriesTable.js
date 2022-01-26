@@ -4,8 +4,12 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
-import React, { useState } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { uploadProjectFile } from '../services/files';
+import { handleError } from '../utilities/errors';
+import { ToastContext } from '../store';
 
 const MultipleKeyValueEntriesTable = ({
   data,
@@ -14,12 +18,17 @@ const MultipleKeyValueEntriesTable = ({
   onAddItem,
   keyLabel = 'Key',
   valueLabel = 'Value',
+  fileLabel = 'File',
+  hasFiles = false,
+  projectId = null,
   helpText,
   className,
 }) => {
   const { t } = useTranslation();
+  const fileRef = useRef(null);
   const [entry, setEntry] = useState({ key: '', value: '' });
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
+  const { setError, setSuccess } = useContext(ToastContext);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +39,18 @@ const MultipleKeyValueEntriesTable = ({
   const onDelete = (e) => {
     onDeleteItem(e);
   };
+
+  const uploadFile = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const { data: res } = await uploadProjectFile(projectId, formData);
+      setEntry((e) => ({ key: e.key, value: e.value, file_id: res.id }));
+      setSuccess('Done', 'Your file has been uploaded.');
+    } catch (error) {
+      setError(setError(handleError(error)));
+    }
+  }
 
   const headerTemplate = (body) => (
     <div className="p-d-flex p-ai-center">
@@ -49,7 +70,7 @@ const MultipleKeyValueEntriesTable = ({
     <div className="p-formgrid p-grid p-fluid p-d-flex p-ai-center">
       <div className="p-col-5">
         <div className="p-field">
-          <label>{ keyLabel }</label>
+          <label>{keyLabel}</label>
           <InputTextarea
             id="key"
             value={entry.key}
@@ -62,7 +83,7 @@ const MultipleKeyValueEntriesTable = ({
       </div>
       <div className="p-col-5">
         <div className="p-field">
-          <label>{ valueLabel }</label>
+          <label>{valueLabel}</label>
           <InputTextarea
             id="value"
             value={entry.value}
@@ -74,6 +95,26 @@ const MultipleKeyValueEntriesTable = ({
         </div>
       </div>
       <div className="p-col-2 p-text-right" style={{ marginTop: '0.3rem' }}>
+        {(hasFiles && projectId !== null) && (
+          <>
+            <input
+              className="hidden"
+              type="file"
+              multiple={false}
+              ref={fileRef}
+              onChange={(e) => uploadFile(e.target.files[0])}
+            />
+            <Button
+              label={fileLabel}
+              icon="pi pi-file"
+              type="button"
+              className="p-mr-2 p-mb-2"
+              onClick={() => {
+                fileRef.current.click();
+              }}
+            />
+          </>
+        )}
         <Button
           icon="pi pi-plus"
           disabled={entry.key.length === 0 || entry.value.length === 0}

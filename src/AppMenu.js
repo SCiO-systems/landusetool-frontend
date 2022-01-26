@@ -3,12 +3,16 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import Logo from './assets/img/LUP4LDN-LOGO_small.png';
-import { getCountryLevelLinks } from './services/countries';
 import { UserContext } from './store';
+import { DRAFT, PROJECT_STEPS } from './services/projects';
 
 const AppMenu = ({ onMenuClick }) => {
   const { t } = useTranslation();
-  const { availableProjects, currentProject, countryLevelLinks, setUser } = useContext(UserContext);
+  const { availableProjects, currentProject, countryLevelLinks } = useContext(UserContext);
+
+  const handleClick = (e, isDisabled) => {
+    if (isDisabled) e.preventDefault();
+  };
 
   return (
     <div className="layout-sidebar" role="button" tabIndex="0" onClick={onMenuClick}>
@@ -68,7 +72,48 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </ul>
           </li>
-          {currentProject && countryLevelLinks && (
+          {(currentProject && currentProject.status === DRAFT) && (
+            <>
+              <li className="menu-separator" role="separator" />
+              <li className="layout-root-menuitem" role="menuitem">
+                <div className="layout-root-menuitem">
+                  <div className="layout-menuitem-root-text">{t('SETUP_PROJECT')}</div>
+                </div>
+                <ul className="layout-menu" role="menu">
+                  <li className="p-mb-1" role="menuitem">
+                    <NavLink
+                      onClick={(e) => handleClick(e, currentProject.step === PROJECT_STEPS.REGION_OF_INTEREST)}
+                      to={`/setup-project/${currentProject.id}/region-of-interest`}
+                      activeClassName="p-button"
+                      exact
+                    >
+                      {(currentProject.step === PROJECT_STEPS.REGION_OF_INTEREST) ? (
+                        <i className="layout-menuitem-icon fas fa-check-circle" />
+                      ) : (
+                        <i className="layout-menuitem-icon far fa-check-circle" />
+                      )}
+                      <span className="layout-menuitem-text">{t('REGION_OF_INTEREST')}</span>
+                    </NavLink>
+                  </li>
+                  <li className="p-mb-1" role="menuitem">
+                    <NavLink
+                      onClick={(e) => handleClick(e, currentProject.step === null)}
+                      to={`/setup-project/${currentProject.id}/datasets`}
+                      activeClassName="p-button"
+                    >
+                      {(currentProject.step === PROJECT_STEPS.COMPLETED) ? (
+                        <i className="layout-menuitem-icon fas fa-check-circle" />
+                      ) : (
+                        <i className="layout-menuitem-icon far fa-check-circle" />
+                      )}
+                      <span className="layout-menuitem-text">{t('PROJECT_DATASETS')}</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              </li>
+            </>
+          )}
+          {(currentProject && currentProject.status !== DRAFT) && countryLevelLinks && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">
@@ -94,7 +139,7 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </>
           )}
-          {currentProject && (
+          {(currentProject && currentProject.status !== DRAFT) && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">

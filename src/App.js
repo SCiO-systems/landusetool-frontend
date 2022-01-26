@@ -15,6 +15,8 @@ import CreateProject from './pages/CreateProject';
 import CurrentState from './pages/CurrentState';
 import Dashboard from './pages/Dashboard';
 import EditProject from './pages/EditProject';
+import RegionOfInterest from './pages/RegionOfInterest';
+import ProjectDatasets from './pages/ProjectDatasets';
 import LandUsePlanning from './pages/LandUsePlanning';
 import RiskProfiles from './pages/RiskProfiles';
 import { logout, verify } from './services/auth';
@@ -71,6 +73,22 @@ const App = () => {
       component: CreateProject,
       exact: true,
       meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('NEW_PROJECT') }] },
+    },
+    {
+      path: '/setup-project/:id/region-of-interest',
+      component: RegionOfInterest,
+      exact: true,
+      meta: {
+        breadcrumb: [{ parent: t('SETUP_PROJECT'), label: t('REGION_OF_INTEREST') }],
+      },
+    },
+    {
+      path: '/setup-project/:id/datasets/:step?',
+      component: ProjectDatasets,
+      exact: true,
+      meta: {
+        breadcrumb: [{ parent: t('SETUP_PROJECT'), label: t('PROJECT_DATASETS') }],
+      },
     },
     {
       path: '/projects/:id',

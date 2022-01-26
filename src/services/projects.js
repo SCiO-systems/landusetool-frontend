@@ -3,33 +3,65 @@ import apiClient from '../utilities/api-client';
 export const PROJECT_OWNER = 'owner';
 export const PROJECT_USER = 'user';
 
+export const DRAFT = 'draft';
+export const PUBLISHED = 'published';
+
+export const PROJECT_STEPS = {
+  REGION_OF_INTEREST: 'RegionOfInterest',
+  DATASETS_LAND_USE: 'LandUse',
+  DATASETS_LAND_DEGRADATION: 'LandDegradation',
+  COMPLETED: 'Dashboard',
+};
+
+export const getNextStep = (project) => {
+  if (project.status === PUBLISHED || project.step === PROJECT_STEPS.COMPLETED) {
+    return PROJECT_STEPS.COMPLETED;
+  }
+
+  if (project.step === null) {
+    return PROJECT_STEPS.REGION_OF_INTEREST;
+  }
+
+  if (project.step === PROJECT_STEPS.REGION_OF_INTEREST) {
+    return PROJECT_STEPS.DATASETS_LAND_USE;
+  }
+
+  if (project.step === PROJECT_STEPS.DATASETS_LAND_USE) {
+    return PROJECT_STEPS.DATASETS_LAND_DEGRADATION;
+  }
+
+  return PROJECT_STEPS.COMPLETED;
+};
+
+export const getUrlForStep = (id, step) => {
+  switch (step) {
+    case null:
+    case PROJECT_STEPS.REGION_OF_INTEREST:
+      return `/setup-project/${id}/region-of-interest`;
+    case PROJECT_STEPS.DATASETS_LAND_USE:
+      return `/setup-project/${id}/datasets/0`;
+    case PROJECT_STEPS.DATASETS_LAND_DEGRADATION:
+      return `/setup-project/${id}/datasets/1`;
+    default:
+      return `/`;
+  }
+}
+
 export const getProject = async (id) => apiClient.get(`/projects/${id}`);
 
 export const listProjects = async () => apiClient.get('/projects');
 
-export const createProject = async ({
-  title,
-  acronym,
-  description,
-  adminLevel,
-  country,
-  polygon,
-  defaultLuClasses,
-  luClasses,
-}) =>
-  apiClient.post('/projects', {
-    title,
-    acronym,
-    description,
-    country_iso_code_3: country,
-    administrative_level: adminLevel,
-    polygon,
-    uses_default_lu_classification: defaultLuClasses,
-    lu_classes: luClasses,
-  });
+export const createProject = async ({ title, acronym, description }) =>
+  apiClient.post('/projects', { title, acronym, description });
 
-export const editProject = async (id, { title, acronym, description }) =>
-  apiClient.put(`/projects/${id}`, { title, acronym, description });
+export const editProject = async (id, data) =>
+  apiClient.put(`/projects/${id}`, data);
+
+export const pubilshProject = async (id) =>
+  apiClient.post(`/projects/${id}/publish`);
+
+export const deleteProject = async (id) =>
+  apiClient.delete(`/projects/${id}`);
 
 export const inviteUsers = async (id, users) =>
   apiClient.post(`/projects/${id}/invites`, { user_ids: users });
@@ -44,3 +76,4 @@ export const getProjectIndicators = async (id) => apiClient.get(`/projects/${id}
 
 export const saveProjectIndicators = async (id, indicators) =>
   apiClient.put(`/projects/${id}/indicators`, { indicators });
+

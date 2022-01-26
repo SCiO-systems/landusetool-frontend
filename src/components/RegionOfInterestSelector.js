@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { Steps } from 'primereact/steps';
 import { useTranslation } from 'react-i18next';
 
 import Glowglobe from './glowglobe';
 import CountrySelector from './CountrySelector';
+import { handleError } from '../utilities/errors';
+import { ToastContext } from '../store';
 import { getCountryAdminLevelArea, getByCoordinates } from '../services/polygons';
+import { uploadProjectFile } from '../services/files';
 
-const RegionOfInterestSelector = ({ register, setValue }) => {
+const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
   const { t } = useTranslation();
+  const roiFileRef = useRef(null);
+  const { setError, setSuccess } = useContext(ToastContext);
   const [activeIndex, setActiveIndex] = useState(0);
   const [country, setCountry] = useState(undefined);
   const [adminLevel, setAdminLevel] = useState(1);
@@ -16,7 +21,8 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
 
   register('country', { required: true });
   register('adminLevel', { required: true });
-  register('polygon', { required: true });
+  register('polygon', { required: false });
+  register('roi_file_id', { value: null });
 
   useEffect(() => {
     setValue('country', country);
@@ -56,6 +62,7 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
         },
       }]);
       setValue('polygon', res.polygon);
+      setValue('roi_file_id', null);
     });
   };
 
@@ -75,6 +82,19 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
     },
   ];
 
+  const uploadRoiFile = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const { data } = await uploadProjectFile(projectId, formData);
+      setValue('roi_file_id', data.id);
+      setValue('polygon', null);
+      setSuccess('Done', 'Your file has been uploaded.');
+    } catch (error) {
+      setError(setError(handleError(error)));
+    }
+  };
+
   return (
     <>
       <Steps
@@ -87,12 +107,35 @@ const RegionOfInterestSelector = ({ register, setValue }) => {
         <CountrySelector setCountry={setCountry} />
       )}
       {activeIndex === 1 && (
-        <Glowglobe
-          options={glowglobeOptions}
-          output={handleOutput}
-          layers={layers}
-          setAdminLevel={setAdminLevel}
-        />
+        <>
+          <Glowglobe
+            options={glowglobeOptions}
+            output={handleOutput}
+            layers={layers}
+            setAdminLevel={setAdminLevel}
+          />
+          <p className="p-mt-4">
+            {t('OR_UPLOAD_CUSTOM_POLYGON')}:
+            <br />
+            <input
+              className="hidden"
+              type="file"
+              accept=".geojson,.shp"
+              multiple={false}
+              ref={roiFileRef}
+              onChange={(e) => uploadRoiFile(e.target.files[0])}
+            />
+            <Button
+              label={t('UPLOAD_POLYGON')}
+              icon="pi pi-image"
+              type="button"
+              className="p-mr-2 p-mt-2"
+              onClick={() => {
+                roiFileRef.current.click();
+              }}
+            />
+          </p>
+        </>
       )}
       <div className="p-d-flex p-jc-between p-mt-6 p-mb-2">
         <Button

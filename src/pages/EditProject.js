@@ -2,7 +2,7 @@ import { Card } from 'primereact/card';
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Button } from 'primereact/button';
 
 import ProjectDetails from '../components/forms/ProjectDetails';
@@ -14,6 +14,7 @@ import { handleError } from '../utilities/errors';
 const EditProject = () => {
   const { t } = useTranslation();
   const { id } = useParams();
+  const history = useHistory();
   const [project, setProject] = useState(null);
   const {
     register,
@@ -26,6 +27,7 @@ const EditProject = () => {
     try {
       await editProject(id, data);
       setSuccess('Woohoo!', 'Project details have been updated.');
+      setTimeout(() => history.push('/'), 500);
     } catch (e) {
       setError(handleError(e));
     }

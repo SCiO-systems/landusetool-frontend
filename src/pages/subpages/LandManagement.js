@@ -29,6 +29,7 @@ const LandManagement = () => {
   // Data.
   const [technologies, setTechnologies] = useState([]);
   // TODO: Finish the chosen technologies.
+  // eslint-disable-next-line
   const [chosenTechnologies, setChosenTechnologies] = useState([]);
 
   const onChooseTechnology = async (techId) => {

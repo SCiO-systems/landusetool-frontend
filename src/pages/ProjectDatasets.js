@@ -286,7 +286,7 @@ const ProjectDatasets = () => {
                     onChange={(e) => uploadLandDegradationMap(e.target.files[0])}
                   />
                   <Button
-                    label={t('UPLOAD_MAP')}
+                    label={t('UPLOAD_LAND_DEGRADATION_MAP')}
                     icon="pi pi-image"
                     type="button"
                     className="p-mr-2 p-mb-4 p-d-block"
@@ -299,6 +299,11 @@ const ProjectDatasets = () => {
               <Button
                 className="p-button-lg"
                 type="submit"
+                disabled={
+                  (!useDefaultLandDegradationMap)
+                  ? (getValues('customLandDegradationMap') === null)
+                  : false
+                }
                 label={t('SAVE_CHANGES')}
                 icon="pi pi-save"
               />

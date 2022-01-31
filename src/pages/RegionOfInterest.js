@@ -39,7 +39,9 @@ const RegionOfInterest = () => {
 
   useEffect(() => {
     const subscription = watch((value) => {
-      if (value?.country && (value?.polygon || value?.roi_file_id !== null)) {
+      if (value?.roi_file_id !== null) {
+        setReadyToSubmit(true);
+      } else if (value?.country && value?.polygon) {
         setReadyToSubmit(true);
       }
     });

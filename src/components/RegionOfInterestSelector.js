@@ -19,8 +19,8 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
   const [adminLevel, setAdminLevel] = useState(1);
   const [layers, setLayers] = useState([]);
 
-  register('country', { required: true });
-  register('adminLevel', { required: true });
+  register('country', { required: false });
+  register('adminLevel', { required: false });
   register('polygon', { required: false });
   register('roi_file_id', { value: null });
 
@@ -104,17 +104,9 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
         className="p-mb-4"
       />
       {activeIndex === 0 && (
-        <CountrySelector setCountry={setCountry} />
-      )}
-      {activeIndex === 1 && (
         <>
-          <Glowglobe
-            options={glowglobeOptions}
-            output={handleOutput}
-            layers={layers}
-            setAdminLevel={setAdminLevel}
-          />
-          <p className="p-mt-4">
+          <CountrySelector setCountry={setCountry} />
+          <p className="p-mt-6">
             {t('OR_UPLOAD_CUSTOM_POLYGON')}:
             <br />
             <input
@@ -137,9 +129,17 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
           </p>
         </>
       )}
+      {activeIndex === 1 && (
+        <Glowglobe
+          options={glowglobeOptions}
+          output={handleOutput}
+          layers={layers}
+          setAdminLevel={setAdminLevel}
+        />
+      )}
       <div className="p-d-flex p-jc-between p-mt-6 p-mb-2">
         <Button
-          className="p-button-secondary"
+          className={`p-button-secondary ${activeIndex === 0 ? ' hidden' : ''}`}
           type="button"
           disabled={activeIndex === 0}
           onClick={(_e) => resetSelections()}
@@ -147,7 +147,7 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
           icon="pi pi-angle-left"
         />
         <Button
-          className="p-button-secondary"
+          className={`p-button-secondary ${(activeIndex === 1 || country === undefined) ? ' hidden' : ''}`}
           type="button"
           disabled={activeIndex === 1 || country === undefined}
           label={t('NEXT')}

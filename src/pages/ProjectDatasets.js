@@ -18,8 +18,9 @@ const ProjectDatasets = () => {
   const { t } = useTranslation();
   const { id, step } = useParams();
   const history = useHistory();
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit, setValue, getValues } = useForm();
   const customLandDegradationMap = useRef(null);
+  const customLandUseMap = useRef(null);
   const [project, setProject] = useState(null);
   const [topTabIndex, setTopTabIndex] = useState(parseInt(step, 10));
   const [luClasses, setLuClasses] = useState([]);
@@ -29,6 +30,7 @@ const ProjectDatasets = () => {
   const { setUser } = useContext(UserContext);
 
   register('customLandDegradationMap', { value: null });
+  register('customLandUseMap', { value: null });
   register('defaultLuClasses', { value: true });
   register('luClasses', { required: false });
 
@@ -38,6 +40,7 @@ const ProjectDatasets = () => {
         await editProject(id, {
           step: PROJECT_STEPS.DATASETS_LAND_DEGRADATION,
           uses_default_lu_classification: data.defaultLuClasses,
+          land_use_map_file_id: data.customLandUseMap,
           lu_classes: luClasses,
         });
         // Move to next tab if this step is completed
@@ -70,6 +73,18 @@ const ProjectDatasets = () => {
     }
   };
 
+  const uploadLandUseMap = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const { data } = await uploadProjectFile(id, formData);
+      setValue('customLandUseMap', data.id);
+      setSuccess('Done', 'Your file has been uploaded.');
+    } catch (error) {
+      setError(setError(handleError(error)));
+    }
+  };
+
   useEffect(() => {
     setValue('luClasses', JSON.stringify(luClasses));
   }, [luClasses, setValue]);
@@ -88,6 +103,31 @@ const ProjectDatasets = () => {
     };
     fetchProject();
   }, [id, setError, history]);
+
+  const isDisabled = () => {
+    if (!useDefaultLuClasses) {
+      // if custom LU classes we should have a land use map
+      if (getValues('customLandUseMap') === null) {
+        return true;
+      }
+
+      // if custom LU classes we should have at least one suitability map
+      if (luClasses.length === 0) {
+        return true;
+      }
+
+      // if we find at least one suitability map we should allow submission
+      for (const luc of luClasses) {
+        if (luc.file_id) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    return false;
+  }
 
   if (project === null) {
     return <Loading />;
@@ -134,30 +174,57 @@ const ProjectDatasets = () => {
                 <label htmlFor="defaultLuClasses">{t('USE_CUSTOM_LU_CLASSIFICATION')}</label>
               </div>
               {!useDefaultLuClasses && (
-                <MultipleKeyValueEntriesTable
-                  className="p-mt-4"
-                  hasFiles
-                  fileLabel={t('UPLOAD_MAP')}
-                  projectId={id}
-                  keyLabel={t('NAME')}
-                  valueLabel={t('VALUE')}
-                  header={t('CUSTOM_LU_CLASSES')}
-                  data={luClasses}
-                  onAddItem={(entry) =>
-                    setLuClasses(
-                      [...luClasses, entry]
-                    )
-                  }
-                  onDeleteItem={(entry) => {
-                    setLuClasses(
-                      luClasses.filter((lc) => lc.key !== entry.key)
-                    );
-                  }}
-                />
+                <>
+                  <p>
+                    {t('CUSTOM_LU_CLASSES_MESSAGE')}
+                  </p>
+                  {getValues('customLandUseMap') === null && (
+                    <>
+                      <input
+                        className="hidden"
+                        type="file"
+                        multiple={false}
+                        accept=".geotiff,.geotif,.tiff,.tif"
+                        ref={customLandUseMap}
+                        onChange={(e) => uploadLandUseMap(e.target.files[0])}
+                      />
+                      <Button
+                        label={t('UPLOAD_LAND_USE_MAP')}
+                        icon="pi pi-image"
+                        type="button"
+                        className="p-mr-2 p-mt-4 p-d-block"
+                        onClick={() => {
+                          customLandUseMap.current.click();
+                        }}
+                      />
+                    </>
+                  )}
+                  <MultipleKeyValueEntriesTable
+                    className="p-mt-4"
+                    hasFiles
+                    fileLabel={t('UPLOAD_LAND_SUITABILITY_MAP')}
+                    projectId={id}
+                    keyLabel={t('NAME')}
+                    valueLabel={t('VALUE')}
+                    header={t('CUSTOM_LU_CLASSES')}
+                    data={luClasses}
+                    onAddItem={(entry) =>
+                      setLuClasses(
+                        [...luClasses, entry]
+                      )
+                    }
+                    onDeleteItem={(entry) => {
+                      setLuClasses(
+                        luClasses.filter((lc) => lc.key !== entry.key)
+                      );
+                    }}
+                  />
+                </>
               )}
               <Button
                 className="p-button-lg p-mt-4"
                 type="submit"
+                disabled={isDisabled()}
                 label={t('SAVE_CHANGES')}
                 icon="pi pi-save"
               />

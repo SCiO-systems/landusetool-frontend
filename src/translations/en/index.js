@@ -130,6 +130,7 @@ const t = {
     UPLOAD_MAP: 'Upload map',
     UPLOAD_POLYGON: 'Upload polygon',
     CONTINUE_SETUP: 'Continue Setup',
+    PREPROCESSING: 'Preprocessing...',
     PROJECT_UNDER_PREPARATION: 'Project is still under preparation.',
     OR_UPLOAD_CUSTOM_POLYGON: 'Or upload custom polygon',
   },

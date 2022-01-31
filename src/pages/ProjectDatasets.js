@@ -10,7 +10,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { uploadProjectFile } from '../services/files';
 import { ToastContext, UserContext } from '../store';
 import { handleError } from '../utilities/errors';
-import { editProject, getProject, pubilshProject, getUrlForStep, getNextStep, PROJECT_STEPS } from '../services/projects';
+import { editProject, getProject, finaliseProject, getUrlForStep, getNextStep, PROJECT_STEPS } from '../services/projects';
 import Loading from '../components/Loading';
 import MultipleKeyValueEntriesTable from '../components/MultipleKeyValueEntriesTable';
 
@@ -47,8 +47,8 @@ const ProjectDatasets = () => {
           custom_land_degradation_map_file_id: data.customLandDegradationMap,
           step: PROJECT_STEPS.COMPLETED,
         });
-        // it's done, let's publish it
-        await pubilshProject(id);
+        // it's done, let's finalise it
+        await finaliseProject(id);
         setUser({ currentProject: null });
         setTimeout(() => history.push(`/`), 500);
       }

@@ -4,6 +4,7 @@ export const PROJECT_OWNER = 'owner';
 export const PROJECT_USER = 'user';
 
 export const DRAFT = 'draft';
+export const PREPROCESSING = 'preprocessing';
 export const PUBLISHED = 'published';
 
 export const PROJECT_STEPS = {
@@ -57,8 +58,8 @@ export const createProject = async ({ title, acronym, description }) =>
 export const editProject = async (id, data) =>
   apiClient.put(`/projects/${id}`, data);
 
-export const pubilshProject = async (id) =>
-  apiClient.post(`/projects/${id}/publish`);
+export const finaliseProject = async (id) =>
+  apiClient.post(`/projects/${id}/finalise`);
 
 export const deleteProject = async (id) =>
   apiClient.delete(`/projects/${id}`);

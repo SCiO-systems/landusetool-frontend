@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import 'primereact/resources/primereact.min.css';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED } from '../../services/projects';
+import { PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED, PREPROCESSING } from '../../services/projects';
 
 const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProject, className }) => {
   const { t } = useTranslation();
@@ -53,7 +53,16 @@ const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProj
           label={t('CONTINUE_SETUP')}
         />
       )}
-      {(rowData.role === PROJECT_USER ) && (rowData.status === DRAFT) && (
+      {(rowData.role === PROJECT_OWNER) && (rowData.status === PREPROCESSING) && (
+        <Button
+          icon="pi pi-cog"
+          disabled
+          className="p-mr-3 p-button-secondary"
+          onClick={() => {}}
+          label={t('PREPROCESSING')}
+        />
+      )}
+      {(rowData.role === PROJECT_USER ) && (rowData.status === DRAFT || rowData.status === PREPROCESSING) && (
         <span>{t('PROJECT_UNDER_PREPARATION')}</span>
       )}
       {(rowData.status === PUBLISHED) && (

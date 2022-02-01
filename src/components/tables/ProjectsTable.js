@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import 'primereact/resources/primereact.min.css';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED, PREPROCESSING } from '../../services/projects';
+import { deleteProject, PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED, PREPROCESSING } from '../../services/projects';
 
 const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProject, className }) => {
   const { t } = useTranslation();
@@ -89,7 +89,7 @@ const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProj
             label=""
             tooltip={t('DELETE_PROJECT')}
             tooltipOptions={{ position: 'top' }}
-            onClick={() => { }}
+            onClick={() => deleteProject(rowData.id)}
           />
         </>
       )}

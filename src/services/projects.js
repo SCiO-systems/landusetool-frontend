@@ -62,7 +62,7 @@ export const finaliseProject = async (id) =>
   apiClient.post(`/projects/${id}/finalise`);
 
 export const deleteProject = async (id) =>
-  apiClient.delete(`/projects/${id}`);
+  apiClient.remove(`/projects/${id}`);
 
 export const inviteUsers = async (id, users) =>
   apiClient.post(`/projects/${id}/invites`, { user_ids: users });

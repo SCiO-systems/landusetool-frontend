@@ -5,12 +5,22 @@ import { InputText } from 'primereact/inputtext';
 import 'primereact/resources/primereact.min.css';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { deleteProject, PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED, PREPROCESSING } from '../../services/projects';
+import { PROJECT_OWNER, PROJECT_USER, DRAFT, PUBLISHED, PREPROCESSING } from '../../services/projects';
 
-const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProject, className }) => {
+const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProject, className, deleteProject }) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [rows, setRows] = useState(10);
+  const [isDeleting, setIsDeleting] = useState(null);
+
+  const tryToDelete = async (projectId) => {
+    setIsDeleting(projectId);
+    try {
+      await deleteProject(projectId);
+    } finally {
+      setIsDeleting(null);
+    }
+  };
 
   const tableHeader = (
     <div className="p-d-flex p-flex-row p-jc-between p-ai-center">
@@ -87,9 +97,11 @@ const ProjectsTable = ({ title, projects, inviteToProject, goToProject, loadProj
             icon="pi pi-times"
             className="p-button-danger p-mr-3"
             label=""
+            loading={isDeleting === rowData.id}
+            disabled={isDeleting === rowData.id}
             tooltip={t('DELETE_PROJECT')}
             tooltipOptions={{ position: 'top' }}
-            onClick={() => deleteProject(rowData.id)}
+            onClick={() => tryToDelete(rowData.id)}
           />
         </>
       )}

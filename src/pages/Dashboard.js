@@ -3,9 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import InviteProjectMembersDialog from '../components/dialogs/InviteProjectMembersDialog';
 import ProjectsTable from '../components/tables/ProjectsTable';
-import { listProjects, PROJECT_OWNER, DRAFT, getUrlForStep } from '../services/projects';
+import { listProjects, PROJECT_OWNER, DRAFT, getUrlForStep, deleteProject } from '../services/projects';
 import { getCountryLevelLinks } from '../services/countries';
-import { UserContext } from '../store';
+import { UserContext, ToastContext } from '../store';
+import { handleError } from '../utilities/errors';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ const Dashboard = () => {
   const [selectedProject, setSelectedProject] = useState({});
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const { setUser } = useContext(UserContext);
+  const { setError, setSuccess } = useContext(ToastContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -56,6 +58,16 @@ const Dashboard = () => {
     }
   };
 
+  const removeProject = async (projectId) => {
+    try {
+      await deleteProject(projectId);
+      setMyProjects((omp) => (omp.filter((p) => p.id !== projectId)));
+      setSuccess('Done!', 'Project has been deleted');
+    } catch (e) {
+      setError(handleError(e));
+    }
+  };
+
   return (
     <div className="layout-dashboard">
       <ProjectsTable
@@ -64,6 +76,7 @@ const Dashboard = () => {
         goToProject={goToProject}
         inviteToProject={inviteToProject}
         loadProject={loadProject}
+        deleteProject={(id) => removeProject(id)}
         className="p-mb-4"
       />
       <ProjectsTable

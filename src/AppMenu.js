@@ -82,12 +82,12 @@ const AppMenu = ({ onMenuClick }) => {
                 <ul className="layout-menu" role="menu">
                   <li className="p-mb-1" role="menuitem">
                     <NavLink
-                      onClick={(e) => handleClick(e, currentProject.step === PROJECT_STEPS.REGION_OF_INTEREST)}
+                      onClick={(e) => handleClick(e, [PROJECT_STEPS.DATASETS_LAND_USE, PROJECT_STEPS.DATASETS_LAND_DEGRADATION].includes(currentProject.step))}
                       to={`/setup-project/${currentProject.id}/region-of-interest`}
                       activeClassName="p-button"
                       exact
                     >
-                      {(currentProject.step === PROJECT_STEPS.REGION_OF_INTEREST) ? (
+                      {([PROJECT_STEPS.DATASETS_LAND_USE, PROJECT_STEPS.DATASETS_LAND_DEGRADATION].includes(currentProject.step)) ? (
                         <i className="layout-menuitem-icon fas fa-check-circle" />
                       ) : (
                         <i className="layout-menuitem-icon far fa-check-circle" />

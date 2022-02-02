@@ -97,12 +97,13 @@ const ProjectDatasets = () => {
         if (data.step === null) {
           history.push(getUrlForStep(id, getNextStep(data)));
         }
+        setUser({ currentProject: data });
       } catch (e) {
         setError(handleError(e));
       }
     };
     fetchProject();
-  }, [id, setError, history]);
+  }, [id, setError, history]); // eslint-disable-line
 
   const isDisabled = () => {
     if (!useDefaultLuClasses) {

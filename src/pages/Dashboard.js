@@ -38,6 +38,10 @@ const Dashboard = () => {
   };
 
   const setCurrentProject = async (project) => {
+    if (!project.country_iso_code_3) {
+      setUser({ currentProject: project, countryLevelLinks: null });
+      return;
+    }
     try {
       const countryLevelLinksResponse = await getCountryLevelLinks(
         project.country_iso_code_3

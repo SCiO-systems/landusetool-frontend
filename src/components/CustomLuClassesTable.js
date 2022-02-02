@@ -5,7 +5,6 @@ import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { FileUpload } from 'primereact/fileupload';
-import { Tag } from 'primereact/tag';
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -130,6 +130,7 @@ const t = {
     UPLOAD_MAP: 'Upload map',
     UPLOAD_LAND_USE_MAP: 'Upload Land Use Map',
     UPLOAD_LAND_SUITABILITY_MAP: 'Upload Land Suitability Map',
+    HAS_SUITABILITY_MAP: 'Has Suitability Map',
     UPLOAD_LAND_DEGRADATION_MAP: 'Upload Land Degradation Map',
     CUSTOM_LU_CLASSES_MESSAGE: 'You should upload a “Land Use Map” and at least one “Suitability Map”',
     UPLOAD_POLYGON: 'Upload polygon',

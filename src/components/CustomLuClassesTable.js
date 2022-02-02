@@ -3,29 +3,26 @@ import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import { InputTextarea } from 'primereact/inputtextarea';
-import React, { useState, useRef, useContext } from 'react';
+import { InputText } from 'primereact/inputtext';
+import { FileUpload } from 'primereact/fileupload';
+import { Tag } from 'primereact/tag';
+import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { uploadProjectFile } from '../services/files';
 import { handleError } from '../utilities/errors';
 import { ToastContext } from '../store';
 
-const MultipleKeyValueEntriesTable = ({
+const CustomLuClassesTable = ({
   data,
-  header,
   onDeleteItem,
   onAddItem,
-  keyLabel = 'Key',
-  valueLabel = 'Value',
-  fileLabel = 'File',
-  hasFiles = false,
+  onUpdateItem,
   projectId = null,
   helpText,
   className,
 }) => {
   const { t } = useTranslation();
-  const fileRef = useRef(null);
   const [entry, setEntry] = useState({ key: '', value: '' });
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
   const { setError, setSuccess } = useContext(ToastContext);
@@ -40,12 +37,13 @@ const MultipleKeyValueEntriesTable = ({
     onDeleteItem(e);
   };
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (e, files) => {
+    // eslint-disable-next-line
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', files[0]);
     try {
       const { data: res } = await uploadProjectFile(projectId, formData);
-      setEntry((e) => ({ key: e.key, value: e.value, file_id: res.id }));
+      onUpdateItem({ key: e.key, value: e.value, file_id: res.id });
       setSuccess('Done', 'Your file has been uploaded.');
     } catch (error) {
       setError(setError(handleError(error)));
@@ -70,51 +68,25 @@ const MultipleKeyValueEntriesTable = ({
     <div className="p-formgrid p-grid p-fluid p-d-flex p-ai-center">
       <div className="p-col-5">
         <div className="p-field">
-          <label>{keyLabel}</label>
-          <InputTextarea
+          <label htmlFor="key">{t('NAME')}</label>
+          <InputText
             id="key"
             value={entry.key}
             onChange={(e) => setEntry((oe) => ({ key: e.target.value, value: oe.value }))}
-            rows={1}
-            autoResize
-            cols={50}
           />
         </div>
       </div>
       <div className="p-col-5">
         <div className="p-field">
-          <label>{valueLabel}</label>
-          <InputTextarea
+          <label htmlFor="value">{t('VALUE')}</label>
+          <InputText
             id="value"
             value={entry.value}
             onChange={(e) => setEntry((oe) => ({ key: oe.key, value: e.target.value }))}
-            rows={1}
-            autoResize
-            cols={50}
           />
         </div>
       </div>
-      <div className="p-col-2 p-text-right" style={{ marginTop: '0.3rem' }}>
-        {(hasFiles && projectId !== null) && (
-          <>
-            <input
-              className="hidden"
-              type="file"
-              multiple={false}
-              ref={fileRef}
-              onChange={(e) => uploadFile(e.target.files[0])}
-            />
-            <Button
-              label={fileLabel}
-              icon="pi pi-file"
-              type="button"
-              className="p-mr-2 p-mb-2"
-              onClick={() => {
-                fileRef.current.click();
-              }}
-            />
-          </>
-        )}
+      <div className="p-col-2 p-text-right" style={{ marginTop: '0.7rem' }}>
         <Button
           icon="pi pi-plus"
           disabled={entry.key.length === 0 || entry.value.length === 0}
@@ -133,13 +105,33 @@ const MultipleKeyValueEntriesTable = ({
         value={data}
         footer={footerTemplate}
         className={classNames([className])}
-        header={headerTemplate(header)}
+        header={headerTemplate(t('CUSTOM_LU_CLASSES'))}
       >
-        <Column header={keyLabel} field="key" />
-        <Column header={valueLabel} field="value" />
+        <Column header={t('NAME')} field="key" />
+        <Column header={t('VALUE')} field="value" />
         <Column
           body={(e) => (
             <div className="p-text-right">
+              {e.file_id
+                ? (
+                  <Button
+                    label={t('HAS_SUITABILITY_MAP')}
+                    className="p-button-secondary p-mr-2"
+                    disabled
+                    icon="pi pi-check"
+                  />
+                ) : (
+                  <FileUpload
+                    accept=".geotiff,.geotif,.tiff,.tif"
+                    chooseLabel={t('UPLOAD_LAND_SUITABILITY_MAP')}
+                    className="p-mr-2 p-d-inline-block"
+                    mode="basic"
+                    multiple={false}
+                    customUpload
+                    auto
+                    uploadHandler={(event) => uploadFile(e, event.files)}
+                  />
+                )}
               <Button
                 className="p-button-danger"
                 icon="pi pi-trash"
@@ -151,7 +143,7 @@ const MultipleKeyValueEntriesTable = ({
       </DataTable>
       {helpText && helpText.length > 0 && (
         <Dialog
-          header={header}
+          header={t('CUSTOM_LU_CLASSES')}
           onHide={() => setHelpDialogOpen(false)}
           visible={helpDialogOpen}
           style={{ width: '500px', maxWidth: '90%' }}
@@ -163,4 +155,4 @@ const MultipleKeyValueEntriesTable = ({
   );
 };
 
-export default MultipleKeyValueEntriesTable;
+export default CustomLuClassesTable;

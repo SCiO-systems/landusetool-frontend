@@ -12,7 +12,7 @@ import { ToastContext, UserContext } from '../store';
 import { handleError } from '../utilities/errors';
 import { editProject, getProject, finaliseProject, getUrlForStep, getNextStep, PROJECT_STEPS } from '../services/projects';
 import Loading from '../components/Loading';
-import MultipleKeyValueEntriesTable from '../components/MultipleKeyValueEntriesTable';
+import CustomLuClassesTable from '../components/CustomLuClassesTable';
 
 const ProjectDatasets = () => {
   const { t } = useTranslation();
@@ -200,20 +200,23 @@ const ProjectDatasets = () => {
                       />
                     </>
                   )}
-                  <MultipleKeyValueEntriesTable
+                  <CustomLuClassesTable
                     className="p-mt-4"
                     hasFiles
-                    fileLabel={t('UPLOAD_LAND_SUITABILITY_MAP')}
                     projectId={id}
-                    keyLabel={t('NAME')}
-                    valueLabel={t('VALUE')}
-                    header={t('CUSTOM_LU_CLASSES')}
                     data={luClasses}
                     onAddItem={(entry) =>
                       setLuClasses(
                         [...luClasses, entry]
                       )
                     }
+                    onUpdateItem={(entry) => {
+                      setLuClasses((oldLC) => {
+                        const index = oldLC.findIndex((lc) => lc.key === entry.key)
+                        oldLC[index] = entry;
+                        return [...oldLC];
+                      });
+                    }}
                     onDeleteItem={(entry) => {
                       setLuClasses(
                         luClasses.filter((lc) => lc.key !== entry.key)

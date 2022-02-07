@@ -1,18 +1,24 @@
-import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
-import { TabPanel, TabView } from 'primereact/tabview';
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import { Card } from 'primereact/card';
 import { RadioButton } from 'primereact/radiobutton';
+import { TabPanel, TabView } from 'primereact/tabview';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useParams, useHistory } from 'react-router-dom';
-
+import { useHistory, useParams } from 'react-router-dom';
+import CustomLuClassesTable from '../components/CustomLuClassesTable';
+import Loading from '../components/Loading';
 import { uploadProjectFile } from '../services/files';
+import {
+  editProject,
+  finaliseProject,
+  getNextStep,
+  getProject,
+  getUrlForStep,
+  PROJECT_STEPS,
+} from '../services/projects';
 import { ToastContext, UserContext } from '../store';
 import { handleError } from '../utilities/errors';
-import { editProject, getProject, finaliseProject, getUrlForStep, getNextStep, PROJECT_STEPS } from '../services/projects';
-import Loading from '../components/Loading';
-import CustomLuClassesTable from '../components/CustomLuClassesTable';
 
 const ProjectDatasets = () => {
   const { t } = useTranslation();
@@ -55,7 +61,7 @@ const ProjectDatasets = () => {
         setUser({ currentProject: null });
         setTimeout(() => history.push(`/`), 500);
       }
-      setSuccess('Woohoo!', 'Project details have been updated.');
+      setSuccess('Success', 'Project details have been updated.');
     } catch (e) {
       setError(handleError(e));
     }
@@ -128,7 +134,7 @@ const ProjectDatasets = () => {
     }
 
     return false;
-  }
+  };
 
   if (project === null) {
     return <Loading />;
@@ -176,9 +182,7 @@ const ProjectDatasets = () => {
               </div>
               {!useDefaultLuClasses && (
                 <>
-                  <p>
-                    {t('CUSTOM_LU_CLASSES_MESSAGE')}
-                  </p>
+                  <p>{t('CUSTOM_LU_CLASSES_MESSAGE')}</p>
                   {getValues('customLandUseMap') === null && (
                     <>
                       <input
@@ -205,22 +209,16 @@ const ProjectDatasets = () => {
                     hasFiles
                     projectId={id}
                     data={luClasses}
-                    onAddItem={(entry) =>
-                      setLuClasses(
-                        [...luClasses, entry]
-                      )
-                    }
+                    onAddItem={(entry) => setLuClasses([...luClasses, entry])}
                     onUpdateItem={(entry) => {
                       setLuClasses((oldLC) => {
-                        const index = oldLC.findIndex((lc) => lc.key === entry.key)
+                        const index = oldLC.findIndex((lc) => lc.key === entry.key);
                         oldLC[index] = entry;
                         return [...oldLC];
                       });
                     }}
                     onDeleteItem={(entry) => {
-                      setLuClasses(
-                        luClasses.filter((lc) => lc.key !== entry.key)
-                      );
+                      setLuClasses(luClasses.filter((lc) => lc.key !== entry.key));
                     }}
                   />
                 </>
@@ -256,13 +254,15 @@ const ProjectDatasets = () => {
                   checked={useDefaultLandDegradationMap}
                 />
                 <label htmlFor="defaultLandDegradationMap">
-                  {t('USE_DEFAULT_DATA')}
-                  (<a
+                  {t('USE_DEFAULT_DATA')}(
+                  <a
                     href="https://github.com/ConservationInternational/trends.earth"
                     target="_blank"
-                    rel="noreferrer">
+                    rel="noreferrer"
+                  >
                     Trends.Earth
-                  </a>)
+                  </a>
+                  )
                 </label>
               </div>
               <div className="p-field-radiobutton">
@@ -304,9 +304,9 @@ const ProjectDatasets = () => {
                 className="p-button-lg"
                 type="submit"
                 disabled={
-                  (!useDefaultLandDegradationMap)
-                  ? (getValues('customLandDegradationMap') === null)
-                  : false
+                  !useDefaultLandDegradationMap
+                    ? getValues('customLandDegradationMap') === null
+                    : false
                 }
                 label={t('SAVE_CHANGES')}
                 icon="pi pi-save"

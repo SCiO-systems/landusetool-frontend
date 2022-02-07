@@ -1,14 +1,13 @@
-import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
-import React, { useState, useContext, useEffect } from 'react';
+import { Card } from 'primereact/card';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
-import { editProject, PROJECT_STEPS, getUrlForStep } from '../services/projects';
+import { useHistory, useParams } from 'react-router-dom';
+import RegionOfInterestSelector from '../components/RegionOfInterestSelector';
+import { editProject, getUrlForStep, PROJECT_STEPS } from '../services/projects';
 import { ToastContext } from '../store';
 import { handleError } from '../utilities/errors';
-import RegionOfInterestSelector from '../components/RegionOfInterestSelector';
 
 const RegionOfInterest = () => {
   const { t } = useTranslation();
@@ -16,7 +15,7 @@ const RegionOfInterest = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [readyToSubmit, setReadyToSubmit] = useState(false);
-  const { register,  handleSubmit, watch, setValue } = useForm();
+  const { register, handleSubmit, watch, setValue } = useForm();
   const { setError, setSuccess } = useContext(ToastContext);
 
   const onSubmit = async (data) => {
@@ -28,7 +27,7 @@ const RegionOfInterest = () => {
         country_iso_code_3: data.country,
         step: PROJECT_STEPS.DATASETS_LAND_USE,
       });
-      setSuccess('Woohoo!', t('YOUR_CHANGES_HAVE_BEEN_SAVED'));
+      setSuccess('Success', t('YOUR_CHANGES_HAVE_BEEN_SAVED'));
       setTimeout(() => history.push(getUrlForStep(id, PROJECT_STEPS.DATASETS_LAND_USE)), 1000);
     } catch (e) {
       setError(handleError(e));

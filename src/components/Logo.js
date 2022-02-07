@@ -12,10 +12,7 @@ const Logo = () => (
           width="100px"
           style={{ margin: '25px 15px 25px 0' }}
         />
-        <h1 style={{ color: 'black', textAlign: 'left' }}>
-          LUP4LDN
-          <small className="p-d-block">BETA</small>
-        </h1>
+        <h1 style={{ color: 'black', textAlign: 'left' }}>LUP4LDN</h1>
       </div>
     </NavLink>
   </div>

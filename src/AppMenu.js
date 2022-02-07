@@ -3,8 +3,8 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import Logo from './assets/img/LUP4LDN-LOGO_small.png';
-import { UserContext } from './store';
 import { DRAFT, PROJECT_STEPS } from './services/projects';
+import { UserContext } from './store';
 
 const AppMenu = ({ onMenuClick }) => {
   const { t } = useTranslation();
@@ -26,17 +26,14 @@ const AppMenu = ({ onMenuClick }) => {
               alt="LUP4LDN"
               style={{ height: '50px', width: '50px' }}
             />
-            <h3 style={{ color: 'white', textAlign: 'left' }}>
-              LUP4LDN
-              <small className="p-d-block">BETA</small>
-            </h3>
+            <h3 style={{ color: 'white', textAlign: 'left' }}>LUP4LDN</h3>
           </div>
         </NavLink>
       </div>
 
       <div className="layout-menu-container">
         <ul className="layout-menu" role="menu">
-          {(availableProjects?.length > 0 && currentProject) && (
+          {availableProjects?.length > 0 && currentProject && (
             <>
               <li className="layout-root-menuitem" role="menuitem">
                 <div className="layout-root-menuitem">
@@ -72,7 +69,7 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </ul>
           </li>
-          {(currentProject && currentProject.status === DRAFT) && (
+          {currentProject && currentProject.status === DRAFT && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">
@@ -82,12 +79,23 @@ const AppMenu = ({ onMenuClick }) => {
                 <ul className="layout-menu" role="menu">
                   <li className="p-mb-1" role="menuitem">
                     <NavLink
-                      onClick={(e) => handleClick(e, [PROJECT_STEPS.DATASETS_LAND_USE, PROJECT_STEPS.DATASETS_LAND_DEGRADATION].includes(currentProject.step))}
+                      onClick={(e) =>
+                        handleClick(
+                          e,
+                          [
+                            PROJECT_STEPS.DATASETS_LAND_USE,
+                            PROJECT_STEPS.DATASETS_LAND_DEGRADATION,
+                          ].includes(currentProject.step)
+                        )
+                      }
                       to={`/setup-project/${currentProject.id}/region-of-interest`}
                       activeClassName="p-button"
                       exact
                     >
-                      {([PROJECT_STEPS.DATASETS_LAND_USE, PROJECT_STEPS.DATASETS_LAND_DEGRADATION].includes(currentProject.step)) ? (
+                      {[
+                        PROJECT_STEPS.DATASETS_LAND_USE,
+                        PROJECT_STEPS.DATASETS_LAND_DEGRADATION,
+                      ].includes(currentProject.step) ? (
                         <i className="layout-menuitem-icon fas fa-check-circle" />
                       ) : (
                         <i className="layout-menuitem-icon far fa-check-circle" />
@@ -101,7 +109,7 @@ const AppMenu = ({ onMenuClick }) => {
                       to={`/setup-project/${currentProject.id}/datasets`}
                       activeClassName="p-button"
                     >
-                      {(currentProject.step === PROJECT_STEPS.COMPLETED) ? (
+                      {currentProject.step === PROJECT_STEPS.COMPLETED ? (
                         <i className="layout-menuitem-icon fas fa-check-circle" />
                       ) : (
                         <i className="layout-menuitem-icon far fa-check-circle" />
@@ -113,7 +121,7 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </>
           )}
-          {(currentProject && currentProject.status !== DRAFT) && countryLevelLinks && (
+          {currentProject && currentProject.status !== DRAFT && countryLevelLinks && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">
@@ -139,7 +147,7 @@ const AppMenu = ({ onMenuClick }) => {
               </li>
             </>
           )}
-          {(currentProject && currentProject.status !== DRAFT) && (
+          {currentProject && currentProject.status !== DRAFT && (
             <>
               <li className="menu-separator" role="separator" />
               <li className="layout-root-menuitem" role="menuitem">

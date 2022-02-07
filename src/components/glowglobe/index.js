@@ -10,6 +10,14 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import './leaflet-extensions/Leaflet.Control.Custom';
 import './leaflet-extensions/CustomMask';
 
+// Slide Compare
+import './leaflet-extensions/sidebyside/leaflet-side-by-side'
+import './leaflet-extensions/sidebyside/layout.css'
+
+// Legends
+import './leaflet-extensions/htmllegend/L.Control.HtmlLegend'
+import './leaflet-extensions/htmllegend/L.Control.HtmlLegend.css'
+
 // Leaflet Basemap Providers
 import 'leaflet-providers';
 
@@ -19,6 +27,7 @@ const GeoRasterLayer = require('georaster-layer-for-leaflet');
 const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
   const [map, setMap] = useState(null);
   const [data, setData] = useState({});
+  const legend = useRef();
   const position = [51.505, -0.09];
 
   const glowglobe = useRef();
@@ -89,47 +98,115 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
               parse_georaster(arrayBuffer).then((georaster) => {
                 const pixelValuesLegend = [];
                 const scale = chroma.scale('RdGy');
-
                 const layer = new GeoRasterLayer({
                   georaster,
                   opacity: 1,
                   pixelValuesToColorFn(pixelValues) {
-                    if (layerOptions.layer.palette === 1) {
-                      switch (pixelValues[0]) {
-                        case 1:
-                          return '#ed8f2f';
-                        case 2:
-                          return '#e05f2f';
-                        case 3:
-                          return '#d43333';
-                        case 0:
-                          return '#ffffff';
-                        default:
-                          return '#ffffff';
+                    if (layerOptions.layer.palette.type === 'LandCoverPalette') {
+                      if (pixelValues[0] === 1) {
+                        return '#42b05c';
+                      } if (pixelValues[0] === 2) {
+                        return '#a0dc67';
+                      } if (pixelValues[0] === 3) {
+                        return '#c67f5f';
+                      } if (pixelValues[0] === 4) {
+                        return '#12AAB5';
+                      } if (pixelValues[0] === 5) {
+                        return '#5D7F99';
+                      } if (pixelValues[0] === 6) {
+                        return '#f5d680';
+                      } if (pixelValues[0] === 7) {
+                        return '#67b7dc';
                       }
-                    } else if (layerOptions.layer.palette === 2) {
-                      switch (pixelValues[0]) {
-                        case 1:
-                          return '#42b05c';
-                        case 2:
-                          return '#a0dc67';
-                        case 3:
-                          return '#c67f5f';
-                        case 4:
-                          return '#12AAB5';
-                        case 5:
-                          return '#5D7F99';
-                        case 6:
-                          return '#f5d680';
-                        case 7:
-                          return '#67b7dc';
-                        default:
-                          return '#ffffff';
+                    }
+                    else if (layerOptions.layer.palette.type === 'LandDegradationPalette') {
+                      if (pixelValues[0] === -1) {
+                        return '#d43333';
+                      } if (pixelValues[0] === 0) {
+                        return '#fcdd90';
+                      } if (pixelValues[0] === 1) {
+                        return '#398e3b';
                       }
-                    } else {
+                    }
+                    else if (layerOptions.layer.palette.type === 'LandSuitabilityPalette') {
+                      if (pixelValues[0] === 1) {
+                        return '#398e3b';
+                        // eslint-disable-next-line
+                      } else if (pixelValues[0] === 2) {
+                        return '#fcdd90';
+                      } else if (pixelValues[0] === 3) {
+                        return '#d43333';
+                      }
+                    }
+                    else if (layerOptions.layer.palette.type === 'FutureLandDegradation') {
+                      if (pixelValues[0] === 1) {
+                        return '#398e3b';
+                        // eslint-disable-next-line
+                      } else if (pixelValues[0] === 2) {
+                        return '#fcdd90';
+                      } else if (pixelValues[0] === 3) {
+                        return '#ed8f2f';
+                      } else if (pixelValues[0] === 4) {
+                        return '#e05f2f';
+                      } else if (pixelValues[0] === 5) {
+                        return '#d43333';
+                      }
+                    }
+                    else if (layerOptions.layer.palette.type === 'Custom') {
+                      if (pixelValues[0] === 1) {
+                        return '#007FFF';
+                        // eslint-disable-next-line
+                      } else if (pixelValues[0] === 2) {
+                        return '#FFD12A';
+                      } else if (pixelValues[0] === 3) {
+                        return '#ED872D';
+                      } else if (pixelValues[0] === 4) {
+                        return '#A40000';
+                      } else if (pixelValues[0] === 5) {
+                        return '#614051';
+                      } else if (pixelValues[0] === 6) {
+                        return '#FC8EAC';
+                      } else if (pixelValues[0] === 7) {
+                        return '#DAA520';
+                      } else if (pixelValues[0] === 8) {
+                        return '#FFFFF0';
+                      } else if (pixelValues[0] === 9) {
+                        return '#00A86B';
+                      } else if (pixelValues[0] === 10) {
+                        return '#C3B091';
+                      } else if (pixelValues[0] === 11) {
+                        return '#C4C3D0';
+                      } else if (pixelValues[0] === 12) {
+                        return '#FFDB58';
+                      } else if (pixelValues[0] === 13) {
+                        return '#000080';
+                      } else if (pixelValues[0] === 14) {
+                        return '#808000';
+                      } else if (pixelValues[0] === 15) {
+                        return '#CB99C9';
+                      } else if (pixelValues[0] === 16) {
+                        return '#65000B';
+                      } else if (pixelValues[0] === 17) {
+                        return '#FF8C69';
+                      } else if (pixelValues[0] === 18) {
+                        return '#008080';
+                      } else if (pixelValues[0] === 19) {
+                        return '#5B92E5';
+                      } else if (pixelValues[0] === 20) {
+                        return '#8F00FF';
+                      } else if (pixelValues[0] === 21) {
+                        return '#F5DEB3';
+                      } else if (pixelValues[0] === 22) {
+                        return '#738678';
+                      } else if (pixelValues[0] === 23) {
+                        return '#FFFF00';
+                      }
+                    }
+                    else {
                       const min = georaster.mins[0];
                       const range = georaster.ranges[0];
-                      const pixelValue = pixelValues[0]; // there's just one band in this raster
+                      // there's just one band in this raster
+                      const pixelValue = pixelValues[0];
                       // if there's zero wind, don't return a color
                       if (pixelValue <= 0) return null;
                       // scale to 0 - 1 used by chroma
@@ -138,15 +215,16 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                       pixelValuesLegend.push(pixelValues);
                       return color;
                     }
+                    return 'transparent';
                   },
-                  resolution: 256, // optional parameter for adjusting display resolution
+                  resolution: 256,  // optional parameter for adjusting display resolution
                 });
-
                 layer.addTo(glowglobe.current);
                 const corner1 = layer.getBounds()._northEast; // eslint-disable-line
                 const corner2 = layer.getBounds()._southWest; // eslint-disable-line
                 const bounds = L.latLngBounds(corner1, corner2);
                 glowglobe.current.fitBounds(bounds);
+                resolveLegend(layerOptions.layer.palette, layer);
               });
             })
             .catch((response) => {
@@ -158,39 +236,672 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     );
   };
 
+  const loadLayerSidebySide = (sidebysideLayers) => {
+    const { left_layer } = sidebysideLayers;
+    const { right_layer } = sidebysideLayers;
+    let leaflet_left_layer;
+    let leaflet_right_layer;
+    if (left_layer.layer.type === 'geotiff') {
+      fetch(left_layer.layer.data)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => {
+          parse_georaster(arrayBuffer).then(georaster => {
+            const pixelValuesLegend = [];
+            const scale = chroma.scale('RdGy');
+            leaflet_left_layer = new GeoRasterLayer({
+              georaster,
+              opacity: 1,
+              pixelValuesToColorFn(pixelValues) {
+                if (left_layer.layer.palette.type === 'LandCoverPalette') {
+                  if (pixelValues[0] === 1) {
+                    return '#42b05c';
+                  } if (pixelValues[0] === 2) {
+                    return '#a0dc67';
+                  } if (pixelValues[0] === 3) {
+                    return '#c67f5f';
+                  } if (pixelValues[0] === 4) {
+                    return '#12AAB5';
+                  } if (pixelValues[0] === 5) {
+                    return '#5D7F99';
+                  } if (pixelValues[0] === 6) {
+                    return '#f5d680';
+                  } if (pixelValues[0] === 7) {
+                    return '#67b7dc';
+                  }
+                } else if (left_layer.layer.palette.type === 'LandDegradationPalette') {
+                  if (pixelValues[0] === -1) {
+                    return '#d43333';
+                  } if (pixelValues[0] === 0) {
+                    return '#fcdd90';
+                  } if (pixelValues[0] === 1) {
+                    return '#398e3b';
+                  }
+                } else if (left_layer.layer.palette.type === 'LandSuitabilityPalette') {
+                  if (pixelValues[0] === 1) {
+                    return '#398e3b';
+                  } if (pixelValues[0] === 2) {
+                    return '#fcdd90';
+                    // eslint-disable-next-line
+                  } else if (pixelValues[0] === 3) {
+                    return '#d43333';
+                  }
+                } else if (left_layer.layer.palette.type === 'FutureLandDegradation') {
+                  if (pixelValues[0] === 1) {
+                    return '#398e3b';
+                    // eslint-disable-next-line
+                  } else if (pixelValues[0] === 2) {
+                    return '#fcdd90';
+                  } else if (pixelValues[0] === 3) {
+                    return '#ed8f2f';
+                  } else if (pixelValues[0] === 4) {
+                    return '#e05f2f';
+                  } else if (pixelValues[0] === 5) {
+                    return '#d43333';
+                  }
+                } else if (left_layer.layer.palette.type === 'Custom') {
+                  if (pixelValues[0] === 1) {
+                    return '#007FFF';
+                    // eslint-disable-next-line
+                  } else if (pixelValues[0] === 2) {
+                    return '#FFD12A';
+                  } else if (pixelValues[0] === 3) {
+                    return '#ED872D';
+                  } else if (pixelValues[0] === 4) {
+                    return '#A40000';
+                  } else if (pixelValues[0] === 5) {
+                    return '#614051';
+                  } else if (pixelValues[0] === 6) {
+                    return '#FC8EAC';
+                  } else if (pixelValues[0] === 7) {
+                    return '#DAA520';
+                  } else if (pixelValues[0] === 8) {
+                    return '#FFFFF0';
+                  } else if (pixelValues[0] === 9) {
+                    return '#00A86B';
+                  } else if (pixelValues[0] === 10) {
+                    return '#C3B091';
+                  } else if (pixelValues[0] === 11) {
+                    return '#C4C3D0';
+                  } else if (pixelValues[0] === 12) {
+                    return '#FFDB58';
+                  } else if (pixelValues[0] === 13) {
+                    return '#000080';
+                  } else if (pixelValues[0] === 14) {
+                    return '#808000';
+                  } else if (pixelValues[0] === 15) {
+                    return '#CB99C9';
+                  } else if (pixelValues[0] === 16) {
+                    return '#65000B';
+                  } else if (pixelValues[0] === 17) {
+                    return '#FF8C69';
+                  } else if (pixelValues[0] === 18) {
+                    return '#008080';
+                  } else if (pixelValues[0] === 19) {
+                    return '#5B92E5';
+                  } else if (pixelValues[0] === 20) {
+                    return '#8F00FF';
+                  } else if (pixelValues[0] === 21) {
+                    return '#F5DEB3';
+                  } else if (pixelValues[0] === 22) {
+                    return '#738678';
+                  } else if (pixelValues[0] === 23) {
+                    return '#FFFF00';
+                  }
+                } else {
+                  const min = georaster.mins[0];
+                  const range = georaster.ranges[0];
+                  const pixelValue = pixelValues[0]; // there's just one band in this raster
+                  // if there's zero wind, don't return a color
+                  if (pixelValue <= 0) return null;
+                  // scale to 0 - 1 used by chroma
+                  const scaledPixelValue = (pixelValue - min) / range;
+                  const color = scale(scaledPixelValue).hex();
+                  pixelValuesLegend.push(pixelValues);
+                  return color;
+                }
+                return 'transparent';
+              },
+              resolution: 256, // optional parameter for adjusting display resolution
+            });
+            leaflet_left_layer.addTo(glowglobe.current);
+            const corner1 = leaflet_left_layer.getBounds()._northEast; // eslint-disable-line
+            const corner2 = leaflet_left_layer.getBounds()._southWest; // eslint-disable-line
+            const bounds = L.latLngBounds(corner1, corner2);
+            glowglobe.current.fitBounds(bounds);
+            fetch(right_layer.layer.data)
+              .then(response => response.arrayBuffer())
+              // eslint-disable-next-line
+              .then(arrayBuffer => {
+                // eslint-disable-next-line
+                parse_georaster(arrayBuffer).then(georaster => {
+                  const pixelValuesLegend = []; // eslint-disable-line
+                  const scale = chroma.scale('RdGy'); // eslint-disable-line
+                  leaflet_right_layer = new GeoRasterLayer({
+                    georaster,
+                    opacity: 1,
+                    pixelValuesToColorFn(pixelValues) {
+                      if (right_layer.layer.palette.type === 'LandCoverPalette') {
+                        if (pixelValues[0] === 1) {
+                          return '#42b05c';
+                        } if (pixelValues[0] === 2) {
+                          return '#a0dc67';
+                        } if (pixelValues[0] === 3) {
+                          return '#c67f5f';
+                        } if (pixelValues[0] === 4) {
+                          return '#12AAB5';
+                        } if (pixelValues[0] === 5) {
+                          return '#5D7F99';
+                        } if (pixelValues[0] === 6) {
+                          return '#f5d680';
+                        } if (pixelValues[0] === 7) {
+                          return '#67b7dc';
+                        }
+                      } else if (right_layer.layer.palette.type === 'LandDegradationPalette') {
+                        if (pixelValues[0] === -1) {
+                          return '#d43333';
+                        } if (pixelValues[0] === 0) {
+                          return '#fcdd90';
+                        } if (pixelValues[0] === 1) {
+                          return '#398e3b';
+                        }
+                      } else if (right_layer.layer.palette.type === 'LandSuitabilityPalette') {
+                        if (pixelValues[0] === 1) {
+                          return '#398e3b';
+                        } if (pixelValues[0] === 2) {
+                          return '#fcdd90';
+                          // eslint-disable-next-line
+                        } else if (pixelValues[0] === 3) {
+                          return '#d43333';
+                        }
+                      } else if (right_layer.layer.palette.type === 'FutureLandDegradation') {
+                        if (pixelValues[0] === 1) {
+                          return '#398e3b';
+                          // eslint-disable-next-line
+                        } else if (pixelValues[0] === 2) {
+                          return '#fcdd90';
+                        } else if (pixelValues[0] === 3) {
+                          return '#ed8f2f';
+                        } else if (pixelValues[0] === 4) {
+                          return '#e05f2f';
+                        } else if (pixelValues[0] === 5) {
+                          return '#d43333';
+                        }
+                      } else if (right_layer.layer.palette.type === 'Custom') {
+                        if (pixelValues[0] === 1) {
+                          return '#007FFF';
+                          // eslint-disable-next-line
+                        } else if (pixelValues[0] === 2) {
+                          return '#FFD12A';
+                        } else if (pixelValues[0] === 3) {
+                          return '#ED872D';
+                        } else if (pixelValues[0] === 4) {
+                          return '#A40000';
+                        } else if (pixelValues[0] === 5) {
+                          return '#614051';
+                        } else if (pixelValues[0] === 6) {
+                          return '#FC8EAC';
+                        } else if (pixelValues[0] === 7) {
+                          return '#DAA520';
+                        } else if (pixelValues[0] === 8) {
+                          return '#FFFFF0';
+                        } else if (pixelValues[0] === 9) {
+                          return '#00A86B';
+                        } else if (pixelValues[0] === 10) {
+                          return '#C3B091';
+                        } else if (pixelValues[0] === 11) {
+                          return '#C4C3D0';
+                        } else if (pixelValues[0] === 12) {
+                          return '#FFDB58';
+                        } else if (pixelValues[0] === 13) {
+                          return '#000080';
+                        } else if (pixelValues[0] === 14) {
+                          return '#808000';
+                        } else if (pixelValues[0] === 15) {
+                          return '#CB99C9';
+                        } else if (pixelValues[0] === 16) {
+                          return '#65000B';
+                        } else if (pixelValues[0] === 17) {
+                          return '#FF8C69';
+                        } else if (pixelValues[0] === 18) {
+                          return '#008080';
+                        } else if (pixelValues[0] === 19) {
+                          return '#5B92E5';
+                        } else if (pixelValues[0] === 20) {
+                          return '#8F00FF';
+                        } else if (pixelValues[0] === 21) {
+                          return '#F5DEB3';
+                        } else if (pixelValues[0] === 22) {
+                          return '#738678';
+                        } else if (pixelValues[0] === 23) {
+                          return '#FFFF00';
+                        }
+                      } else {
+                        const min = georaster.mins[0];
+                        const range = georaster.ranges[0];
+                        const pixelValue = pixelValues[0]; // there's just one band in this raster
+                        // if there's zero wind, don't return a color
+                        if (pixelValue <= 0) return null;
+                        // scale to 0 - 1 used by chroma
+                        const scaledPixelValue = (pixelValue - min) / range;
+                        const color = scale(scaledPixelValue).hex();
+                        pixelValuesLegend.push(pixelValues);
+                        return color;
+                      }
+                      return 'transparent';
+                    },
+                    resolution: 256, // optional parameter for adjusting display resolution
+                  });
+                  leaflet_right_layer.addTo(glowglobe.current);
+                  const corner1 = leaflet_right_layer.getBounds()._northEast; // eslint-disable-line
+                  const corner2 = leaflet_right_layer.getBounds()._southWest; // eslint-disable-line
+                  const bounds = L.latLngBounds(corner1, corner2); // eslint-disable-line
+                  glowglobe.current.fitBounds(bounds);
+                  resolveLegend(right_layer.layer.palette, leaflet_right_layer);
+                  L.control.sideBySide(leaflet_left_layer, leaflet_right_layer).addTo(glowglobe.current);
+                })
+              })
+          })
+        })
+        .catch((response) => console.error(response)) // eslint-disable-line
+    }
+  }
+
+  const resolveLegend = (palette, layer) => {
+    if (palette.type === 'LandCoverPalette') {
+      legend.current = L.control.htmllegend({
+        position: 'bottomright',
+        legends: [
+          {
+            name: palette.label,
+            layer,
+            opacity: 1,
+            elements: [{
+              label: 'Tree-covered',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#42b05c',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Grassland',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#a0dc67',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Cropland',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#c67f5f',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Wetland',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#12AAB5',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Artificial area',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#5D7F99',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Bare land',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#f5d680',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Water body',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#67b7dc',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            ],
+          },
+        ],
+        collapseSimple: true,
+        detectStretched: false,
+        collapsedOnInit: false,
+        defaultOpacity: 1.0,
+      })
+      glowglobe.current.addControl(legend.current);
+    }
+    else if (palette.type === 'LandDegradationPalette') {
+      legend.current = L.control.htmllegend({
+        position: 'bottomright',
+        legends: [
+          {
+            name: palette.label,
+            layer,
+            opacity: 1,
+            elements: [{
+              label: 'Degraded',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#d43333',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Stable',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#fcdd90',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Improved',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#398e3b',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            ],
+          },
+        ],
+        collapseSimple: true,
+        detectStretched: false,
+        collapsedOnInit: false,
+        defaultOpacity: 1.0,
+      })
+      glowglobe.current.addControl(legend.current);
+    }
+    else if (palette.type === 'LandSuitabilityPalette') {
+      legend.current = L.control.htmllegend({
+        position: 'bottomright',
+        legends: [
+          {
+            name: palette.label,
+            layer,
+            opacity: 1,
+            elements: [{
+              label: 'Suitable',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#398e3b',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Marginal',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#fcdd90',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Unsuitable',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#d43333',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            ],
+          },
+        ],
+        collapseSimple: true,
+        detectStretched: false,
+        collapsedOnInit: false,
+        defaultOpacity: 1.0,
+      })
+      glowglobe.current.addControl(legend.current);
+    }
+    else if (palette.type === 'FutureLandDegradation') {
+      legend.current = L.control.htmllegend({
+        position: 'bottomright',
+        legends: [
+          {
+            name: palette.label,
+            layer,
+            opacity: 1,
+            elements: [{
+              label: 'Not degraded. Stable to improvement',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#398e3b',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Avoid: Not degraded. Likely becoming degraded',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#fcdd90',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Avoid: Not degraded. New LD expected',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#ed8f2f',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Reverse: Degraded. Stable to recovering*',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#d43333',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            ],
+          },
+        ],
+        collapseSimple: true,
+        detectStretched: false,
+        collapsedOnInit: false,
+        defaultOpacity: 1.0,
+      })
+      glowglobe.current.addControl(legend.current);
+    }
+    else if (palette.type === 'Custom') {
+      const elements = palette.legend.map(
+        (item, index) => {
+          let localColor = '#FFFFF';
+          if (index === 1) {
+            localColor = '#007FFF';
+          } else if (index === 2) {
+            localColor = '#FFD12A';
+          } else if (index === 3) {
+            localColor = '#ED872D';
+          } else if (index === 4) {
+            localColor = '#A40000';
+          } else if (index === 5) {
+            localColor = '#614051';
+          } else if (index === 6) {
+            localColor = '#FC8EAC';
+          } else if (index === 7) {
+            localColor = '#DAA520';
+          } else if (index === 8) {
+            localColor = '#FFFFF0';
+          } else if (index === 9) {
+            localColor = '#00A86B';
+          } else if (index === 10) {
+            localColor = '#C3B091';
+          } else if (index === 11) {
+            localColor = '#C4C3D0';
+          } else if (index === 12) {
+            localColor = '#FFDB58';
+          } else if (index === 13) {
+            localColor = '#000080';
+          } else if (index === 14) {
+            localColor = '#808000';
+          } else if (index === 15) {
+            localColor = '#CB99C9';
+          } else if (index === 16) {
+            localColor = '#65000B';
+          } else if (index === 17) {
+            localColor = '#FF8C69';
+          } else if (index === 18) {
+            localColor = '#008080';
+          } else if (index === 19) {
+            localColor = '#5B92E5';
+          } else if (index === 20) {
+            localColor = '#8F00FF';
+          } else if (index === 21) {
+            localColor = '#F5DEB3';
+          } else if (index === 22) {
+            localColor = '#738678';
+          } else if (index === 23) {
+            localColor = '#FFFF00';
+          }
+          const element = {
+            label: item.label,
+            html: '',
+            style: {
+              'text-align': 'left',
+              'background-color': localColor,
+              'width': '20px',
+              'height': '20px',
+              'position': 'relative',
+              'margin': '3.75px 0',
+            },
+          }
+          return element;
+        }
+      )
+      const tmpLegend = {
+        name: palette.label,
+        layer,
+        opacity: 1,
+        elements,
+      }
+      legend.current = L.control.htmllegend({
+        position: 'bottomright',
+        legends: [
+          tmpLegend,
+        ],
+        collapseSimple: true,
+        detectStretched: false,
+        collapsedOnInit: false,
+        defaultOpacity: 1.0,
+      });
+      glowglobe.current.addControl(legend.current);
+    }
+  }
+
   useEffect(() => {
     if (!map) return;
 
     const tileLayer = L.tileLayer.provider('Esri.WorldImagery');
     tileLayer.addTo(map);
-
     glowglobe.current = map;
+
     if (options) {
       if (options.mode === 'select_administration_area') {
         map.pm.addControls(simpleToolbar);
-        initializeAdministratorSelector(map);
-
+        initializeAdministratorSelector(map)
         map.on('pm:drawstart', (e) => {
           map.pm.getGeomanDrawLayers(false).forEach(
             (geomanLayer) => {
               map.removeLayer(geomanLayer);
             }
-          );
-        });
-
+          )
+        })
         map.on('pm:create', (e) => {
           map.pm.disableDraw();
           if (output) {
-            const tmpData = data;
-            tmpData.point = e.layer.toGeoJSON();
-            output(tmpData);
-            setData(tmpData);
+            const tmp = data;
+            tmp.point = e.layer.toGeoJSON();
+            output(tmp)
+            setData(tmp)
           }
         });
+        loadLayers(layers);
+      } else if (options.mode === 'view') {
+        loadLayers(layers);
       } else if (options.mode === 'sidebyside') {
-        loadLayers(options.layers);
-      }
-      if (layers && layers.length > 0) {
+        loadLayerSidebySide(options)
+      } else if (layers && layers.length > 0) {
         loadLayers(layers);
       }
     }

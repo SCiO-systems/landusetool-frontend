@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import InviteProjectMembersDialog from '../components/dialogs/InviteProjectMembersDialog';
 import ProjectsTable from '../components/tables/ProjectsTable';
-import { listProjects, PROJECT_OWNER, DRAFT, getUrlForStep, deleteProject } from '../services/projects';
+import { listProjects, PROJECT_OWNER, DRAFT, getUrlForStep, deleteProject, PUBLISHED } from '../services/projects';
 import { getCountryLevelLinks } from '../services/countries';
 import { UserContext, ToastContext } from '../store';
 import { handleError } from '../utilities/errors';
@@ -57,8 +57,8 @@ const Dashboard = () => {
   const loadProject = (project) => {
     setSelectedProject(project);
     setCurrentProject(project);
-    if (project.status === DRAFT) {
-      history.push(getUrlForStep(project.id, project.step));
+    if (project.status === DRAFT || project.status === PUBLISHED) {
+      setTimeout(() => history.push(getUrlForStep(project.id, project.step)), 500);
     }
   };
 

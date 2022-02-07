@@ -1,101 +1,80 @@
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import { RadioButton } from 'primereact/radiobutton';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
+import { Card } from 'primereact/card';
+import { useHistory } from 'react-router-dom';
 
-const RadioFields = ({ useDefaultData, setUseDefaultData }) => {
-  const { t } = useTranslation();
-
-  return (
-    <div className="p-col-12">
-      <div className="p-field-radiobutton">
-        <RadioButton
-          inputId="default-data"
-          onChange={() => setUseDefaultData(true)}
-          checked={useDefaultData}
-        />
-        <label htmlFor="default-data">
-          {t('USE_DEFAULT_DATA')} (
-          <a
-            href="https://core.ac.uk/download/pdf/15477943.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Global Land System (GLS)
-          </a>
-          )
-        </label>
-      </div>
-      <div className="p-field-radiobutton">
-        <RadioButton
-          inputId="custom-data"
-          onChange={() => setUseDefaultData(false)}
-          checked={!useDefaultData}
-        />
-        <label htmlFor="custom-data">{t('USE_CUSTOM_DATA')}</label>
-      </div>
-    </div>
-  );
-};
-
-const LandUseSuitabilityTable = ({ data }) => {
-  const { t } = useTranslation();
-
-  // The template for rendering each column.
-  const valueTemplate = ({ value, percentage }) => (
-    <div style={{ textAlign: 'right' }}>
-      {Number(value).toFixed(2)} {'ha '} ({Number(percentage).toFixed(2)}%)
-    </div>
-  );
-
-  return (
-    <DataTable
-      value={data}
-      className="p-datatable-gridlines p-datatable-striped"
-      rows={10}
-      dataKey="id"
-      rowHover
-      editMode="row"
-    >
-      <Column rowSpan={2} field="luType" header="LU Type in ROI" body={valueTemplate} />
-      <Column
-        style={{ textAlign: 'center' }}
-        field="suitable"
-        header={t('SUITABLE')}
-        body={valueTemplate}
-      />
-      <Column
-        style={{ textAlign: 'center' }}
-        field="partiallySuitable"
-        header={t('PARTIALLY_SUITABLE')}
-        body={valueTemplate}
-      />
-      <Column
-        style={{ textAlign: 'center' }}
-        field="nonSuitable"
-        header={t('NON_SUITABLE')}
-        body={valueTemplate}
-      />
-    </DataTable>
-  );
-};
+import Map from '../../components/glowglobe/Map';
+import { UserContext, ToastContext } from '../../store';
+import { handleError } from '../../utilities/errors';
+import { editProject, getNextStep } from '../../services/projects';
 
 const LandUseSuitability = () => {
-  // State related.
-  const [useDefaultData, setUseDefaultData] = useState(true);
-  // TODO: Fix the following
-  // eslint-disable-next-line
-  const [data, setData] = useState([]);
+  const { t } = useTranslation();
+  const history = useHistory();
+  const { currentProject, setUser } = useContext(UserContext);
+  const { setError } = useContext(ToastContext);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // TODO: Fetch data from the backend.
-  }, []); // eslint-disable-line
+  if (!currentProject.preprocessing_data) {
+    return <>Project preprocessing...</>;
+  }
+
+  const mapLinks = [
+    currentProject.preprocessing_data.land_use,
+    currentProject.preprocessing_data.suitability,
+  ];
+
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const { data} = await editProject(currentProject.id, { step: getNextStep(currentProject) });
+      setUser({ currentProject: data });
+      setTimeout(() => history.push('/land-use-planning'), 500);
+    } catch (e) {
+      setError(handleError(e));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
-      <RadioFields useDefaultData={useDefaultData} setUseDefaultData={setUseDefaultData} />
-      <LandUseSuitabilityTable data={data} />
+      <Card>
+        <Map
+          type='side-by-side'
+          mapLinks={mapLinks}
+          paletteType='LandSuitabilityPalette'
+          label='Land Use Suitability'
+          customLuClasses={currentProject.lu_classes}
+        />
+        <div className="p-grid p-justify-between p-mt-4 p-px-3">
+          <Button
+            label={t('DOWNLOAD_MAP')}
+            icon="pi pi-cloud-download"
+            type="button"
+            className="p-d-block p-button-secondary"
+            onClick={() => window.open(mapLinks[0], '_blank')}
+          />
+          <Button
+            label={t('DOWNLOAD_MAP')}
+            icon="pi pi-cloud-download"
+            type="button"
+            className="p-d-block p-button-secondary"
+            onClick={() => window.open(mapLinks[1], '_blank')}
+          />
+        </div>
+        <div className="p-grid p-justify-center p-text-center p-mt-4 p-px-3">
+          <Button
+            label={t('ANTICIPATED_NEW_LAND_DEGRADATION')}
+            icon="fad fa-chart-line-down"
+            type="button"
+            loading={isLoading}
+            className="p-d-block"
+            onClick={() => handleSubmit()}
+          />
+        </div>
+      </Card>
     </>
   );
 };

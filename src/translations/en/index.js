@@ -128,6 +128,7 @@ const t = {
     EXPAND: 'Expand',
     ACTIONS: 'Actions',
     UPLOAD_MAP: 'Upload map',
+    DOWNLOAD_MAP: 'Download map',
     UPLOAD_LAND_USE_MAP: 'Upload Land Use Map',
     UPLOAD_LAND_SUITABILITY_MAP: 'Upload Land Suitability Map',
     HAS_SUITABILITY_MAP: 'Has Suitability Map',

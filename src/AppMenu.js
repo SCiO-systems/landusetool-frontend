@@ -161,12 +161,14 @@ const AppMenu = ({ onMenuClick }) => {
                       <span className="layout-menuitem-text">{t('CURRENT_STATE')}</span>
                     </NavLink>
                   </li>
-                  <li className="p-mb-1" role="menuitem">
-                    <NavLink to="/land-use-planning" activeClassName="p-button" exact>
-                      <i className="layout-menuitem-icon fad fa-abacus" />
-                      <span className="layout-menuitem-text">{t('LAND_USE_PLANNING')}</span>
-                    </NavLink>
-                  </li>
+                  {currentProject.step === PROJECT_STEPS.PLANNING && (
+                    <li className="p-mb-1" role="menuitem">
+                      <NavLink to="/land-use-planning" activeClassName="p-button" exact>
+                        <i className="layout-menuitem-icon fad fa-abacus" />
+                        <span className="layout-menuitem-text">{t('LAND_USE_PLANNING')}</span>
+                      </NavLink>
+                    </li>
+                  )}
                 </ul>
               </li>
             </>

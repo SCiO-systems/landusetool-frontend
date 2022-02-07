@@ -11,12 +11,13 @@ export const PROJECT_STEPS = {
   REGION_OF_INTEREST: 'RegionOfInterest',
   DATASETS_LAND_USE: 'LandUse',
   DATASETS_LAND_DEGRADATION: 'LandDegradation',
-  COMPLETED: 'Dashboard',
+  COMPLETED: 'CurrentState',
+  PLANNING: 'LandUsePlanning',
 };
 
 export const getNextStep = (project) => {
-  if (project.status === PUBLISHED || project.step === PROJECT_STEPS.COMPLETED) {
-    return PROJECT_STEPS.COMPLETED;
+  if (project.status === PUBLISHED && project.step === PROJECT_STEPS.COMPLETED) {
+    return PROJECT_STEPS.PLANNING;
   }
 
   if (project.step === null) {
@@ -43,6 +44,10 @@ export const getUrlForStep = (id, step) => {
       return `/setup-project/${id}/datasets/0`;
     case PROJECT_STEPS.DATASETS_LAND_DEGRADATION:
       return `/setup-project/${id}/datasets/1`;
+    case PROJECT_STEPS.COMPLETED:
+      return `/current-state`;
+    case PROJECT_STEPS.PLANNING:
+      return `/land-use-planning`;
     default:
       return `/`;
   }

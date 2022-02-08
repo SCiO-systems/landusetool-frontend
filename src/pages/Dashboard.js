@@ -56,10 +56,11 @@ const Dashboard = () => {
 
   const loadProject = (project) => {
     setSelectedProject(project);
-    setCurrentProject(project);
-    if (project.status === DRAFT || project.status === PUBLISHED) {
-      setTimeout(() => history.push(getUrlForStep(project.id, project.step)), 500);
-    }
+    setCurrentProject(project).then(() => {
+      if (project.status === DRAFT || project.status === PUBLISHED) {
+        history.push(getUrlForStep(project.id, project.step));
+      }
+    });
   };
 
   const removeProject = async (projectId) => {

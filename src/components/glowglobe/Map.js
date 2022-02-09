@@ -3,18 +3,16 @@ import Glowglobe from '.';
 
 const Map = ({
   type = 'single',
-  mapLinks,
-  paletteType,
-  label,
+  maps,
   customLuClasses = null,
 }) => {
 
   const constructLegends = (luClasses) =>
     luClasses.map(({ name }) => ({ 'label': name }));
 
-  const constructPaletteOptions = () => ({
-    type: paletteType || 'LandCoverPalette',
-    label: label || 'Unnamed',
+  const constructPaletteOptions = (paletteType, label = 'Unnamed') => ({
+    type: paletteType,
+    label,
     legend: (customLuClasses === null) ? [] : constructLegends(customLuClasses),
   });
 
@@ -22,28 +20,22 @@ const Map = ({
     // dragabble side-by-side map
     if (type === 'side-by-side') {
       return {
-        layers: {
-          layer: {
-            type: 'geotiff',
-            data: mapLinks[0],
-            palette: constructPaletteOptions(),
-          },
-        },
+        layers: null,
         options: {
           mode: 'sidebyside',
           mask: false,
           left_layer: {
             layer: {
               type: 'geotiff',
-              data: mapLinks[0],
-              palette: constructPaletteOptions(),
+              data: maps[0].link,
+              palette: constructPaletteOptions(maps[0].paletteType, maps[0].label),
             },
           },
           right_layer: {
             layer: {
               type: 'geotiff',
-              data: mapLinks[1],
-              palette: constructPaletteOptions(),
+              data: maps[1].link,
+              palette: constructPaletteOptions(maps[1].paletteType, maps[1].label),
             },
           },
         },
@@ -55,23 +47,23 @@ const Map = ({
       layers: {
         layer: {
           type: 'geotiff',
-          data: mapLinks[0],
-          palette: constructPaletteOptions(),
+          data: maps[0].link,
+          palette: constructPaletteOptions(maps[0].paletteType, maps[0].label),
         },
       },
       options: {
         mode: 'view',
-        mask: true,
+        mask: false,
       },
     }
   };
 
-  if (!mapLinks || mapLinks.length < 1) {
-    return <div>You need to provide at least one mapLink to display the map.</div>;
+  if (!maps || maps.length < 1) {
+    return <div>You need to provide at least one map entity to display the map.</div>;
   }
 
-  if (type === 'side-by-side' && (!mapLinks || mapLinks.length < 2)) {
-    return <div>You need to provide at two mapLinks to display the side-by-side map.</div>;
+  if (type === 'side-by-side' && (!maps || maps.length < 2)) {
+    return <div>You need to provide at two maps to display the side-by-side map.</div>;
   }
 
   return (

@@ -54,12 +54,36 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
         text: 'Administration Level 1',
         onClick: () => {
           setAdminLevel(1);
+          if (output) {
+            const tmpData = data;
+            tmpData.administration_level = 1
+            output(tmpData)
+            setData(tmpData)
+          }
+          const classes = map.pm.Toolbar.getButtons().AdministrationLevelSelector.buttonsDomNode.firstChild.firstChild.className.split(' ');
+          const filteredClasses = classes.filter(
+            (item) => !item.startsWith('admin-level')
+          )
+          filteredClasses.push('admin-level-1');
+          map.pm.Toolbar.getButtons().AdministrationLevelSelector.buttonsDomNode.firstChild.firstChild.className = filteredClasses.join(' ');
         },
       },
       {
         text: 'Administration Level 2',
         onClick: () => {
           setAdminLevel(2);
+          if (output) {
+            const tmpData = data;
+            tmpData.administration_level = 2
+            output(tmpData)
+            setData(tmpData)
+          }
+          const classes = map.pm.Toolbar.getButtons().AdministrationLevelSelector.buttonsDomNode.firstChild.firstChild.className.split(' ');
+          const filteredClasses = classes.filter(
+            (item) => !item.startsWith('admin-level')
+          )
+          filteredClasses.push('admin-level-2');
+          map.pm.Toolbar.getButtons().AdministrationLevelSelector.buttonsDomNode.firstChild.firstChild.className = filteredClasses.join(' ');
         },
       },
     ];
@@ -91,6 +115,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
           }
           layer.addTo(glowglobe.current);
           glowglobe.current.fitBounds(layer.getBounds());
+          glowglobe.current.setMaxBounds(layer.getBounds());
         } else if (layerOptions.layer.type === 'geotiff') {
           fetch(layerOptions.layer.data)
             .then((response) => response.arrayBuffer())
@@ -224,7 +249,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                 const corner2 = layer.getBounds()._southWest; // eslint-disable-line
                 const bounds = L.latLngBounds(corner1, corner2);
                 glowglobe.current.fitBounds(bounds);
-                resolveLegend(layerOptions.layer.palette, layer);
+                resolveLegend(layerOptions.layer.palette, layer, 'bottomright');
               });
             })
             .catch((response) => {
@@ -368,6 +393,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
             const corner2 = leaflet_left_layer.getBounds()._southWest; // eslint-disable-line
             const bounds = L.latLngBounds(corner1, corner2);
             glowglobe.current.fitBounds(bounds);
+            resolveLegend(left_layer.layer.palette, leaflet_left_layer, 'bottomleft');
             fetch(right_layer.layer.data)
               .then(response => response.arrayBuffer())
               // eslint-disable-next-line
@@ -496,7 +522,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                   const corner2 = leaflet_right_layer.getBounds()._southWest; // eslint-disable-line
                   const bounds = L.latLngBounds(corner1, corner2); // eslint-disable-line
                   glowglobe.current.fitBounds(bounds);
-                  resolveLegend(right_layer.layer.palette, leaflet_right_layer);
+                  resolveLegend(right_layer.layer.palette, leaflet_right_layer, 'bottomright');
                   L.control.sideBySide(leaflet_left_layer, leaflet_right_layer).addTo(glowglobe.current);
                 })
               })
@@ -506,10 +532,10 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     }
   }
 
-  const resolveLegend = (palette, layer) => {
+  const resolveLegend = (palette, layer, legend_position = 'bottomright') => {
     if (palette.type === 'LandCoverPalette') {
       legend.current = L.control.htmllegend({
-        position: 'bottomright',
+        position: legend_position,
         legends: [
           {
             name: palette.label,
@@ -611,7 +637,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     }
     else if (palette.type === 'LandDegradationPalette') {
       legend.current = L.control.htmllegend({
-        position: 'bottomright',
+        position: legend_position,
         legends: [
           {
             name: palette.label,
@@ -665,7 +691,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     }
     else if (palette.type === 'LandSuitabilityPalette') {
       legend.current = L.control.htmllegend({
-        position: 'bottomright',
+        position: legend_position,
         legends: [
           {
             name: palette.label,
@@ -719,7 +745,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     }
     else if (palette.type === 'FutureLandDegradation') {
       legend.current = L.control.htmllegend({
-        position: 'bottomright',
+        position: legend_position,
         legends: [
           {
             name: palette.label,
@@ -856,7 +882,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
         elements,
       }
       legend.current = L.control.htmllegend({
-        position: 'bottomright',
+        position: legend_position,
         legends: [
           tmpLegend,
         ],
@@ -906,6 +932,13 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
       }
     }
   }, [map]); // eslint-disable-line
+
+  useEffect(() => {
+    if (!map) return;
+    if (layers) {
+      loadLayers(layers)
+    }
+  }, [layers]); // eslint-disable-line
 
   return (
     <div>

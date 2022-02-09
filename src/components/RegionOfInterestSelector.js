@@ -43,7 +43,7 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
 
   const glowglobeOptions = {
     mode: 'select_administration_area',
-    mask: true,
+    mask: false,
   };
 
   const resetSelections = () => {
@@ -54,6 +54,7 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
   };
 
   const handleOutput = (pin) => {
+    if (!pin.point) return;
     getByCoordinates(pin.point, adminLevel).then((res) => {
       setLayers([{
         layer: {

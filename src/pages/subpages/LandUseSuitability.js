@@ -20,9 +20,17 @@ const LandUseSuitability = () => {
     return <>Project preprocessing...</>;
   }
 
-  const mapLinks = [
-    currentProject.preprocessing_data.land_use,
-    currentProject.preprocessing_data.suitability,
+  const maps = [
+    {
+      link: currentProject.preprocessing_data.land_use,
+      label: 'Land Use',
+      paletteType: 'LandUsePalette',
+    },
+    {
+      link: currentProject.preprocessing_data.suitability,
+      label: 'Land Suitability',
+      paletteType: 'LandSuitabilityPalette',
+    },
   ];
 
   const handleSubmit = async () => {
@@ -41,11 +49,17 @@ const LandUseSuitability = () => {
   return (
     <>
       <Card>
+        <div className="p-grid p-justify-between p-px-3">
+          <div>
+            <h4>{ maps[0].label }</h4>
+          </div>
+          <div>
+            <h4>{ maps[1].label }</h4>
+          </div>
+        </div>
         <Map
           type='side-by-side'
-          mapLinks={mapLinks}
-          paletteType='LandSuitabilityPalette'
-          label='Land Use Suitability'
+          maps={maps}
           customLuClasses={currentProject.lu_classes}
         />
         <div className="p-grid p-justify-between p-mt-4 p-px-3">
@@ -54,14 +68,14 @@ const LandUseSuitability = () => {
             icon="pi pi-cloud-download"
             type="button"
             className="p-d-block p-button-secondary"
-            onClick={() => window.open(mapLinks[0], '_blank')}
+            onClick={() => window.open(maps[0].link, '_blank')}
           />
           <Button
             label={t('DOWNLOAD_MAP')}
             icon="pi pi-cloud-download"
             type="button"
             className="p-d-block p-button-secondary"
-            onClick={() => window.open(mapLinks[1], '_blank')}
+            onClick={() => window.open(maps[1].link, '_blank')}
           />
         </div>
         <div className="p-grid p-justify-center p-text-center p-mt-4 p-px-3">

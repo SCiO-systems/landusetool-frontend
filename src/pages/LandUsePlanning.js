@@ -16,18 +16,32 @@ const NewLandDegradationMap = () => {
     return <>Project preprocessing...</>;
   }
 
-  const mapLinks = [
-    currentProject.preprocessing_data.land_degradation,
-    currentProject.preprocessing_data.future_ld,
+  const maps = [
+    {
+      link: currentProject.preprocessing_data.land_degradation,
+      label: 'Land Degradation',
+      paletteType: 'LandDegradationPalette',
+    },
+    {
+      link: currentProject.preprocessing_data.future_ld,
+      label: 'Future Land Degradation',
+      paletteType: 'FutureLandDegradation',
+    },
   ];
 
   return (
     <>
+      <div className="p-grid p-justify-between p-mt-2 p-px-3">
+        <div>
+          <h4>{ maps[0].label }</h4>
+        </div>
+        <div>
+          <h4>{ maps[1].label }</h4>
+        </div>
+      </div>
       <Map
         type='side-by-side'
-        mapLinks={mapLinks}
-        paletteType='LandDegradationPalette'
-        label='New Land Degradation'
+        maps={maps}
         customLuClasses={currentProject.lu_classes}
       />
         <div className="p-grid p-justify-between p-mt-4 p-px-3">
@@ -36,14 +50,14 @@ const NewLandDegradationMap = () => {
             icon="pi pi-cloud-download"
             type="button"
             className="p-d-block p-button-secondary"
-            onClick={() => window.open(mapLinks[0], '_blank')}
+            onClick={() => window.open(maps[0].link, '_blank')}
           />
           <Button
             label={t('DOWNLOAD_MAP')}
             icon="pi pi-cloud-download"
             type="button"
             className="p-d-block p-button-secondary"
-            onClick={() => window.open(mapLinks[1], '_blank')}
+            onClick={() => window.open(maps[1].link, '_blank')}
           />
         </div>
     </>

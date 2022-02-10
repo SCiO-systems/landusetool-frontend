@@ -24,7 +24,7 @@ const LandUseSuitability = () => {
     {
       link: currentProject.preprocessing_data.land_use,
       label: 'Land Use',
-      paletteType: 'LandUsePalette',
+      paletteType: 'Custom',
     },
     {
       link: currentProject.preprocessing_data.suitability,

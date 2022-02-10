@@ -165,7 +165,16 @@ const ProjectDatasets = () => {
                   }}
                   checked={useDefaultLuClasses}
                 />
-                <label htmlFor="defaultLuClasses">{t('USE_DEFAULT_LU_CLASSIFICATION')}</label>
+                <label htmlFor="defaultLuClasses">
+                  {t('USE_DEFAULT_LU_CLASSIFICATION')}
+                  &nbsp;
+                  <a
+                    rel="noreferrer"
+                    target="_blank"
+                    href="https://data.apps.fao.org/map/catalog/srv/eng/catalog.search#/metadata/fc32c5de-440c-46aa-9cad-81f4c8b84c6a">
+                    fao.org
+                  </a>
+                </label>
               </div>
               <div className="p-field-radiobutton">
                 <RadioButton

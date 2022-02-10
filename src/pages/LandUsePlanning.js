@@ -19,7 +19,7 @@ const NewLandDegradationMap = () => {
   const maps = [
     {
       link: currentProject.preprocessing_data.land_degradation,
-      label: 'Land Degradation',
+      label: 'Current Land Degradation',
       paletteType: 'LandDegradationPalette',
     },
     {

@@ -172,7 +172,7 @@ const ProjectDatasets = () => {
                     rel="noreferrer"
                     target="_blank"
                     href="https://data.apps.fao.org/map/catalog/srv/eng/catalog.search#/metadata/fc32c5de-440c-46aa-9cad-81f4c8b84c6a">
-                    fao.org
+                    FAO/LADA
                   </a>)
                 </label>
               </div>

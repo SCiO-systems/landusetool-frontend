@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { UserContext, ToastContext } from '../../store';
-import { generateScenarioSchema, fillInitialLandCoverageValues } from '../../utilities/schema-generators';
+import { generateScenarioSchema, generateLUImpactMatrixSchema, fillInitialLandCoverageValues } from '../../utilities/schema-generators';
 import { handleError } from '../../utilities/errors';
 import { createScenario, getScenarios, deleteAllScenarios, editScenario } from '../../services/scenarios';
 import ScenarioToolbar from '../../components/ScenarioToolbar';
@@ -95,13 +95,11 @@ const LandUse = () => {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
-    console.log(scenarios);
-  }, [scenarios]);
-
-  useEffect(() => {
     fetchScenarios();
   }, []); // eslint-disable-line
+
+  const initialDataForImpactMatrix = generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification);
+  const usesDefaultData = currentProject.uses_default_lu_classification === 1;
 
   return (
     <>
@@ -112,7 +110,11 @@ const LandUse = () => {
         onReset={resetScenarios}
       />
       <div className="p-mt-4">
-        <TransitionImpactMatrix title={t('LU_TRANSITION_IMPACT_MATRIX')} currentProject={currentProject} />
+        <TransitionImpactMatrix
+          title={t('LU_TRANSITION_IMPACT_MATRIX')}
+          initialData={initialDataForImpactMatrix}
+          hasDefaultData={usesDefaultData}
+        />
       </div>
       <div className="p-mt-4">
         {(scenarios.length > 0) && scenarios.map((s)=> (

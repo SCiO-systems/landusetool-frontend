@@ -144,7 +144,6 @@ const LandManagement = () => {
           </div>
         </div>
         <div className="p-col-2">
-          <Button label="Map" className="p-button-secondary p-d-block" icon="pi pi-map-marker" />
           <Button
             label="Choose"
             onClick={() => onChooseTechnology(tech?.id)}

@@ -5,8 +5,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useTranslation } from 'react-i18next';
 
-import { generateLUImpactMatrixSchema } from '../utilities/schema-generators';
-
 const StatusEditor = ({ rowData, field, onStatusEditorValueChange }) => {
   const { t } = useTranslation();
   const [dropdownValue, setDropdownValue] = useState('');
@@ -49,24 +47,19 @@ const StatusEditor = ({ rowData, field, onStatusEditorValueChange }) => {
   );
 };
 
-const TransitionImpactMatrix = ({ currentProject, title }) => {
+const TransitionImpactMatrix = ({ initialData, title, hasDefaultData }) => {
   const { t } = useTranslation();
-  const [landCoverItem, setLandCoverItem] =
-    useState(
-      generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification)
-  );
+  const [landCoverItem, setLandCoverItem] = useState(JSON.parse(JSON.stringify(initialData)));
   const [selectedlandCoverItem, setSelectedlandCoverItem] = useState(null);
   const [trendsEarthStatus, setTrendsEarthStatus] = useState(true);
 
   const loadTrendsEarthDefault = () => {
-    setLandCoverItem(
-      generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification)
-    );
+    setLandCoverItem(JSON.parse(JSON.stringify(initialData)));
     setTrendsEarthStatus(true);
   };
 
   const onStatusRowEditSave = ({ data }) => {
-    const landCoverItemLocal = [...landCoverItem];
+    const landCoverItemLocal = JSON.parse(JSON.stringify(landCoverItem));
     const updatedLandCoverItem = landCoverItemLocal.map(
       (item) => {
         if (item.id === data.id) {
@@ -83,7 +76,7 @@ const TransitionImpactMatrix = ({ currentProject, title }) => {
     );
 
     setTrendsEarthStatus(false);
-    setLandCoverItem([...updatedLandCoverItem]);
+    setLandCoverItem(updatedLandCoverItem);
   };
 
   const onStatusEditorValueChange = (rowData, field, value) => {
@@ -124,7 +117,7 @@ const TransitionImpactMatrix = ({ currentProject, title }) => {
         <div>
           <h4 className="p-mb-0">{title}</h4>
         </div>
-        {(currentProject.uses_default_lu_classification === 1) && (
+        {hasDefaultData && (
           <div>
             <Button
               icon="pi pi-refresh"

@@ -5,7 +5,6 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
 import { useTranslation } from 'react-i18next';
-import initialScenario from '../data/initial-scenario';
 
 const ScenarioTransitionMatrix = ({ inputScenario, onSave, isUpdating }) => {
   const { t } = useTranslation();

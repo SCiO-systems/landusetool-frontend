@@ -8,13 +8,19 @@ const Map = ({
 }) => {
 
   const constructLegends = (luClasses) =>
-    luClasses.map(({ name }) => ({ 'label': name }));
+    luClasses.map(({ key, value }) => ({ 'label': key, 'value': parseInt(value, 10) }));
 
-  const constructPaletteOptions = (paletteType, label = 'Unnamed') => ({
-    type: paletteType,
-    label,
-    legend: (customLuClasses === null) ? [] : constructLegends(customLuClasses),
-  });
+  const constructPaletteOptions = (paletteType, label = 'Unnamed') => {
+    let paletteToUse = paletteType;
+    if (paletteType === 'LandUsePalette' && customLuClasses !== null) {
+      paletteToUse = 'Custom';
+    }
+    return {
+      type: paletteToUse,
+      label,
+      legend: (customLuClasses === null) ? [] : constructLegends(customLuClasses),
+    }
+  };
 
   const constructPropsByType = () => {
     // dragabble side-by-side map

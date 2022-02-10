@@ -3,12 +3,16 @@ import L from 'leaflet';
 import { MapContainer } from 'react-leaflet';
 import chroma from 'chroma-js';
 
+// Turf
+import { point, polygon, multiPolygon, booleanPointInPolygon } from '@turf/turf'
+
 // Geoman
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
+import './leaflet-extensions/mask/leaflet.mask';
+
 import './leaflet-extensions/Leaflet.Control.Custom';
-import './leaflet-extensions/CustomMask';
 
 // Slide Compare
 import './leaflet-extensions/sidebyside/leaflet-side-by-side'
@@ -28,6 +32,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
   const [map, setMap] = useState(null);
   const [data, setData] = useState({});
   const legend = useRef();
+  const checkPolygon = useRef();
   const position = [51.505, -0.09];
 
   const glowglobe = useRef();
@@ -47,7 +52,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     rotateMode: false,
   };
 
-  const initializeAdministratorSelector = (currMap) => {
+  const initializeAdministratorSelector = () => {
     const actions = [
       'cancel',
       {
@@ -100,22 +105,50 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     map.pm.Toolbar.createCustomControl(toolbarOptions);
   };
 
+  const isValidPoint = (leafletPoint) => {
+    const pt = point(leafletPoint.geometry.coordinates);
+    let isValid = false;
+    for (let geoIndex = 0; geoIndex < checkPolygon.current.features.length; geoIndex += 1) {
+      const feature = checkPolygon.current.features[geoIndex];
+      if (feature.geometry.type === 'MultiPolygon') {
+        const turfShape = multiPolygon(feature.geometry.coordinates);
+        if (booleanPointInPolygon(pt, turfShape) === true) {
+          isValid = true;
+          break;
+        };
+      } else if (feature.geometry.type === 'Polygon') {
+        const turfShape = polygon(feature.geometry.coordinates);
+        isValid = booleanPointInPolygon(pt, turfShape);
+        if (booleanPointInPolygon(pt, turfShape) === true) {
+          isValid = true;
+          break;
+        };
+      }
+    }
+    return isValid;
+  }
+
   const loadLayers = (layersArray) => {
     layersArray.forEach(
       (layerOptions) => {
         if (layerOptions.layer.type === 'geojson') {
-          const layer = L.geoJSON(layerOptions.layer.data);
           if (options.mask === true) {
-            const coordinates = layerOptions.layer.data.features[0].geometry.coordinates[0];
-            const latLngs = [];
-            for (let i = 0; i < coordinates.length; i += 1) {
-              latLngs.push(new L.LatLng(coordinates[i][1], coordinates[i][0]));
-            }
-            L.mask(latLngs).addTo(glowglobe.current);
+            glowglobe.current.eachLayer((layer) => {
+              // eslint-disable-next-line
+              if (layer._bounds) {
+                glowglobe.current.removeLayer(layer);
+              }
+            });
+            checkPolygon.current = layerOptions.layer.data;
+            L.mask(layerOptions.layer.data, {
+              map: glowglobe.current, fitBounds: true,
+            }).addTo(glowglobe.current);
+          } else {
+            const layer = L.geoJSON(layerOptions.layer.data);
+            layer.addTo(glowglobe.current);
+            glowglobe.current.fitBounds(layer.getBounds());
+            glowglobe.current.setMaxBounds(layer.getBounds());
           }
-          layer.addTo(glowglobe.current);
-          glowglobe.current.fitBounds(layer.getBounds());
-          glowglobe.current.setMaxBounds(layer.getBounds());
         } else if (layerOptions.layer.type === 'geotiff') {
           fetch(layerOptions.layer.data)
             .then((response) => response.arrayBuffer())
@@ -154,9 +187,11 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                       }
                     }
                     else if (layerOptions.layer.palette.type === 'LandSuitabilityPalette') {
-                      if (pixelValues[0] === 1) {
-                        return '#398e3b';
+                      if (pixelValues[0] === 0) {
+                        return '#dddddd';
                         // eslint-disable-next-line
+                      } else if (pixelValues[0] === 1) {
+                        return '#398e3b';
                       } else if (pixelValues[0] === 2) {
                         return '#fcdd90';
                       } else if (pixelValues[0] === 3) {
@@ -175,6 +210,37 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                         return '#e05f2f';
                       } else if (pixelValues[0] === 5) {
                         return '#d43333';
+                      }
+                    }
+                    else if (layerOptions.layer.palette.type === 'LandUsePalette') {
+                      if ((pixelValues[0] >= 1) && (pixelValues[0] <= 2)) {
+                        return '#267300';
+                      } if ((pixelValues[0] >= 3) && (pixelValues[0] <= 4)) {
+                        return '#a7e39d';
+                      } if ((pixelValues[0] >= 7) && (pixelValues[0] <= 8)) {
+                        return '#e66000';
+                      } if ((pixelValues[0] >= 9) && (pixelValues[0] <= 11)) {
+                        return '#ffaa01';
+                      } if ((pixelValues[0] >= 13) && (pixelValues[0] <= 14)) {
+                        return '#573a00';
+                      } if ((pixelValues[0] >= 15) && (pixelValues[0] <= 17)) {
+                        return '#a87001';
+                      } if ((pixelValues[0] >= 19) && (pixelValues[0] <= 24)) {
+                        return '#df72ff';
+                      } if (pixelValues[0] === 25) {
+                        return '#343434';
+                      } if ((pixelValues[0] >= 26) && (pixelValues[0] <= 29)) {
+                        return '#12AAB5';
+                      } if ((pixelValues[0] >= 30) && (pixelValues[0] <= 31)) {
+                        return '#e7e600';
+                      } if ((pixelValues[0] >= 32) && (pixelValues[0] <= 33)) {
+                        return '#feff73';
+                      } if ((pixelValues[0] >= 34) && (pixelValues[0] <= 35)) {
+                        return '#c7960d';
+                      } if ((pixelValues[0] >= 36) && (pixelValues[0] <= 37)) {
+                        return '#f5d680';
+                      } if ((pixelValues[0] >= 38) && (pixelValues[0] <= 40)) {
+                        return '#67b7dc';
                       }
                     }
                     else if (layerOptions.layer.palette.type === 'Custom') {
@@ -225,6 +291,60 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                         return '#738678';
                       } else if (pixelValues[0] === 23) {
                         return '#FFFF00';
+                      } else if (pixelValues[0] === 24) {
+                        return '#00fff7';
+                      } else if (pixelValues[0] === 25) {
+                        return '#d8ff2a';
+                      } else if (pixelValues[0] === 26) {
+                        return '#ed602d';
+                      } else if (pixelValues[0] === 27) {
+                        return '#99a400';
+                      } else if (pixelValues[0] === 28) {
+                        return '#504061';
+                      } else if (pixelValues[0] === 29) {
+                        return 'rgba(252,142,172,0.75)';
+                      } else if (pixelValues[0] === 30) {
+                        return 'rgba(218,165,32,0.7)';
+                      } else if (pixelValues[0] === 31) {
+                        return 'rgba(255,255,240,0.74)';
+                      } else if (pixelValues[0] === 32) {
+                        return 'rgba(0,168,107,0.63)';
+                      } else if (pixelValues[0] === 33) {
+                        return 'rgba(195,176,145,0.73)';
+                      } else if (pixelValues[0] === 34) {
+                        return '#432f96';
+                      } else if (pixelValues[0] === 35) {
+                        return 'rgba(255,219,88,0.29)';
+                      } else if (pixelValues[0] === 36) {
+                        return '#80007a';
+                      } else if (pixelValues[0] === 37) {
+                        return 'rgba(128,128,0,0.71)';
+                      } else if (pixelValues[0] === 38) {
+                        return '#25463b';
+                      } else if (pixelValues[0] === 39) {
+                        return '#005665';
+                      } else if (pixelValues[0] === 40) {
+                        return '#9b69ff';
+                      } else if (pixelValues[0] === 41) {
+                        return 'rgba(0,128,128,0.13)';
+                      } else if (pixelValues[0] === 42) {
+                        return '#e55b99';
+                      } else if (pixelValues[0] === 43) {
+                        return 'rgba(0,255,89,0.25)';
+                      } else if (pixelValues[0] === 44) {
+                        return '#b3f5d7';
+                      } else if (pixelValues[0] === 45) {
+                        return '#867f73';
+                      } else if (pixelValues[0] === 46) {
+                        return '#ff00cc';
+                      } else if (pixelValues[0] === 47) {
+                        return '#89e55b';
+                      } else if (pixelValues[0] === 48) {
+                        return 'rgba(0,119,255,0.56)';
+                      } else if (pixelValues[0] === 49) {
+                        return 'rgba(205,179,245,0.63)';
+                      } else if (pixelValues[0] === 50) {
+                        return '#868473';
                       }
                     }
                     else {
@@ -302,11 +422,13 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                     return '#398e3b';
                   }
                 } else if (left_layer.layer.palette.type === 'LandSuitabilityPalette') {
-                  if (pixelValues[0] === 1) {
-                    return '#398e3b';
-                  } if (pixelValues[0] === 2) {
-                    return '#fcdd90';
+                  if (pixelValues[0] === 0) {
+                    return '#dddddd';
                     // eslint-disable-next-line
+                  } else if (pixelValues[0] === 1) {
+                    return '#398e3b';
+                  } else if (pixelValues[0] === 2) {
+                    return '#fcdd90';
                   } else if (pixelValues[0] === 3) {
                     return '#d43333';
                   }
@@ -322,6 +444,37 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                     return '#e05f2f';
                   } else if (pixelValues[0] === 5) {
                     return '#d43333';
+                  }
+                }
+                else if (left_layer.layer.palette.type === 'LandUsePalette') {
+                  if ((pixelValues[0] >= 1) && (pixelValues[0] <= 2)) {
+                    return '#267300';
+                  } if ((pixelValues[0] >= 3) && (pixelValues[0] <= 4)) {
+                    return '#a7e39d';
+                  } if ((pixelValues[0] >= 7) && (pixelValues[0] <= 8)) {
+                    return '#e66000';
+                  } if ((pixelValues[0] >= 9) && (pixelValues[0] <= 11)) {
+                    return '#ffaa01';
+                  } if ((pixelValues[0] >= 13) && (pixelValues[0] <= 14)) {
+                    return '#573a00';
+                  } if ((pixelValues[0] >= 15) && (pixelValues[0] <= 17)) {
+                    return '#a87001';
+                  } if ((pixelValues[0] >= 19) && (pixelValues[0] <= 24)) {
+                    return '#df72ff';
+                  } if (pixelValues[0] === 25) {
+                    return '#343434';
+                  } if ((pixelValues[0] >= 26) && (pixelValues[0] <= 29)) {
+                    return '#12AAB5';
+                  } if ((pixelValues[0] >= 30) && (pixelValues[0] <= 31)) {
+                    return '#e7e600';
+                  } if ((pixelValues[0] >= 32) && (pixelValues[0] <= 33)) {
+                    return '#feff73';
+                  } if ((pixelValues[0] >= 34) && (pixelValues[0] <= 35)) {
+                    return '#c7960d';
+                  } if ((pixelValues[0] >= 36) && (pixelValues[0] <= 37)) {
+                    return '#f5d680';
+                  } if ((pixelValues[0] >= 38) && (pixelValues[0] <= 40)) {
+                    return '#67b7dc';
                   }
                 } else if (left_layer.layer.palette.type === 'Custom') {
                   if (pixelValues[0] === 1) {
@@ -371,6 +524,60 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                     return '#738678';
                   } else if (pixelValues[0] === 23) {
                     return '#FFFF00';
+                  } else if (pixelValues[0] === 24) {
+                    return '#00fff7';
+                  } else if (pixelValues[0] === 25) {
+                    return '#d8ff2a';
+                  } else if (pixelValues[0] === 26) {
+                    return '#ed602d';
+                  } else if (pixelValues[0] === 27) {
+                    return '#99a400';
+                  } else if (pixelValues[0] === 28) {
+                    return '#504061';
+                  } else if (pixelValues[0] === 29) {
+                    return 'rgba(252,142,172,0.75)';
+                  } else if (pixelValues[0] === 30) {
+                    return 'rgba(218,165,32,0.7)';
+                  } else if (pixelValues[0] === 31) {
+                    return 'rgba(255,255,240,0.74)';
+                  } else if (pixelValues[0] === 32) {
+                    return 'rgba(0,168,107,0.63)';
+                  } else if (pixelValues[0] === 33) {
+                    return 'rgba(195,176,145,0.73)';
+                  } else if (pixelValues[0] === 34) {
+                    return '#432f96';
+                  } else if (pixelValues[0] === 35) {
+                    return 'rgba(255,219,88,0.29)';
+                  } else if (pixelValues[0] === 36) {
+                    return '#80007a';
+                  } else if (pixelValues[0] === 37) {
+                    return 'rgba(128,128,0,0.71)';
+                  } else if (pixelValues[0] === 38) {
+                    return '#25463b';
+                  } else if (pixelValues[0] === 39) {
+                    return '#005665';
+                  } else if (pixelValues[0] === 40) {
+                    return '#9b69ff';
+                  } else if (pixelValues[0] === 41) {
+                    return 'rgba(0,128,128,0.13)';
+                  } else if (pixelValues[0] === 42) {
+                    return '#e55b99';
+                  } else if (pixelValues[0] === 43) {
+                    return 'rgba(0,255,89,0.25)';
+                  } else if (pixelValues[0] === 44) {
+                    return '#b3f5d7';
+                  } else if (pixelValues[0] === 45) {
+                    return '#867f73';
+                  } else if (pixelValues[0] === 46) {
+                    return '#ff00cc';
+                  } else if (pixelValues[0] === 47) {
+                    return '#89e55b';
+                  } else if (pixelValues[0] === 48) {
+                    return 'rgba(0,119,255,0.56)';
+                  } else if (pixelValues[0] === 49) {
+                    return 'rgba(205,179,245,0.63)';
+                  } else if (pixelValues[0] === 50) {
+                    return '#868473';
                   }
                 } else {
                   const min = georaster.mins[0];
@@ -431,11 +638,13 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                           return '#398e3b';
                         }
                       } else if (right_layer.layer.palette.type === 'LandSuitabilityPalette') {
-                        if (pixelValues[0] === 1) {
-                          return '#398e3b';
-                        } if (pixelValues[0] === 2) {
-                          return '#fcdd90';
+                        if (pixelValues[0] === 0) {
+                          return '#dddddd';
                           // eslint-disable-next-line
+                        } else if (pixelValues[0] === 1) {
+                          return '#398e3b';
+                        } else if (pixelValues[0] === 2) {
+                          return '#fcdd90';
                         } else if (pixelValues[0] === 3) {
                           return '#d43333';
                         }
@@ -452,7 +661,38 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                         } else if (pixelValues[0] === 5) {
                           return '#d43333';
                         }
-                      } else if (right_layer.layer.palette.type === 'Custom') {
+                      }
+                      else if (right_layer.layer.palette.type === 'LandUsePalette') {
+                        if ((pixelValues[0] >= 1) && (pixelValues[0] <= 2)) {
+                          return '#267300';
+                        } if ((pixelValues[0] >= 3) && (pixelValues[0] <= 4)) {
+                          return '#a7e39d';
+                        } if ((pixelValues[0] >= 7) && (pixelValues[0] <= 8)) {
+                          return '#e66000';
+                        } if ((pixelValues[0] >= 9) && (pixelValues[0] <= 11)) {
+                          return '#ffaa01';
+                        } if ((pixelValues[0] >= 13) && (pixelValues[0] <= 14)) {
+                          return '#573a00';
+                        } if ((pixelValues[0] >= 15) && (pixelValues[0] <= 17)) {
+                          return '#a87001';
+                        } if ((pixelValues[0] >= 19) && (pixelValues[0] <= 24)) {
+                          return '#df72ff';
+                        } if (pixelValues[0] === 25) {
+                          return '#343434';
+                        } if ((pixelValues[0] >= 26) && (pixelValues[0] <= 29)) {
+                          return '#12AAB5';
+                        } if ((pixelValues[0] >= 30) && (pixelValues[0] <= 31)) {
+                          return '#e7e600';
+                        } if ((pixelValues[0] >= 32) && (pixelValues[0] <= 33)) {
+                          return '#feff73';
+                        } if ((pixelValues[0] >= 34) && (pixelValues[0] <= 35)) {
+                          return '#c7960d';
+                        } if ((pixelValues[0] >= 36) && (pixelValues[0] <= 37)) {
+                          return '#f5d680';
+                        } if ((pixelValues[0] >= 38) && (pixelValues[0] <= 40)) {
+                          return '#67b7dc';
+                        }
+                      } else if (left_layer.layer.palette.type === 'Custom') {
                         if (pixelValues[0] === 1) {
                           return '#007FFF';
                           // eslint-disable-next-line
@@ -500,6 +740,60 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                           return '#738678';
                         } else if (pixelValues[0] === 23) {
                           return '#FFFF00';
+                        } else if (pixelValues[0] === 24) {
+                          return '#00fff7';
+                        } else if (pixelValues[0] === 25) {
+                          return '#d8ff2a';
+                        } else if (pixelValues[0] === 26) {
+                          return '#ed602d';
+                        } else if (pixelValues[0] === 27) {
+                          return '#99a400';
+                        } else if (pixelValues[0] === 28) {
+                          return '#504061';
+                        } else if (pixelValues[0] === 29) {
+                          return 'rgba(252,142,172,0.75)';
+                        } else if (pixelValues[0] === 30) {
+                          return 'rgba(218,165,32,0.7)';
+                        } else if (pixelValues[0] === 31) {
+                          return 'rgba(255,255,240,0.74)';
+                        } else if (pixelValues[0] === 32) {
+                          return 'rgba(0,168,107,0.63)';
+                        } else if (pixelValues[0] === 33) {
+                          return 'rgba(195,176,145,0.73)';
+                        } else if (pixelValues[0] === 34) {
+                          return '#432f96';
+                        } else if (pixelValues[0] === 35) {
+                          return 'rgba(255,219,88,0.29)';
+                        } else if (pixelValues[0] === 36) {
+                          return '#80007a';
+                        } else if (pixelValues[0] === 37) {
+                          return 'rgba(128,128,0,0.71)';
+                        } else if (pixelValues[0] === 38) {
+                          return '#25463b';
+                        } else if (pixelValues[0] === 39) {
+                          return '#005665';
+                        } else if (pixelValues[0] === 40) {
+                          return '#9b69ff';
+                        } else if (pixelValues[0] === 41) {
+                          return 'rgba(0,128,128,0.13)';
+                        } else if (pixelValues[0] === 42) {
+                          return '#e55b99';
+                        } else if (pixelValues[0] === 43) {
+                          return 'rgba(0,255,89,0.25)';
+                        } else if (pixelValues[0] === 44) {
+                          return '#b3f5d7';
+                        } else if (pixelValues[0] === 45) {
+                          return '#867f73';
+                        } else if (pixelValues[0] === 46) {
+                          return '#ff00cc';
+                        } else if (pixelValues[0] === 47) {
+                          return '#89e55b';
+                        } else if (pixelValues[0] === 48) {
+                          return 'rgba(0,119,255,0.56)';
+                        } else if (pixelValues[0] === 49) {
+                          return 'rgba(205,179,245,0.63)';
+                        } else if (pixelValues[0] === 50) {
+                          return '#868473';
                         }
                       } else {
                         const min = georaster.mins[0];
@@ -697,42 +991,55 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
             name: palette.label,
             layer,
             opacity: 1,
-            elements: [{
-              label: 'Suitable',
-              html: '',
-              style: {
-                'text-align': 'left',
-                'background-color': '#398e3b',
-                'width': '20px',
-                'height': '20px',
-                'position': 'relative',
-                'margin': '3.75px 0',
+            elements: [
+              {
+                label: 'No data',
+                html: '',
+                style: {
+                  'text-align': 'left',
+                  'background-color': '#dddddd',
+                  'width': '20px',
+                  'height': '20px',
+                  'position': 'relative',
+                  'margin': '3.75px 0',
+                },
               },
-            },
-            {
-              label: 'Marginal',
-              html: '',
-              style: {
-                'text-align': 'left',
-                'background-color': '#fcdd90',
-                'width': '20px',
-                'height': '20px',
-                'position': 'relative',
-                'margin': '3.75px 0',
+              {
+                label: 'Suitable',
+                html: '',
+                style: {
+                  'text-align': 'left',
+                  'background-color': '#398e3b',
+                  'width': '20px',
+                  'height': '20px',
+                  'position': 'relative',
+                  'margin': '3.75px 0',
+                },
               },
-            },
-            {
-              label: 'Unsuitable',
-              html: '',
-              style: {
-                'text-align': 'left',
-                'background-color': '#d43333',
-                'width': '20px',
-                'height': '20px',
-                'position': 'relative',
-                'margin': '3.75px 0',
+              {
+                label: 'Marginal',
+                html: '',
+                style: {
+                  'text-align': 'left',
+                  'background-color': '#fcdd90',
+                  'width': '20px',
+                  'height': '20px',
+                  'position': 'relative',
+                  'margin': '3.75px 0',
+                },
               },
-            },
+              {
+                label: 'Unsuitable',
+                html: '',
+                style: {
+                  'text-align': 'left',
+                  'background-color': '#d43333',
+                  'width': '20px',
+                  'height': '20px',
+                  'position': 'relative',
+                  'margin': '3.75px 0',
+                },
+              },
             ],
           },
         ],
@@ -792,7 +1099,205 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
               html: '',
               style: {
                 'text-align': 'left',
+                'background-color': '#e05f2f',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Reverse & Reduce: Degraded. Further degradation is expected',
+              html: '',
+              style: {
+                'text-align': 'left',
                 'background-color': '#d43333',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            ],
+          },
+        ],
+        collapseSimple: true,
+        detectStretched: false,
+        collapsedOnInit: false,
+        defaultOpacity: 1.0,
+      })
+      glowglobe.current.addControl(legend.current);
+    }
+    else if (palette.type === 'LandUsePalette') {
+      legend.current = L.control.htmllegend({
+        position: legend_position,
+        legends: [
+          {
+            name: palette.label,
+            layer,
+            opacity: 1,
+            elements: [{
+              label: 'Forest virgin or protected',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#267300',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Forestry with ag. activities',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#a7e39d',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Grasslands unmanaged or protected',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#e66000',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Grasslands with ag. activities',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#ffaa01',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Shrub cover unmanaged or protected',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#573a00',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Shrub cover with ag. activities',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#a87001',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Agricultural activities',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#df72ff',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Urban areas',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#343434',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Wetland',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#12AAB5',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Sparse areas unmanaged or protected',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#e7e600',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Sparse areas with ag. activities',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#feff73',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Bare areas unmanaged or protected',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#c7960d',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Bare areas with ag. activities',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#f5d680',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Water body',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#67b7dc',
                 'width': '20px',
                 'height': '20px',
                 'position': 'relative',
@@ -811,54 +1316,108 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
     }
     else if (palette.type === 'Custom') {
       const elements = palette.legend.map(
-        (item, index) => {
+        (item) => {
           let localColor = '#FFFFF';
-          if (index === 1) {
+          if (item.value === 1) {
             localColor = '#007FFF';
-          } else if (index === 2) {
+          } else if (item.value === 2) {
             localColor = '#FFD12A';
-          } else if (index === 3) {
+          } else if (item.value === 3) {
             localColor = '#ED872D';
-          } else if (index === 4) {
+          } else if (item.value === 4) {
             localColor = '#A40000';
-          } else if (index === 5) {
+          } else if (item.value === 5) {
             localColor = '#614051';
-          } else if (index === 6) {
+          } else if (item.value === 6) {
             localColor = '#FC8EAC';
-          } else if (index === 7) {
+          } else if (item.value === 7) {
             localColor = '#DAA520';
-          } else if (index === 8) {
+          } else if (item.value === 8) {
             localColor = '#FFFFF0';
-          } else if (index === 9) {
+          } else if (item.value === 9) {
             localColor = '#00A86B';
-          } else if (index === 10) {
+          } else if (item.value === 10) {
             localColor = '#C3B091';
-          } else if (index === 11) {
+          } else if (item.value === 11) {
             localColor = '#C4C3D0';
-          } else if (index === 12) {
+          } else if (item.value === 12) {
             localColor = '#FFDB58';
-          } else if (index === 13) {
+          } else if (item.value === 13) {
             localColor = '#000080';
-          } else if (index === 14) {
+          } else if (item.value === 14) {
             localColor = '#808000';
-          } else if (index === 15) {
+          } else if (item.value === 15) {
             localColor = '#CB99C9';
-          } else if (index === 16) {
+          } else if (item.value === 16) {
             localColor = '#65000B';
-          } else if (index === 17) {
+          } else if (item.value === 17) {
             localColor = '#FF8C69';
-          } else if (index === 18) {
+          } else if (item.value === 18) {
             localColor = '#008080';
-          } else if (index === 19) {
+          } else if (item.value === 19) {
             localColor = '#5B92E5';
-          } else if (index === 20) {
+          } else if (item.value === 20) {
             localColor = '#8F00FF';
-          } else if (index === 21) {
+          } else if (item.value === 21) {
             localColor = '#F5DEB3';
-          } else if (index === 22) {
+          } else if (item.value === 22) {
             localColor = '#738678';
-          } else if (index === 23) {
+          } else if (item.value === 23) {
             localColor = '#FFFF00';
+          } else if (item.value === 24) {
+            localColor = '#00fff7';
+          } else if (item.value === 25) {
+            localColor = '#d8ff2a';
+          } else if (item.value === 26) {
+            localColor = '#ed602d';
+          } else if (item.value === 27) {
+            localColor = '#99a400';
+          } else if (item.value === 28) {
+            localColor = '#504061';
+          } else if (item.value === 29) {
+            localColor = 'rgba(252,142,172,0.75)';
+          } else if (item.value === 30) {
+            localColor = 'rgba(218,165,32,0.7)';
+          } else if (item.value === 31) {
+            localColor = 'rgba(255,255,240,0.74)';
+          } else if (item.value === 32) {
+            localColor = 'rgba(0,168,107,0.63)';
+          } else if (item.value === 33) {
+            localColor = 'rgba(195,176,145,0.73)';
+          } else if (item.value === 34) {
+            localColor = '#432f96';
+          } else if (item.value === 35) {
+            localColor = 'rgba(255,219,88,0.29)';
+          } else if (item.value === 36) {
+            localColor = '#80007a';
+          } else if (item.value === 37) {
+            localColor = 'rgba(128,128,0,0.71)';
+          } else if (item.value === 38) {
+            localColor = '#25463b';
+          } else if (item.value === 39) {
+            localColor = '#005665';
+          } else if (item.value === 40) {
+            localColor = '#9b69ff';
+          } else if (item.value === 41) {
+            localColor = 'rgba(0,128,128,0.13)';
+          } else if (item.value === 42) {
+            localColor = '#e55b99';
+          } else if (item.value === 43) {
+            localColor = 'rgba(0,255,89,0.25)';
+          } else if (item.value === 44) {
+            localColor = '#b3f5d7';
+          } else if (item.value === 45) {
+            localColor = '#867f73';
+          } else if (item.value === 46) {
+            localColor = '#ff00cc';
+          } else if (item.value === 47) {
+            localColor = '#89e55b';
+          } else if (item.value === 48) {
+            localColor = 'rgba(0,119,255,0.56)';
+          } else if (item.value === 49) {
+            localColor = 'rgba(205,179,245,0.63)';
+          } else if (item.value === 50) {
+            localColor = '#868473';
           }
           const element = {
             label: item.label,
@@ -918,8 +1477,16 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
           if (output) {
             const tmp = data;
             tmp.point = e.layer.toGeoJSON();
-            output(tmp)
-            setData(tmp)
+            if (isValidPoint(tmp.point) === true) {
+              output(tmp);
+              setData(tmp);
+            } else {
+              map.pm.getGeomanDrawLayers(false).forEach(
+                (geomanLayer) => {
+                  map.removeLayer(geomanLayer);
+                }
+              )
+            }
           }
         });
         loadLayers(layers);

@@ -13,6 +13,7 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@geoman-io/leaflet-geoman-free": "^2.11.3",
     "@n8tb1t/use-scroll-position": "^2.0.3",
+    "@turf/turf": "^6.5.0",
     "axios": "^0.21.1",
     "chroma-js": "^1.4.1",
     "classnames": "^2.2.6",

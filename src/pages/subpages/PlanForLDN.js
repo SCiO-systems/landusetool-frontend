@@ -45,13 +45,6 @@ const PlanForLDN = () => {
       command: () => setMenuIndex(1),
       template: menuItemTemplate,
     },
-    {
-      index: 2,
-      label: t('SOIL_ORGANIC_CARBON'),
-      icon: 'pi pi-fw pi-angle-right',
-      command: () => setMenuIndex(2),
-      template: menuItemTemplate,
-    },
   ];
 
   return (
@@ -62,7 +55,6 @@ const PlanForLDN = () => {
         <div className="p-py-4">
           {menuIndex === 0 && <LandUse />}
           {menuIndex === 1 && <LandManagement />}
-          {menuIndex === 2 && <span>Soil Organic Carbon</span>}
         </div>
       </div>
     </>

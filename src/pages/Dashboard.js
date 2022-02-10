@@ -19,11 +19,12 @@ const Dashboard = () => {
   const history = useHistory();
 
   useEffect(() => {
+    setUser({ currentProject: null });
     const fetchProjects = async () => {
       const { data } = await listProjects();
       setMyProjects(data.filter((p) => p.role === PROJECT_OWNER));
       setSharedProjects(data.filter((p) => p.role !== PROJECT_OWNER));
-      setUser({ availableProjects: data });
+      setUser({ availableProjects: data, currentProject: null });
     };
     fetchProjects();
   }, []); // eslint-disable-line

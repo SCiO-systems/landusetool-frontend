@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
 import { FileUpload } from 'primereact/fileupload';
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,7 @@ const CustomLuClassesTable = ({
   className,
 }) => {
   const { t } = useTranslation();
-  const [entry, setEntry] = useState({ key: '', value: '' });
+  const [entry, setEntry] = useState({ key: '', value: null });
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
   const { setError, setSuccess } = useContext(ToastContext);
 
@@ -78,17 +79,17 @@ const CustomLuClassesTable = ({
       <div className="p-col-5">
         <div className="p-field">
           <label htmlFor="value">{t('VALUE')}</label>
-          <InputText
+          <InputNumber
             id="value"
             value={entry.value}
-            onChange={(e) => setEntry((oe) => ({ key: oe.key, value: e.target.value }))}
+            onChange={(e) => setEntry((oe) => ({ key: oe.key, value: e.value }))}
           />
         </div>
       </div>
       <div className="p-col-2 p-text-right" style={{ marginTop: '0.7rem' }}>
         <Button
           icon="pi pi-plus"
-          disabled={entry.key.length === 0 || entry.value.length === 0}
+          disabled={entry.key.length === 0 || entry.value === null}
           onClick={onSubmit}
           type="button"
           label={t('ADD_ENTRY')}

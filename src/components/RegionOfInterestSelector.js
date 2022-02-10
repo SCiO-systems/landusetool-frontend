@@ -43,7 +43,7 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
 
   const glowglobeOptions = {
     mode: 'select_administration_area',
-    mask: false,
+    mask: true,
   };
 
   const resetSelections = () => {

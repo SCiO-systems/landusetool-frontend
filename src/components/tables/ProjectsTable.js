@@ -53,7 +53,7 @@ const ProjectsTable = ({
   const titleTemplate = (rowData) => (
     <>
       <div className="p-d-flex p-jc-start p-ai-center">
-        {rowData.role === PROJECT_OWNER && (
+        {(rowData.role === PROJECT_OWNER && rowData.status === DRAFT) && (
           <Button
             icon="pi pi-pencil"
             className="p-button-rounded p-button-outlined p-button-icon-only p-mr-2"

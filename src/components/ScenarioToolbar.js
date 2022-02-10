@@ -10,7 +10,15 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onReset }) => {
   const { t } = useTranslation();
   const [resetModalVisible, setResetModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const op = useRef(null);
+
+  const tryResetting = async () => {
+    setIsLoading(true);
+    await onReset();
+    setIsLoading(false);
+    setResetModalVisible(false);
+  };
 
   const scenarioStartYearBody = (rowData) => rowData.scenarioPeriod.scenarioStart;
 
@@ -60,10 +68,10 @@ const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onRese
       <Button
         label={t('YES_DELETE_ALL_SCENARIOS')}
         icon="fad fa-calendar-times"
+        disabled={isLoading}
         className="p-button-danger"
         onClick={() => {
-          onReset();
-          setResetModalVisible(false);
+          tryResetting();
         }}
         autoFocus
       />

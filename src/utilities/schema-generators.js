@@ -69,7 +69,7 @@ export const generateScenarioSchema = (luClasses, usesDefault) => {
       if (element.key !== lc.key) {
         breakDown.push({
           landType: element.key,
-          landId: camelize(element.key),
+          landId: parseInt(element.value, 10),
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -84,4 +84,20 @@ export const generateScenarioSchema = (luClasses, usesDefault) => {
   scenario.landTypes = landTypes;
 
   return scenario;
+};
+
+export const fillInitialLandCoverageValues = (scenario, hectaresPerClass) => {
+  if (scenario.landTypes && scenario.landTypes.length > 0) {
+    scenario.landTypes.forEach((lt) => {
+      let value = 0;
+      if (hectaresPerClass[lt.landId]) {
+        value = hectaresPerClass[lt.landId];
+      }
+      lt.landCoverage.value = value;
+      lt.endLandCoverage.value = value;
+      lt.breakDownLimit.value = value;
+    })
+  }
+
+  return { ...scenario };
 };

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { UserContext } from '../../store';
-import { generateScenarioSchema } from '../../utilities/schema-generators';
+import { UserContext, ToastContext } from '../../store';
+import { generateScenarioSchema, fillInitialLandCoverageValues } from '../../utilities/schema-generators';
+import { handleError } from '../../utilities/errors';
+import { createScenario, getScenarios, deleteAllScenarios, editScenario } from '../../services/scenarios';
 import ScenarioToolbar from '../../components/ScenarioToolbar';
 import TransitionImpactMatrix from '../../components/TransitionImpactMatrix';
 import ScenarioTransitionMatrix from '../../components/ScenarioTransitionMatrix';
@@ -11,20 +13,49 @@ import NewScenarioDialog from '../../components/dialogs/NewScenario';
 const LandUse = () => {
   const { t } = useTranslation();
   const { currentProject } = useContext(UserContext);
+  const { setError } = useContext(ToastContext);
   const [scenarios, setScenarios] = useState([]);
   const [canAddNewScenarios, setCanAddNewScenarios] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [scenarioModalVisible, setScenarioModalVisible] = useState(false);
   const [minYear, setMinYear] = useState(new Date().getFullYear());
 
-  const prepareScenario = (startYear, endYear) => {
-    const scenario = {
+  const fetchScenarios = async () => {
+    try {
+      const { data } = await getScenarios(currentProject.id);
+      let maxYear = new Date().getFullYear();
+      data.forEach((sc) => {
+        if (parseInt(sc.to_year, 10) > maxYear) {
+          maxYear = sc.to_year;
+        }
+      });
+      setMinYear(parseInt(maxYear, 10));
+      setScenarios(data.map((sc) => sc.content));
+    } catch (e) {
+      setError(handleError(e));
+    }
+  };
+
+  const prepareScenario = async (startYear, endYear) => {
+    const scenario = fillInitialLandCoverageValues({
       ...generateScenarioSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification),
       scenarioName: `${startYear} - ${endYear}`,
       scenarioPeriod: {
         scenarioStart: startYear,
         scenarioEnd: endYear,
       },
-    };
+    }, currentProject.preprocessing_data.land_cover_hectares_per_class);
+
+    try {
+      const { data } = await createScenario(currentProject.id, scenario);
+      scenario.remoteId = data.id;
+      // update the remoteId
+      await editScenario(currentProject.id, scenario);
+    } catch (e) {
+      setError(handleError(e));
+      return;
+    }
+
     setScenarios((oldScenarios) => {
       const newScenarios = [...oldScenarios, scenario];
       return newScenarios;
@@ -39,15 +70,38 @@ const LandUse = () => {
     }
   };
 
-  const resetScenarios = () => {
+  const resetScenarios = async () => {
+    try {
+      await deleteAllScenarios(currentProject.id);
+      setMinYear(new Date().getFullYear());
+    } catch (e) {
+      setError(handleError(e));
+      return;
+    }
     setScenarios([]);
     setCanAddNewScenarios(true);
+  };
+
+  const updateScenario = async (scenarioContent) => {
+    console.log(scenarioContent); // eslint-disable-line
+    try {
+      setIsUpdating(true);
+      await editScenario(currentProject.id, scenarioContent);
+    } catch (e) {
+      setError(handleError(e));
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   useEffect(() => {
     // eslint-disable-next-line
     console.log(scenarios);
   }, [scenarios]);
+
+  useEffect(() => {
+    fetchScenarios();
+  }, []); // eslint-disable-line
 
   return (
     <>
@@ -65,9 +119,9 @@ const LandUse = () => {
           <div className="p-mt-6" key={s.scenarioName} id={s.scenarioName}>
             <ScenarioTransitionMatrix
               inputScenario={s}
-              onSave={(e, sc) => {
-                // eslint-disable-next-line
-                console.log(e, sc);
+              isUpdating={isUpdating}
+              onSave={(sc) => {
+                updateScenario(sc);
               }}
             />
           </div>

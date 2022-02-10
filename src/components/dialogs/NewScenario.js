@@ -12,8 +12,7 @@ const NewScenarioDialog = ({ minYear, maxYear, prepareScenario, dialogOpen, setD
 
   useEffect(() => {
     setStartYear(minYear);
-    setEndYear(maxYear);
-  }, [minYear, maxYear]);
+  }, [minYear])
 
   return (
     <Dialog
@@ -65,7 +64,6 @@ const NewScenarioDialog = ({ minYear, maxYear, prepareScenario, dialogOpen, setD
                 icon="fad fa-calendar-plus"
                 onClick={() => {
                   prepareScenario(startYear, endYear);
-
                   setDialogOpen(false);
                 }}
                 autoFocus

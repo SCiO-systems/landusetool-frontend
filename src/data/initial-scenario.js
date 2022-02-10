@@ -1,4 +1,5 @@
 const initialScenario = {
+  remoteId: null,
   scenarioName: 'Untitled',
   scenarioPeriod: {
     scenarioStart: 0,
@@ -7,7 +8,7 @@ const initialScenario = {
   landTypes: [
     {
       landType: 'Tree-covered',
-      landId: 'treecovered',
+      landId: 1,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -23,7 +24,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Grassland',
-          landId: 'grassland',
+          landId: 2,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -31,7 +32,7 @@ const initialScenario = {
         },
         {
           landType: 'Cropland',
-          landId: 'cropland',
+          landId: 3,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -39,7 +40,7 @@ const initialScenario = {
         },
         {
           landType: 'Wetland',
-          landId: 'wetland',
+          landId: 4,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -47,7 +48,7 @@ const initialScenario = {
         },
         {
           landType: 'Artificial area',
-          landId: 'artificialarea',
+          landId: 5,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -55,7 +56,7 @@ const initialScenario = {
         },
         {
           landType: 'Bare land',
-          landId: 'bareland',
+          landId: 6,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -63,7 +64,7 @@ const initialScenario = {
         },
         {
           landType: 'Water body',
-          landId: 'waterbody',
+          landId: 7,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -73,7 +74,7 @@ const initialScenario = {
     },
     {
       landType: 'Grassland',
-      landId: 'grassland',
+      landId: 2,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -89,7 +90,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Tree-covered',
-          landId: 'treecovered',
+          landId: 1,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -97,7 +98,7 @@ const initialScenario = {
         },
         {
           landType: 'Cropland',
-          landId: 'cropland',
+          landId: 3,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -105,7 +106,7 @@ const initialScenario = {
         },
         {
           landType: 'Wetland',
-          landId: 'wetland',
+          landId: 4,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -113,7 +114,7 @@ const initialScenario = {
         },
         {
           landType: 'Artificial area',
-          landId: 'artificialarea',
+          landId: 5,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -121,7 +122,7 @@ const initialScenario = {
         },
         {
           landType: 'Bare land',
-          landId: 'bareland',
+          landId: 6,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -129,7 +130,7 @@ const initialScenario = {
         },
         {
           landType: 'Water body',
-          landId: 'waterbody',
+          landId: 7,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -139,7 +140,7 @@ const initialScenario = {
     },
     {
       landType: 'Cropland',
-      landId: 'cropland',
+      landId: 3,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -155,7 +156,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Tree-covered',
-          landId: 'treecovered',
+          landId: 1,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -163,7 +164,7 @@ const initialScenario = {
         },
         {
           landType: 'Grassland',
-          landId: 'grassland',
+          landId: 2,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -171,7 +172,7 @@ const initialScenario = {
         },
         {
           landType: 'Wetland',
-          landId: 'wetland',
+          landId: 4,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -179,7 +180,7 @@ const initialScenario = {
         },
         {
           landType: 'Artificial area',
-          landId: 'artificialarea',
+          landId: 5,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -187,7 +188,7 @@ const initialScenario = {
         },
         {
           landType: 'Bare land',
-          landId: 'bareland',
+          landId: 6,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -195,7 +196,7 @@ const initialScenario = {
         },
         {
           landType: 'Water body',
-          landId: 'waterbody',
+          landId: 7,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -205,7 +206,7 @@ const initialScenario = {
     },
     {
       landType: 'Wetland',
-      landId: 'wetland',
+      landId: 4,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -221,7 +222,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Tree-covered',
-          landId: 'treecovered',
+          landId: 1,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -229,7 +230,7 @@ const initialScenario = {
         },
         {
           landType: 'Grassland',
-          landId: 'grassland',
+          landId: 2,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -237,7 +238,7 @@ const initialScenario = {
         },
         {
           landType: 'Cropland',
-          landId: 'cropland',
+          landId: 3,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -245,7 +246,7 @@ const initialScenario = {
         },
         {
           landType: 'Artificial area',
-          landId: 'artificialarea',
+          landId: 5,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -253,7 +254,7 @@ const initialScenario = {
         },
         {
           landType: 'Bare land',
-          landId: 'bareland',
+          landId: 6,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -261,7 +262,7 @@ const initialScenario = {
         },
         {
           landType: 'Water body',
-          landId: 'waterbody',
+          landId: 7,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -271,7 +272,7 @@ const initialScenario = {
     },
     {
       landType: 'Artificial area',
-      landId: 'artificialarea',
+      landId: 5,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -287,7 +288,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Tree-covered',
-          landId: 'treecovered',
+          landId: 1,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -295,7 +296,7 @@ const initialScenario = {
         },
         {
           landType: 'Grassland',
-          landId: 'grassland',
+          landId: 2,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -303,7 +304,7 @@ const initialScenario = {
         },
         {
           landType: 'Cropland',
-          landId: 'cropland',
+          landId: 3,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -311,7 +312,7 @@ const initialScenario = {
         },
         {
           landType: 'Wetland',
-          landId: 'wetland',
+          landId: 4,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -319,7 +320,7 @@ const initialScenario = {
         },
         {
           landType: 'Bare land',
-          landId: 'bareland',
+          landId: 6,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -327,7 +328,7 @@ const initialScenario = {
         },
         {
           landType: 'Water body',
-          landId: 'waterbody',
+          landId: 7,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -337,7 +338,7 @@ const initialScenario = {
     },
     {
       landType: 'Bare land',
-      landId: 'bareland',
+      landId: 6,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -353,7 +354,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Tree-covered',
-          landId: 'treecovered',
+          landId: 1,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -361,7 +362,7 @@ const initialScenario = {
         },
         {
           landType: 'Grassland',
-          landId: 'grassland',
+          landId: 2,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -369,7 +370,7 @@ const initialScenario = {
         },
         {
           landType: 'Cropland',
-          landId: 'cropland',
+          landId: 3,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -377,7 +378,7 @@ const initialScenario = {
         },
         {
           landType: 'Wetland',
-          landId: 'wetland',
+          landId: 4,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -385,7 +386,7 @@ const initialScenario = {
         },
         {
           landType: 'Artificial area',
-          landId: 'artificialarea',
+          landId: 5,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -393,7 +394,7 @@ const initialScenario = {
         },
         {
           landType: 'Water body',
-          landId: 'waterbody',
+          landId: 7,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -403,7 +404,7 @@ const initialScenario = {
     },
     {
       landType: 'Water body',
-      landId: 'waterbody',
+      landId: 7,
       landCoverage: {
         value: 0,
         unit: 'ha',
@@ -419,7 +420,7 @@ const initialScenario = {
       breakDown: [
         {
           landType: 'Tree-covered',
-          landId: 'treecovered',
+          landId: 1,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -427,7 +428,7 @@ const initialScenario = {
         },
         {
           landType: 'Grassland',
-          landId: 'grassland',
+          landId: 2,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -435,7 +436,7 @@ const initialScenario = {
         },
         {
           landType: 'Cropland',
-          landId: 'cropland',
+          landId: 3,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -443,7 +444,7 @@ const initialScenario = {
         },
         {
           landType: 'Wetland',
-          landId: 'wetland',
+          landId: 4,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -451,7 +452,7 @@ const initialScenario = {
         },
         {
           landType: 'Artificial area',
-          landId: 'artificialarea',
+          landId: 5,
           landCoverage: {
             value: 0,
             unit: 'ha',
@@ -459,7 +460,7 @@ const initialScenario = {
         },
         {
           landType: 'Bare land',
-          landId: 'bareland',
+          landId: 6,
           landCoverage: {
             value: 0,
             unit: 'ha',

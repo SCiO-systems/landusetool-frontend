@@ -5,8 +5,9 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
 import { useTranslation } from 'react-i18next';
+import initialScenario from '../data/initial-scenario';
 
-const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
+const ScenarioTransitionMatrix = ({ inputScenario, onSave, isUpdating }) => {
   const { t } = useTranslation();
   const [expandedRows, setExpandedRows] = useState([]);
   const [scenarioStart, setScenarioStart] = useState(null);
@@ -141,7 +142,9 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
   );
 
   const saveStatus = (e) => {
-    onSave(e, scenario)
+    onSave(
+      { ...inputScenario, landTypes: scenario }
+    );
     setOnChecked(e);
     setCanSave(false);
   }
@@ -187,6 +190,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave }) => {
       <div className="scenario-transition-matrix">
         {scenario && (
           <DataTable
+            loading={isUpdating}
             value={scenario}
             expandedRows={expandedRows}
             className="stm-parent-dt"

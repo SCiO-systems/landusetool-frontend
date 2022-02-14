@@ -83,3 +83,5 @@ export const getProjectIndicators = async (id) => apiClient.get(`/projects/${id}
 export const saveProjectIndicators = async (id, indicators) =>
   apiClient.put(`/projects/${id}/indicators`, { indicators });
 
+export const findIntersectingArea = async (id, polygonFileId) =>
+  apiClient.post(`/projects/${id}/polygons/intersecting_area`, { polygon_file_id: polygonFileId });

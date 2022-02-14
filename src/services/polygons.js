@@ -5,3 +5,4 @@ export const getCountryAdminLevelArea = async (country, adminLevel = 1) =>
 
 export const getByCoordinates = async (point, adminLevel = 1) =>
   apiClient.post(`/polygons/coordinates`, { point, administrative_level: adminLevel });
+

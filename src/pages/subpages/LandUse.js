@@ -121,6 +121,7 @@ const LandUse = () => {
           <div className="p-mt-6" key={s.scenarioName} id={s.scenarioName}>
             <ScenarioTransitionMatrix
               inputScenario={s}
+              projectId={currentProject.id}
               isUpdating={isUpdating}
               onSave={(sc) => {
                 updateScenario(sc);

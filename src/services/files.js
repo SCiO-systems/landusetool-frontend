@@ -12,4 +12,4 @@ export const getProjectFile = async (projectId, fileId) =>
   apiClient.get(`/projects/${projectId}/files/${fileId}`);
 
 export const deleteFile = async (projectId, fileId) =>
-  apiClient.delete(`/projects/${projectId}/files/${fileId}`);
+  apiClient.remove(`/projects/${projectId}/files/${fileId}`);

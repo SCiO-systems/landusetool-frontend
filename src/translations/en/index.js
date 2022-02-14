@@ -136,6 +136,7 @@ const t = {
     UPLOAD_LAND_DEGRADATION_MAP: 'Upload Land Degradation Map',
     CUSTOM_LU_CLASSES_MESSAGE: 'You should upload a “Land Use Map” and at least one “Suitability Map”',
     UPLOAD_POLYGON: 'Upload polygon',
+    PROCESSING_POLYGON: 'Processing polygon',
     CONTINUE_SETUP: 'Continue Setup',
     PREPROCESSING: 'Preprocessing...',
     PROJECT_UNDER_PREPARATION: 'Project is still under preparation.',

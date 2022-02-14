@@ -83,7 +83,6 @@ const LandUse = () => {
   };
 
   const updateScenario = async (scenarioContent) => {
-    console.log(scenarioContent); // eslint-disable-line
     try {
       setIsUpdating(true);
       await editScenario(currentProject.id, scenarioContent);

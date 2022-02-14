@@ -32,7 +32,6 @@ export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
     matrixSchema.push(matrixEntry);
   });
 
-  console.log(matrixSchema); // eslint-disable-line
   return matrixSchema;
 };
 

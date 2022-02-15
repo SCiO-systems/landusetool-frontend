@@ -47,7 +47,7 @@ const ProjectDatasets = () => {
           step: PROJECT_STEPS.DATASETS_LAND_DEGRADATION,
           uses_default_lu_classification: data.defaultLuClasses,
           land_use_map_file_id: data.customLandUseMap,
-          lu_classes: luClasses,
+          lu_classes: (!data.defaultLuClasses) ? data.luClasses : [],
         });
         // Move to next tab if this step is completed
         setTopTabIndex(1);
@@ -161,6 +161,7 @@ const ProjectDatasets = () => {
                   name="defaultLuClasses"
                   onChange={() => {
                     setUseDefaultLuClasses(true);
+                    setLuClasses([]);
                     setValue('defaultLuClasses', true);
                   }}
                   checked={useDefaultLuClasses}

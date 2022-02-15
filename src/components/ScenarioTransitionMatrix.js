@@ -94,20 +94,11 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
       setCanSave(true);
     }
 
+    setOnChecked(false);
     setScenario([...scenario]);
   }
 
   const coverageEditor = (props, landId) => {
-    // setOnChecked
-    if (onChecked === true) {
-      return <InputNumber
-        value={props.rowData.landCoverage.value}
-        disabled={isUploading || processionPolygonForId === (`${landId}${props.rowData.landId}`)}
-        showButtons
-        suffix="ha"
-      />
-    }
-
     const row = scenario.find((item) => item.landId === landId);
 
     const { value } = props.rowData.landCoverage;
@@ -252,6 +243,12 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
         <h4 className="p-mb-0 p-ml-3">{scenarioName}</h4>
       </div>
       <div>
+        <Button
+          icon={`pi ${isCollapsed ? 'pi-angle-right' : 'pi-angle-down'}`}
+          className="p-togglebutton p-mr-2"
+          label={isCollapsed ? t('EXPAND') : t('COLLAPSE')}
+          onClick={() => setIsCollapsed((v) => !v)}
+        />
         <ToggleButton
           onLabel={t('SAVED')}
           offLabel={t('SAVE_CHANGES')}
@@ -262,12 +259,6 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
           tabIndex="false"
           disabled={!canSave}
           onChange={(e) => saveStatus(e.value)} />
-        <Button
-          icon={`pi ${isCollapsed ? 'pi-angle-right' : 'pi-angle-down'}`}
-          className="p-togglebutton p-ml-2"
-          label={isCollapsed ? t('EXPAND') : t('COLLAPSE')}
-          onClick={() => setIsCollapsed((v) => !v)}
-        />
       </div>
     </div>
   );

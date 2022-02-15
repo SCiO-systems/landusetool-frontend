@@ -5,6 +5,7 @@ import { UserContext, ToastContext } from '../../store';
 import { generateScenarioSchema, generateLUImpactMatrixSchema, fillInitialLandCoverageValues } from '../../utilities/schema-generators';
 import { handleError } from '../../utilities/errors';
 import { createScenario, getScenarios, deleteAllScenarios, editScenario } from '../../services/scenarios';
+import { editProject } from '../../services/projects';
 import ScenarioToolbar from '../../components/ScenarioToolbar';
 import TransitionImpactMatrix from '../../components/TransitionImpactMatrix';
 import ScenarioTransitionMatrix from '../../components/ScenarioTransitionMatrix';
@@ -12,8 +13,8 @@ import NewScenarioDialog from '../../components/dialogs/NewScenario';
 
 const LandUse = () => {
   const { t } = useTranslation();
-  const { currentProject } = useContext(UserContext);
-  const { setError } = useContext(ToastContext);
+  const { currentProject, setUser } = useContext(UserContext);
+  const { setError, setSuccess } = useContext(ToastContext);
   const [scenarios, setScenarios] = useState([]);
   const [canAddNewScenarios, setCanAddNewScenarios] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -31,6 +32,19 @@ const LandUse = () => {
       });
       setMinYear(parseInt(maxYear, 10));
       setScenarios(data.map((sc) => sc.content));
+    } catch (e) {
+      setError(handleError(e));
+    }
+  };
+
+  const editTransitionImpactMatrix = async (impactMatrixData) => {
+    try {
+      const { data: updatedProject } = await editProject(currentProject.id, {
+        has_edited_transition_matrix_data: true,
+        transition_impact_matrix_data: impactMatrixData,
+      });
+      setUser({ currentProject: updatedProject });
+      setSuccess('Done', 'Trasition Impact Matrix for this project has been updated.');
     } catch (e) {
       setError(handleError(e));
     }
@@ -97,7 +111,14 @@ const LandUse = () => {
     fetchScenarios();
   }, []); // eslint-disable-line
 
-  const initialDataForImpactMatrix = generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification);
+  let initialDataForImpactMatrix = [];
+  if (currentProject.has_edited_transition_matrix_data &&
+    currentProject.transition_impact_matrix_data !== null) {
+    initialDataForImpactMatrix = currentProject.transition_impact_matrix_data;
+  } else {
+    initialDataForImpactMatrix = generateLUImpactMatrixSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification);
+  }
+
   const usesDefaultData = currentProject.uses_default_lu_classification === 1;
 
   return (
@@ -113,11 +134,12 @@ const LandUse = () => {
           title={t('LU_TRANSITION_IMPACT_MATRIX')}
           initialData={initialDataForImpactMatrix}
           hasDefaultData={usesDefaultData}
+          onSave={(impactMatrixData) => editTransitionImpactMatrix(impactMatrixData)}
         />
       </div>
       <div className="p-mt-4">
-        {(scenarios.length > 0) && scenarios.map((s)=> (
-          <div className="p-mt-6" key={s.scenarioName} id={s.scenarioName}>
+        {(scenarios.length > 0) && scenarios.map((s, index)=> (
+          <div className={index === 0 ? `p-mt-6` : `` } key={s.scenarioName} id={s.scenarioName}>
             <ScenarioTransitionMatrix
               inputScenario={s}
               projectId={currentProject.id}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
+import { ToggleButton } from 'primereact/togglebutton';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useTranslation } from 'react-i18next';
@@ -47,11 +48,12 @@ const StatusEditor = ({ rowData, field, onStatusEditorValueChange }) => {
   );
 };
 
-const TransitionImpactMatrix = ({ initialData, title, hasDefaultData }) => {
+const TransitionImpactMatrix = ({ initialData, title, hasDefaultData, onSave }) => {
   const { t } = useTranslation();
   const [landCoverItem, setLandCoverItem] = useState(JSON.parse(JSON.stringify(initialData)));
   const [selectedlandCoverItem, setSelectedlandCoverItem] = useState(null);
   const [trendsEarthStatus, setTrendsEarthStatus] = useState(true);
+  const [onChecked, setOnChecked] = useState(false);
 
   const loadTrendsEarthDefault = () => {
     setLandCoverItem(JSON.parse(JSON.stringify(initialData)));
@@ -111,22 +113,38 @@ const TransitionImpactMatrix = ({ initialData, title, hasDefaultData }) => {
     );
   };
 
+  const handleSave = (checked) => {
+    setOnChecked(checked);
+    onSave(landCoverItem);
+  };
+
   const landCoverTableHeader = (
     <div className="table-header">
       <div className="p-d-flex p-justify-between p-ai-center p-py-2 p-px-2">
         <div>
           <h4 className="p-mb-0">{title}</h4>
         </div>
-        {hasDefaultData && (
-          <div>
+        <div>
+          {hasDefaultData && (
             <Button
               icon="pi pi-refresh"
               label={t('LOAD_TRENDS_EARTH_DEFAULTS')}
               onClick={loadTrendsEarthDefault}
               disabled={trendsEarthStatus}
             />
-          </div>
-        )}
+          )}
+          <ToggleButton
+            onLabel={t('SAVED')}
+            offLabel={t('SAVE_CHANGES')}
+            onIcon="fad fa-check"
+            offIcon="fad fa-save"
+            className="g-save p-ml-2"
+            checked={onChecked}
+            tabIndex="false"
+            disabled={trendsEarthStatus}
+            onChange={(e) => handleSave(e)}
+          />
+        </div>
       </div>
     </div>
   );

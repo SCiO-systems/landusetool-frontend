@@ -25,7 +25,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
   const [onChecked, setOnChecked] = useState(false)
   const [canSave, setCanSave] = useState(true)
   const { setError, setSuccess } = useContext(ToastContext);
-  const fileUploadRefs = useRef([]);
+  const fileUploadRefs = useRef({});
 
   useEffect(() => {
     if (inputScenario !== undefined) {
@@ -102,7 +102,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
     if (onChecked === true) {
       return <InputNumber
         value={props.rowData.landCoverage.value}
-        disabled={isUploading || processionPolygonForId === (landId + props.rowData.landId)}
+        disabled={isUploading || processionPolygonForId === (`${landId}${props.rowData.landId}`)}
         showButtons
         suffix="ha"
       />
@@ -115,7 +115,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
     return <InputNumber
       value={props.rowData.landCoverage.value}
       onValueChange={(e) => onEditorValueChange(props, e.value, landId)}
-      disabled={isUploading || processionPolygonForId === (landId + props.rowData.landId)}
+      disabled={isUploading || processionPolygonForId === (`${landId}${props.rowData.landId}`)}
       min={0} max={row.breakDownLimit.value + value} showButtons
       suffix="ha"
     />
@@ -132,7 +132,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
       const { data: res } = await uploadProjectFile(projectId, formData);
       fileId = res.id;
       setIsUploading(false);
-      const uniqueButton = landTypeId + props.rowData.landId;
+      const uniqueButton = `${landTypeId}${props.rowData.landId}`;
       fileUploadRefs.current[uniqueButton]?.clear();
       setProcessionPolygonForId(uniqueButton);
       const { hectares } = await findIntersectingArea(projectId, fileId);
@@ -185,17 +185,17 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
         />
       )}
       <FileUpload
-        ref={(ref) => { fileUploadRefs.current[landTypeId + props.rowData.landId] = ref; }}
-        disabled={isUploading || processionPolygonForId === (landTypeId + props.rowData.landId)}
+        ref={(ref) => { fileUploadRefs.current[`${landTypeId}${props.rowData.landId}`] = ref; }}
+        disabled={isUploading || processionPolygonForId === (`${landTypeId}${props.rowData.landId}`)}
         accept=".geojson,.shp"
         chooseLabel=""
         chooseOptions={{
-          label: (processionPolygonForId === (landTypeId + props.rowData.landId))
+          label: (processionPolygonForId === (`${landTypeId}${props.rowData.landId}`))
             ? t('PROCESSING_POLYGON')
             : '',
-          icon: (processionPolygonForId === (landTypeId + props.rowData.landId)) ? 'pi pi-spin pi-spinner' : 'pi pi-upload',
-          iconOnly: (processionPolygonForId !== (landTypeId + props.rowData.landId)),
-          className: (processionPolygonForId !== (landTypeId + props.rowData.landId))
+          icon: (processionPolygonForId === (`${landTypeId}${props.rowData.landId}`)) ? 'pi pi-spin pi-spinner' : 'pi pi-upload',
+          iconOnly: (processionPolygonForId !== (`${landTypeId}${props.rowData.landId}`)),
+          className: (processionPolygonForId !== (`${landTypeId}${props.rowData.landId}`))
             ? `p-button-icon-only`
             : ``,
         }}

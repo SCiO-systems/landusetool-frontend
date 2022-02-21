@@ -1,11 +1,6 @@
 import LandCoverDefaults from '../data/land-cover-defaults';
 import InitialScenario from '../data/initial-scenario';
 
-const camelize = (str) => str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
-  if (/\s+/.test(match)) return ''; // or if (/\s+/.test(match)) for white spaces
-  return index === 0 ? match.toLowerCase() : match.toUpperCase();
-});
-
 export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
   if (usesDefault) return [...LandCoverDefaults];
   if (!luClasses || luClasses.length === 0) return [...LandCoverDefaults];
@@ -13,7 +8,7 @@ export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
 
   luClasses.forEach((lc, index, luc) => {
     const matrixEntry = {
-      id: camelize(lc.key),
+      id: parseInt(lc.value, 10),
       name: lc.key,
       non_editable: index + 1,
     };
@@ -23,7 +18,7 @@ export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
       row.push({
         landType: element.key,
         value: element.key === lc.key ? '' : '-',
-        id: camelize(element.key),
+        id: parseInt(element.value, 10),
       });
     });
 
@@ -44,13 +39,14 @@ export const generateScenarioSchema = (luClasses, usesDefault) => {
       scenarioStart: 0,
       scenarioEnd: 0,
     },
+    ld_impact: 0,
   };
 
   const landTypes = [];
   luClasses.forEach((lc, _index, luc) => {
     const lt = {
       landType: lc.key,
-      landId: camelize(lc.key),
+      landId: parseInt(lc.value, 10),
       landCoverage: {
         value: 0,
         unit: 'ha',

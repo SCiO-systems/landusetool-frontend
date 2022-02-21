@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
+import { Tag } from 'primereact/tag';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
@@ -20,16 +21,26 @@ const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onRese
     setResetModalVisible(false);
   };
 
-  const scenarioStartYearBody = (rowData) => rowData.scenarioPeriod.scenarioStart;
+  const scenarioLdImpact = (rowData) => {
+    if (!rowData.ld_impact) {
+      return <Tag value={0} severity='warn' />;
+    }
 
-  const scenarioEndYearBody = (rowData) => rowData.scenarioPeriod.scenarioEnd;
+    return (
+      <Tag
+        value={rowData.ld_impact}
+        severity={rowData.ld_impact > 0 ? 'success' : 'error'}
+        icon={rowData.ld_impact > 0 ? 'pi pi-plus' : 'pi pi-minus'}
+      />
+    );
+  }
 
   const leftContents = (
     <>
       <Button
         type="button"
         icon="fad fa-eye"
-        label={t('OVERVIEW')}
+        label={t('LD_IMPACT_OVERVIEW')}
         onClick={(e) => op.current.toggle(e)}
         disabled={scenarios.length === 0}
       />
@@ -47,8 +58,7 @@ const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onRese
           rows={5}
         >
           <Column field="scenarioName" header={t('NAME')} sortable />
-          <Column field="start" header={t('START_YEAR')} body={scenarioStartYearBody} />
-          <Column field="end" header={t('END_YEAR')} body={scenarioEndYearBody} />
+          <Column header={t('SCENARIO_LD_IMPACT')} body={scenarioLdImpact} />
 
         </DataTable>
       </OverlayPanel>

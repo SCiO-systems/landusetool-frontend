@@ -5,6 +5,7 @@ const initialScenario = {
     scenarioStart: 0,
     scenarioEnd: 0,
   },
+  ld_impact: 0,
   landTypes: [
     {
       landType: 'Tree-covered',

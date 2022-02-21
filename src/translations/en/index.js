@@ -73,6 +73,7 @@ const t = {
     LAND_MANAGEMENT: 'Land Management',
     SOIL_ORGANIC_CARBON: 'Soil Organic Carbon',
     OVERVIEW: 'Overview',
+    LD_IMPACT_OVERVIEW: 'LD Impact Overview',
     START_YEAR: 'Start Year',
     END_YEAR: 'End Year',
     NEW_SCENARIO: 'New Scenario',
@@ -141,6 +142,7 @@ const t = {
     PREPROCESSING: 'Preprocessing...',
     PROJECT_UNDER_PREPARATION: 'Project is still under preparation.',
     OR_UPLOAD_CUSTOM_POLYGON: 'Or upload custom polygon',
+    SCENARIO_LD_IMPACT: 'LD Impact',
   },
 };
 

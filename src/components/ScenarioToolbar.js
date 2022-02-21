@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
@@ -8,11 +8,24 @@ import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
 import { OverlayPanel } from 'primereact/overlaypanel';
 
-const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onReset }) => {
+import LandDegradationGauge from './charts/LandDegradationGauge';
+
+const format = (num, decimals) => num.toFixed(decimals).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+
+const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onReset, totalRoiArea, initialRoiLd }) => {
   const { t } = useTranslation();
   const [resetModalVisible, setResetModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [gaugeValues, setGaugeValues] = useState([totalRoiArea, initialRoiLd]);
   const op = useRef(null);
+
+  useEffect(() => {
+    const newLd = scenarios.reduce(
+      (previousValue, sc) => previousValue + sc.ld_impact,
+      0
+    );
+    setGaugeValues((oldGaugeValues) => ([oldGaugeValues[0], initialRoiLd + newLd]))
+  }, [scenarios, initialRoiLd]);
 
   const tryResetting = async () => {
     setIsLoading(true);
@@ -28,7 +41,7 @@ const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onRese
 
     return (
       <Tag
-        value={rowData.ld_impact}
+        value={`${format(rowData.ld_impact, 2)} ha`}
         severity={rowData.ld_impact > 0 ? 'success' : 'error'}
         icon={rowData.ld_impact > 0 ? 'pi pi-plus' : 'pi pi-minus'}
       />
@@ -48,19 +61,22 @@ const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onRese
         ref={op}
         showCloseIcon
         id="overlay_panel"
-        style={{ width: '450px' }}
+        style={{ width: '700px' }}
         appendTo={document.body}
       >
-        <DataTable
-          value={scenarios}
-          selectionMode="single"
-          paginator
-          rows={5}
-        >
-          <Column field="scenarioName" header={t('NAME')} sortable />
-          <Column header={t('SCENARIO_LD_IMPACT')} body={scenarioLdImpact} />
+        <>
+          <LandDegradationGauge gaugeValues={gaugeValues} />
+          <DataTable
+            value={scenarios}
+            selectionMode="single"
+            paginator
+            rows={5}
+          >
+            <Column field="scenarioName" header={t('NAME')} sortable />
+            <Column header={t('SCENARIO_LD_IMPACT')} body={scenarioLdImpact} />
 
-        </DataTable>
+          </DataTable>
+        </>
       </OverlayPanel>
 
       <Button

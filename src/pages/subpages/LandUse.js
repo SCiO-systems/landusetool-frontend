@@ -140,6 +140,8 @@ const LandUse = () => {
         canAddNew={canAddNewScenarios}
         setScenarioModalVisible={setScenarioModalVisible}
         onReset={resetScenarios}
+        totalRoiArea={currentProject.preprocessing_data.total_roi_area}
+        initialRoiLd={currentProject.preprocessing_data.initial_roi_ld}
       />
       <div className="p-mt-4">
         <TransitionImpactMatrix

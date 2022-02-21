@@ -36,7 +36,10 @@ const LandUseSuitability = () => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      const { data} = await editProject(currentProject.id, { step: getNextStep(currentProject) });
+      const { data} = await editProject(currentProject.id, {
+        step: getNextStep(currentProject),
+        land_use_suitability_method: true,
+      });
       setUser({ currentProject: data });
       setTimeout(() => history.push('/land-use-planning'), 500);
     } catch (e) {

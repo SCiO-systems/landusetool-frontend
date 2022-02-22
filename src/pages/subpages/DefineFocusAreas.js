@@ -71,7 +71,7 @@ const DefineFocusAreas = ({ onForward }) => {
   }
 
   const onContinue = async () => {
-    if (focusAreas.length !== 0) {
+    if (focusAreas.length === 0) {
       setError(t('NO_FOCUS_AREAS_WARNING'));
       return;
     }

@@ -1,6 +1,8 @@
 import { Menubar } from 'primereact/menubar';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { UserContext } from '../../store';
 import LandManagement from './LandManagement';
 import LandUse from './LandUse';
 
@@ -17,6 +19,7 @@ const getMenuItemClasses = (index, currentIndex) => {
 const PlanForLDN = () => {
   const { t } = useTranslation();
   const [menuIndex, setMenuIndex] = useState(0);
+  const { currentProject } = useContext(UserContext);
 
   const menuItemTemplate = (item, options) => (
     <button
@@ -38,21 +41,26 @@ const PlanForLDN = () => {
       command: () => setMenuIndex(0),
       template: menuItemTemplate,
     },
-    {
+  ];
+
+  if (currentProject.land_management_sustainability_method) {
+    menuItems.push({
       index: 1,
       label: t('LAND_MANAGEMENT'),
       icon: 'pi pi-fw pi-angle-right',
       command: () => setMenuIndex(1),
       template: menuItemTemplate,
-    },
-  ];
+    });
+  }
 
   return (
     <>
       {/* to eliminate default tab padding */}
       <div style={{ marginLeft: '-1rem', marginRight: '-1rem' }}>
-        <Menubar model={menuItems} />
-        <div className="p-py-4">
+        {menuItems.length > 1 && (
+          <Menubar model={menuItems} className="p-mb-4" />
+        )}
+        <div className="p-pb-4">
           {menuIndex === 0 && <LandUse />}
           {menuIndex === 1 && <LandManagement />}
         </div>

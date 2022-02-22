@@ -83,5 +83,13 @@ export const getProjectIndicators = async (id) => apiClient.get(`/projects/${id}
 export const saveProjectIndicators = async (id, indicators) =>
   apiClient.put(`/projects/${id}/indicators`, { indicators });
 
+export const getProjectFocusAreas = async (id) => apiClient.get(`/projects/${id}/focus_areas`);
+
+export const addProjectFocusArea = async (id, name, file_id) =>
+  apiClient.post(`/projects/${id}/focus_areas`, { name, file_id });
+
+export const deleteProjectFocusArea = async (id, focus_area_id) =>
+  apiClient.remove(`/projects/${id}/focus_areas/${focus_area_id}`);
+
 export const findIntersectingArea = async (id, polygonFileId) =>
   apiClient.post(`/projects/${id}/polygons/intersecting_area`, { polygon_file_id: polygonFileId });

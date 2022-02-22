@@ -76,6 +76,7 @@ const t = {
     LD_IMPACT_OVERVIEW: 'LD Impact Overview',
     START_YEAR: 'Start Year',
     END_YEAR: 'End Year',
+    SCENARIO: 'Scenario',
     NEW_SCENARIO: 'New Scenario',
     DELETE_PROJECT: 'Delete Project',
     LOAD_PROJECT: 'Load Project',
@@ -91,9 +92,12 @@ const t = {
     BARE_LAND: 'Bare land',
     WATER_BODY: 'Water body',
     IMPROVEMENT: 'Improvement',
+    IMPROVED: 'Improved',
     STABLE: 'Stable',
     DEGRADATION: 'Degradation',
+    DEGRADED: 'Degraded',
     LAND_DEGRADATION: 'Land Degradation',
+    LAND_DEGRADATION_BALANCE: 'Land Degradation Balance',
     SELECT_STATUS: 'Select Status',
     LU_TRANSITION_IMPACT_MATRIX: 'LU Transition Impact Matrix',
     APPLICABLE_WOCAT_SLM_TECHNOLOGIES: 'Applicable WOCAT SLM Technologies',
@@ -143,6 +147,7 @@ const t = {
     PROJECT_UNDER_PREPARATION: 'Project is still under preparation.',
     OR_UPLOAD_CUSTOM_POLYGON: 'Or upload custom polygon',
     SCENARIO_LD_IMPACT: 'LD Impact',
+    NOT_ENOUGH_SCENARIOS: 'You don\'t have enough scenarios to display the Neutrality Matrix.',
   },
 };
 

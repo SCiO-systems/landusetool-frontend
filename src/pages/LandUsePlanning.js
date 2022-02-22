@@ -7,6 +7,7 @@ import { Card } from 'primereact/card';
 import { UserContext } from '../store';
 import Map from '../components/glowglobe/Map';
 import PlanForLDN from './subpages/PlanForLDN';
+import NeutralityMatrix from './subpages/NeutralityMatrix';
 
 const NewLandDegradationMap = () => {
   const { t } = useTranslation();
@@ -100,7 +101,7 @@ const LandUsePlanning = () => {
               </span>
             )}
           >
-            Neutrality Matrix
+            <NeutralityMatrix />
           </TabPanel>
         </TabView>
       </Card>

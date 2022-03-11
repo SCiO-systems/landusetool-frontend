@@ -97,8 +97,8 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       return (
         <div className="p-d-flex p-ai-center">
           {hasFinishedEvaluations
-            ? <i className="p-d-block pi pi-check p-mr-2" />
-            : <i className="p-d-block pi pi-times p-mr-2" />
+            ? <i className="p-d-block pi pi-check-circle p-mr-2" />
+            : <i className="p-d-block pi pi-envelope p-mr-2" />
           }
           <span className="p-block">{option.name}</span>
         </div>
@@ -123,8 +123,8 @@ const FocusAreaLMAssesment = ({ onBack }) => {
     return (
       <div className="p-d-flex p-ai-center">
         {hasFinishedEvaluations
-          ? <i className="p-d-block pi pi-check p-mr-2" />
-          : <i className="p-d-block pi pi-times p-mr-2" />
+          ? <i className="p-d-block pi pi-check-circle p-mr-2" />
+          : <i className="p-d-block pi pi-envelope p-mr-2" />
         }
         <span className="p-block">{option.name}</span>
       </div>
@@ -136,8 +136,8 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       return (
         <div className="p-d-flex p-ai-center">
           {option.hasEvaluation
-            ? <i className="p-d-block pi pi-check p-mr-2" />
-            : <i className="p-d-block pi pi-times p-mr-2" />
+            ? <i className="p-d-block pi pi-check-circle p-mr-2" />
+            : <i className="p-d-block pi pi-envelope p-mr-2" />
           }
           <span className="p-block">{option.value}</span>
         </div>
@@ -154,8 +154,8 @@ const FocusAreaLMAssesment = ({ onBack }) => {
   const luClassOptionTemplate = (option) => (
     <div className="p-d-flex p-ai-center">
       {option.hasEvaluation
-        ? <i className="p-d-block pi pi-check p-mr-2" />
-        : <i className="p-d-block pi pi-times p-mr-2" />
+        ? <i className="p-d-block pi pi-check-circle p-mr-2" />
+        : <i className="p-d-block pi pi-envelope p-mr-2" />
       }
       <span className="p-block">{option.value}</span>
     </div>

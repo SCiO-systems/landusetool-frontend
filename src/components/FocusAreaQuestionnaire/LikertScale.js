@@ -26,7 +26,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         }
       }
     }
-  }, []); // eslint-disable-line
+  }, [initialScale]); // eslint-disable-line
 
   const selectValue = (e) => {
     setValue(e.value);

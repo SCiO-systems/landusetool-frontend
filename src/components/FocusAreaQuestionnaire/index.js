@@ -91,8 +91,6 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, canProceedToPlanning = fal
   const { setError } = useContext(ToastContext);
   const history = useHistory();
 
-  console.log(evaluation); // eslint-disable-line
-
   const handleChangeEvaluation = ({ id, numericValue }) => {
     setEvaluationValues((oev) => {
       const copy = { ...oev };
@@ -135,7 +133,6 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, canProceedToPlanning = fal
   }
 
   useEffect(() => {
-    console.log(evaluationValues); // eslint-disable-line
     setSpiderData(buildInitialSpiderGraphData(questions, evaluationValues));
     setCurvedData(buildInitialCurvedGraphData(evaluationValues));
   }, [evaluationValues]);

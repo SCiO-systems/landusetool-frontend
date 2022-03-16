@@ -1,29 +1,29 @@
-const questions = [
+const questionsData = [
   {
     label: 'Ecological impacts',
     id: 'ecological_impacts',
     questions: [
       {
         label: 'Soil',
-        id: 'ecological_impacts_soil',
+        id: 'soil_value',
         sublabel: [],
         explanationList: [],
       },
       {
         label: 'Biodiversity',
-        id: 'ecological_impacts_water_biodiversity',
+        id: 'biodiversity_value',
         sublabel: [],
         explanationList: [],
       },
       {
         label: 'Water',
-        id: 'ecological_impacts_water_availability_and_quality',
+        id: 'water_value',
         sublabel: [],
         explanationList: [],
       },
       {
         label: 'Climate Change resilience',
-        id: 'ecological_impacts_water_cycle',
+        id: 'climate_change_resilience_value',
         sublabel: [],
         explanationList: [],
       },
@@ -36,7 +36,7 @@ const questions = [
     questions: [
       {
         label: 'Production',
-        id: 'socio_economic_impacts_production',
+        id: 'production_value',
         sublabel: [],
         explanationList: [
           'crop',
@@ -49,7 +49,7 @@ const questions = [
       },
       {
         label: 'Economic viability',
-        id: 'socio_economic_impacts_income',
+        id: 'economic_viability_value',
         sublabel: [],
         explanationList: [],
       },
@@ -61,13 +61,13 @@ const questions = [
     questions: [
       {
         label: 'Food security',
-        id: 'socio_cultural_impacts_food_secutiry',
+        id: 'food_security_value',
         sublabel: [],
         explanationList: [],
       },
       {
         label: 'Equality of opportunity',
-        id: 'socio_cultural_impacts_equality_of_opportunity',
+        id: 'equality_of_opportunity_value',
         sublabel: [],
         explanationList: [],
       },
@@ -75,5 +75,4 @@ const questions = [
   },
 ];
 
-export default questions;
-
+export default questionsData;

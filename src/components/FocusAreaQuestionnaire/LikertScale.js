@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import styles from './LikertScale.css'
 
-const LikertScale = ({ initialScale, onChange }) => {
+const LikertScale = ({ id, initialScale, onChange }) => {
   const [value, setValue] = useState(null);
 
   const likertRange = {
@@ -52,6 +52,7 @@ const LikertScale = ({ initialScale, onChange }) => {
       }
 
       const valueSelection = {
+        id,
         humanReadable,
         numericValue: numericScale,
       }
@@ -64,51 +65,51 @@ const LikertScale = ({ initialScale, onChange }) => {
 
     <div>
       <RadioButton
-        className="strongly_disagree  small "{...styles}
+        className="strongly_disagree small "{...styles}
         value="strongly_disagree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'strongly_disagree'}
       />
       <RadioButton
-        className="likert disagree  small "{...styles}
+        className="likert disagree small "{...styles}
         value="disagree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'disagree'}
       />
       <RadioButton
-        className="likert somewhat_disagree  small "{...styles}
+        className="likert somewhat_disagree small "{...styles}
         value="somewhat_disagree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'somewhat_disagree'}
       />
       <RadioButton
-        className="likert neither_agree_or_disagree  small "{...styles}
+        className="likert neither_agree_or_disagree small "{...styles}
         value="neither_agree_or_disagree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'neither_agree_or_disagree'}
       />
       <RadioButton
-        className="likert somewhat_agree  small "{...styles}
+        className="likert somewhat_agree small "{...styles}
         value="somewhat_agree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'somewhat_agree'}
       />
       <RadioButton
-        className="likert agree  small "{...styles}
+        className="likert agree small "{...styles}
         value="agree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'agree'}
       />
       <RadioButton
-        className="likert strongly_agree  small "{...styles}
+        className="likert strongly_agree small "{...styles}
         value="strongly_agree"
-        name="likertscale"
+        name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
         checked={value === 'strongly_agree'}
       />

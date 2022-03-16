@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Dropdown } from 'primereact/dropdown';
+import { useTranslation } from 'react-i18next';
 
 import Loading from '../../components/Loading';
 import FocusAreaQuestionnaire from '../../components/FocusAreaQuestionnaire';
 import { ToastContext, UserContext } from '../../store';
 import { getProjectFocusAreas } from '../../services/projects';
-import { getEvaluations } from '../../services/focus-area-evaluations';
+import { getEvaluations, addEvaluation, updatEvaluation } from '../../services/focus-area-evaluations';
 import { handleError } from '../../utilities/errors';
 import { findLuClassesByIds } from '../../utilities/schema-generators';
 
@@ -22,6 +23,7 @@ const hasEvaluation = (evaluations, focusAreaId, luClass) => {
 }
 
 const FocusAreaLMAssesment = ({ onBack }) => {
+  const { t } = useTranslation();
   const { currentProject } = useContext(UserContext);
   const { setError, setSuccess } = useContext(ToastContext);
   const [evaluations, setEvaluations] = useState([]);
@@ -48,15 +50,41 @@ const FocusAreaLMAssesment = ({ onBack }) => {
           currentProject.uses_default_lu_classification
         ).map((lc) => ({
           ...lc,
-          hasEvaluation: hasEvaluation(evaluationsResponse, focusArea.id, lc.key),
+          hasEvaluation: hasEvaluation(evaluationsResponse, focusArea.id, `${lc.key}`),
         })),
       })));
 
       setIsLoading(false);
     } catch (error) {
-      setError(setError(handleError(error)));
+      setError(handleError(error));
     }
-  }
+  };
+
+  const saveEvaluation = async (evaluationId, data) => {
+    if (selectedLuClass === null || selectedFocusArea === null) {
+      // Do nothing if nothing is selected
+      return;
+    }
+
+    try {
+      if (selectedEvaluation === null) {
+        // Add it
+        await addEvaluation(currentProject.id, {
+          project_focus_area_id: selectedFocusArea.id,
+          lu_class: selectedLuClass,
+          ...data,
+        });
+      } else {
+        // Update it
+        await updatEvaluation(currentProject.id, evaluationId, data);
+      }
+    } catch (error) {
+      setError(handleError(error));
+    } finally {
+      setSuccess(t('YOUR_CHANGES_HAVE_BEEN_SAVED'));
+      await fetchData();
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -65,11 +93,9 @@ const FocusAreaLMAssesment = ({ onBack }) => {
   useEffect(() => {
     if (selectedFocusArea && selectedLuClass) {
       const foundEvaluation = evaluations.find((ev) => (
-        ev.project_focus_area_id === selectedFocusArea.id && ev.lu_class === selectedLuClass
+        ev.project_focus_area_id === selectedFocusArea.id && ev.lu_class === `${selectedLuClass}`
       ));
-      if (foundEvaluation) {
-        setSelectedEvaluation(foundEvaluation);
-      }
+      setSelectedEvaluation(foundEvaluation || null);
     }
   }, [selectedFocusArea, selectedLuClass]); // eslint-disable-line
 
@@ -79,6 +105,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
 
   const onFocusAreaChange = (e) => {
     setSelectedFocusArea(e.value);
+    setSelectedLuClass(null);
   }
 
   const onLuClassChange = (e) => {
@@ -194,7 +221,8 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       {(selectedFocusArea && selectedLuClass) && (
         <FocusAreaQuestionnaire
           evaluation={selectedEvaluation}
-          headerLabel={`${selectedFocusArea.name} - ${selectedLuClass}`}
+          canProceedToPlanning={evaluations && evaluations.length > 0}
+          onSave={saveEvaluation}
         />
       )}
     </div>

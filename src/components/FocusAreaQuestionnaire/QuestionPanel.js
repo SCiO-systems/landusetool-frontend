@@ -1,7 +1,7 @@
 import React from 'react';
 import LikertScale from './LikertScale';
 
-const QuestionPanel = ({ question, onChange }) => (
+const QuestionPanel = ({ question, onChange, value }) => (
   <div>
     {question && (
       <div id={question.id}>
@@ -26,9 +26,9 @@ const QuestionPanel = ({ question, onChange }) => (
           )}
           <div className="p-mt-2 p-mb-4">
             <LikertScale
-              id={`likert_${question.id}`}
-              callback={onChange}
-              initialScale="neither_agree_or_disagree"
+              id={question.id}
+              onChange={onChange}
+              initialScale={value}
             />
           </div>
         </div>

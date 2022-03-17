@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Dropdown } from 'primereact/dropdown';
+import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 
 import Loading from '../../components/Loading';
 import FocusAreaQuestionnaire from '../../components/FocusAreaQuestionnaire';
 import { ToastContext, UserContext } from '../../store';
-import { getProjectFocusAreas } from '../../services/projects';
+import { getProjectFocusAreas, editProject } from '../../services/projects';
 import { getEvaluations, addEvaluation, updatEvaluation } from '../../services/focus-area-evaluations';
 import { handleError } from '../../utilities/errors';
 import { findLuClassesByIds } from '../../utilities/schema-generators';
@@ -24,7 +26,7 @@ const hasEvaluation = (evaluations, focusAreaId, luClass) => {
 
 const FocusAreaLMAssesment = ({ onBack }) => {
   const { t } = useTranslation();
-  const { currentProject } = useContext(UserContext);
+  const { currentProject, setUser } = useContext(UserContext);
   const { setError, setSuccess } = useContext(ToastContext);
   const [evaluations, setEvaluations] = useState([]);
   const [options, setOptions] = useState([]);
@@ -32,6 +34,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
   const [selectedFocusArea, setSelectedFocusArea] = useState(null);
   const [selectedLuClass, setSelectedLuClass] = useState(null);
   const [selectedEvaluation, setSelectedEvaluation] = useState(null);
+  const history = useHistory();
 
   const fetchData = async () => {
     try {
@@ -82,7 +85,25 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       setError(handleError(error));
     } finally {
       setSuccess(t('YOUR_CHANGES_HAVE_BEEN_SAVED'));
+      setSelectedFocusArea(null);
+      setSelectedLuClass(null);
+      setSelectedEvaluation(null);
       await fetchData();
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await editProject(currentProject.id, {
+        land_management_sustainability_method: true,
+      });
+      setUser({ currentProject: data });
+      setTimeout(() => history.push('/land-use-planning'), 500);
+    } catch (e) {
+      setError(handleError(e));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -148,7 +169,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       }
     }
     return (
-      <div className="p-d-flex p-ai-center">
+      <div key={option.id} className="p-d-flex p-ai-center">
         {hasFinishedEvaluations
           ? <i className="p-d-block pi pi-check-circle p-mr-2" />
           : <i className="p-d-block pi pi-envelope p-mr-2" />
@@ -161,7 +182,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
   const selectedLuClassTemplate = (option, props) => {
     if (option) {
       return (
-        <div className="p-d-flex p-ai-center">
+        <div key={option.value} className="p-d-flex p-ai-center">
           {option.hasEvaluation
             ? <i className="p-d-block pi pi-check-circle p-mr-2" />
             : <i className="p-d-block pi pi-envelope p-mr-2" />
@@ -179,7 +200,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
   }
 
   const luClassOptionTemplate = (option) => (
-    <div className="p-d-flex p-ai-center">
+    <div key={option.value} className="p-d-flex p-ai-center">
       {option.hasEvaluation
         ? <i className="p-d-block pi pi-check-circle p-mr-2" />
         : <i className="p-d-block pi pi-envelope p-mr-2" />
@@ -190,33 +211,46 @@ const FocusAreaLMAssesment = ({ onBack }) => {
 
   return (
     <div className="p-mt-4">
-      <div>
-        <strong className="p-d-block p-mb-2">
-          Select a focus area and then a land use type to evaluate it:
-        </strong>
-        <Dropdown
-          className="p-mr-2"
-          value={selectedFocusArea}
-          options={options}
-          onChange={onFocusAreaChange}
-          optionLabel="name"
-          placeholder="Select a focus area"
-          valueTemplate={selectedFocusAreaTemplate}
-          itemTemplate={focusAreaOptionTemplate}
-        />
-        {selectedFocusArea && (
+      <div className="p-grid">
+        <div className="p-col-6">
+          <strong className="p-d-block p-mb-2">
+            Select a focus area and then a land use type to evaluate it:
+          </strong>
           <Dropdown
             className="p-mr-2"
-            value={selectedLuClass}
-            options={selectedFocusArea.luClasses}
-            onChange={onLuClassChange}
-            optionLabel="value"
-            optionValue="key"
-            placeholder="Select a land use type"
-            valueTemplate={selectedLuClassTemplate}
-            itemTemplate={luClassOptionTemplate}
+            value={selectedFocusArea}
+            options={options}
+            onChange={onFocusAreaChange}
+            optionLabel="name"
+            placeholder="Select a focus area"
+            valueTemplate={selectedFocusAreaTemplate}
+            itemTemplate={focusAreaOptionTemplate}
           />
-        )}
+          {selectedFocusArea && (
+            <Dropdown
+              className="p-mr-2"
+              value={selectedLuClass}
+              options={selectedFocusArea.luClasses}
+              onChange={onLuClassChange}
+              optionLabel="value"
+              optionValue="key"
+              placeholder="Select a land use type"
+              valueTemplate={selectedLuClassTemplate}
+              itemTemplate={luClassOptionTemplate}
+            />
+          )}
+        </div>
+        <div className="p-col-6 p-d-flex p-jc-end p-ai-center">
+          {(evaluations && evaluations.length > 0) && (
+            <Button
+              label={t('ANTICIPATED_NEW_LAND_DEGRADATION')}
+              loading={isLoading}
+              icon="fad fa-chart-line-down"
+              type="button"
+              onClick={() => handleSubmit()}
+            />
+          )}
+        </div>
       </div>
       {(selectedFocusArea && selectedLuClass) && (
         <FocusAreaQuestionnaire

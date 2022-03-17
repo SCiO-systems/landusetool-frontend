@@ -1,16 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Fieldset } from 'primereact/fieldset';
 import { RadioButton } from 'primereact/radiobutton';
 import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
 
 import EvaluationSpiderGraph from '../charts/EvaluationSpiderGraph';
 import CurvedGraph from '../charts/CurvedGraph';
 import QuestionPanel from './QuestionPanel';
-import { editProject } from '../../services/projects';
-import { UserContext, ToastContext } from '../../store';
-import { handleError } from '../../utilities/errors';
 import questions from './data';
 
 const buildInitialSpiderGraphData = (data, evaluation) => {
@@ -81,15 +77,11 @@ const getEvaluationValues = (evaluation) => {
   return defaults;
 }
 
-const FocusAreaQuestionnaire = ({ evaluation, onSave, canProceedToPlanning = false }) => {
+const FocusAreaQuestionnaire = ({ evaluation, onSave }) => {
   const { t } = useTranslation();
   const [spiderData, setSpiderData] = useState([]);
   const [curvedData, setCurvedData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [evaluationValues, setEvaluationValues] = useState();
-  const { currentProject, setUser } = useContext(UserContext);
-  const { setError } = useContext(ToastContext);
-  const history = useHistory();
 
   const handleChangeEvaluation = ({ id, numericValue }) => {
     setEvaluationValues((oev) => {
@@ -110,21 +102,6 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, canProceedToPlanning = fal
       return copy;
     });
   }
-
-  const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await editProject(currentProject.id, {
-        land_management_sustainability_method: true,
-      });
-      setUser({ currentProject: data });
-      setTimeout(() => history.push('/land-use-planning'), 500);
-    } catch (e) {
-      setError(handleError(e));
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     if (onSave) {
@@ -281,16 +258,6 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, canProceedToPlanning = fal
           iconPos="right"
           label={t('SAVE_ASSESSMENT')}
         />
-        {canProceedToPlanning && (
-          <Button
-            label={t('ANTICIPATED_NEW_LAND_DEGRADATION')}
-            loading={isLoading}
-            icon="fad fa-chart-line-down"
-            type="button"
-            className="p-d-block p-ml-4"
-            onClick={() => handleSubmit()}
-          />
-        )}
       </div>
     </>
   )

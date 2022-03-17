@@ -19,6 +19,7 @@ const DefineFocusAreas = ({ onForward }) => {
   const { currentProject } = useContext(UserContext);
   const [focusAreas, setFocusAreas] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('');
   const [fileId, setFileId] = useState(null);
 
@@ -33,6 +34,7 @@ const DefineFocusAreas = ({ onForward }) => {
 
   const addNewFocusArea = async (e) => {
     e.preventDefault();
+    setIsAdding(true);
     if (name === '' || fileId === null) return;
     try {
       await addProjectFocusArea(currentProject.id, name, fileId);
@@ -42,6 +44,8 @@ const DefineFocusAreas = ({ onForward }) => {
       fileUploadRef.current?.clear();
     } catch (error) {
       setError(setError(handleError(error)));
+    } finally {
+      setIsAdding(false);
     }
   }
 
@@ -121,7 +125,8 @@ const DefineFocusAreas = ({ onForward }) => {
                 <Button
                   label={t('ADD')}
                   type="submit"
-                  disabled={name === '' || fileId === null}
+                  disabled={name === '' || fileId === null || isAdding}
+                  loading={isAdding}
                   icon="pi pi-plus"
                   className="p-button-primary p-mt-2"
                 />

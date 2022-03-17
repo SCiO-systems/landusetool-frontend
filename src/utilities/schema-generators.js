@@ -1,6 +1,16 @@
 import LandCoverDefaults from '../data/land-cover-defaults';
 import InitialScenario from '../data/initial-scenario';
 
+export const DEFAULT_LU_CLASSES = {
+  1: 'Tree-covered',
+  2: 'Grassland',
+  3: 'Cropland',
+  4: 'Wetland',
+  5: 'Artificial Area',
+  6: 'Bare land',
+  7: 'Water body',
+};
+
 export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
   if (usesDefault) return [...LandCoverDefaults];
   if (!luClasses || luClasses.length === 0) return [...LandCoverDefaults];
@@ -98,3 +108,11 @@ export const fillInitialLandCoverageValues = (scenario, hectaresPerClass) => {
 
   return { ...scenario };
 };
+
+export const findLuClassesByIds = (classIds, projectLuClasses, usesDefault) => {
+  if (usesDefault) {
+    return classIds.map((id) => ({ key: id, value: DEFAULT_LU_CLASSES[id] }));
+  }
+
+  return projectLuClasses.filter((plc) => classIds.includes(plc.key));
+}

@@ -92,7 +92,7 @@ const ProjectDatasets = () => {
   };
 
   useEffect(() => {
-    setValue('luClasses', JSON.stringify(luClasses));
+    setValue('luClasses', luClasses);
   }, [luClasses, setValue]);
 
   useEffect(() => {

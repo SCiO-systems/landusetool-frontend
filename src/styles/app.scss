@@ -31,6 +31,11 @@ body,
   max-width: 100%;
 }
 
+// so that things don't go under the footer ribbon
+.layout-dashboard {
+  padding-bottom: 4rem;
+}
+
 // TODO: Make this better.
 .p-dropdown-label,
 .p-inputtext {

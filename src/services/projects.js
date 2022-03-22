@@ -72,11 +72,24 @@ export const deleteProject = async (id) =>
 export const inviteUsers = async (id, users) =>
   apiClient.post(`/projects/${id}/invites`, { user_ids: users });
 
-export const getProjectWocatTechnologies = async (id) =>
-  apiClient.get(`/projects/${id}/wocat_technologies`);
+export const getProjectWocatTechnologies = async (id, filters = {}) => {
+  const qs = Object.keys(filters)
+    .map(key => `${key}=${filters[key]}`)
+    .join('&');
+  return apiClient.get(`/projects/${id}/wocat_technologies?${qs}`);
+}
 
-export const chooseProjectWocatTechnology = async (id, technologyId) =>
-  apiClient.post(`/projects/${id}/choose_wocat_technology`, { technology_id: technologyId });
+export const proposeProjectWocatTechnology = async (id, technologyId, focusAreaId, luClass) =>
+  apiClient.post(`/projects/${id}/propose_wocat_technology`, {
+    technology_id: technologyId,
+    project_focus_area_id: focusAreaId,
+    lu_class: `${luClass}`,
+  });
+
+export const voteProjectWocatTechnology = async (id, projectWocatSlmTechnologyId) =>
+  apiClient.post(`/projects/${id}/vote_wocat_technology`, {
+    project_wocat_slm_technology_id: projectWocatSlmTechnologyId,
+  });
 
 export const getProjectIndicators = async (id) => apiClient.get(`/projects/${id}/indicators`);
 

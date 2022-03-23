@@ -103,8 +103,12 @@ const t = {
     APPLICABLE_WOCAT_SLM_TECHNOLOGIES: 'Applicable WOCAT SLM Technologies',
     ENTER_KEYWORD: 'Search using keywords',
     SEARCH: 'Search',
+    WOCAT_TECHNOLOGIES: 'WOCAT SLM Technologies',
+    WOCAT_TECHNOLOGY: 'WOCAT Technology',
     NO_WOCAT_TECHNOLOGIES_FOUND:
       'No applicable WOCAT Technologies were found. Please search using keywords.',
+    NO_WOCAT_TECHNOLOGIES_FOR_THIS_PROJECT:
+      'No WOCAT Technologies have been selected for this project.',
     CURRENT_STATE: 'Current State',
     LAND_USE_SUITABILITY: 'Land Use Suitability',
     LAND_MANAGEMENT_SUSTAINABILITY: 'Land Management Sustainability',

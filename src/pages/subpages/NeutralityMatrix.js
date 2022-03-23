@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 
 import Loading from '../../components/Loading';
+import LDNMap from '../../components/LDNMap';
 import ScenarioImpactTable from '../../components/tables/ScenarioImpactTable';
 import LandDegradationWaterfall from '../../components/charts/LandDegradationWaterfall';
 import { getScenarios } from '../../services/scenarios';
+import { getProjectWocatTechnologies } from '../../services/projects';
 import { UserContext, ToastContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 
@@ -14,6 +18,7 @@ const NeutralityMatrix = () => {
   const { setError } = useContext(ToastContext);
   const [isLoading, setIsLoading] = useState(true);
   const [scenarios, setScenarios] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
   const [waterfallData, setWaterfallData] = useState([]);
 
   const fetchScenarios = async () => {
@@ -25,6 +30,15 @@ const NeutralityMatrix = () => {
       setError(handleError(e));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchProjectTechnologies = async () => {
+    try {
+      const { data } = await getProjectWocatTechnologies(currentProject?.id);
+      setTechnologies(data);
+    } catch (error) {
+      setError(handleError(error));
     }
   };
 
@@ -108,6 +122,7 @@ const NeutralityMatrix = () => {
 
   useEffect(() => {
     fetchScenarios();
+    fetchProjectTechnologies();
   }, []); // eslint-disable-line
 
   useEffect(() => {
@@ -130,9 +145,36 @@ const NeutralityMatrix = () => {
         <ScenarioImpactTable key={sc.remoteId} scenario={sc} />
       ))}
       {waterfallData.length > 0 && (
-        <div className="p-grid p-justify-center p-mt-6">
-          <h4>Land Degradation Evolution in ROI</h4>
-          <LandDegradationWaterfall data={waterfallData} />
+        <div className="p-grid p-mt-4">
+          <div className="p-col-6">
+            <LDNMap
+              projectId={currentProject?.id}
+              scenarios={scenarios}
+              impactMatrix={currentProject?.transition_impact_matrix_data}
+            />
+          </div>
+          <div className="p-col-6">
+            <h4>Land Degradation Evolution in ROI</h4>
+            <LandDegradationWaterfall data={waterfallData} />
+          </div>
+          <div className="p-col-12">
+            <DataTable
+              value={technologies}
+              emptyMessage={t(`NO_WOCAT_TECHNOLOGIES_FOR_THIS_PROJECT:`)}
+              header={t('WOCAT_TECHNOLOGIES')}
+            >
+              <Column header={t('FOCUS_AREA')} body={(rowData) => (
+                <>{ rowData.focus_area.name } (LU Class: { rowData.lu_class })</>
+              )} />
+              <Column header={t('WOCAT_TECHNOLOGY')} body={(rowData) => (
+                <a
+                  href={`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >{`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}</a>
+              )} />
+            </DataTable>
+          </div>
         </div>
       )}
     </>

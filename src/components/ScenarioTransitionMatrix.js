@@ -178,7 +178,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
       <FileUpload
         ref={(ref) => { fileUploadRefs.current[`${landTypeId}${props.rowData.landId}`] = ref; }}
         disabled={isUploading || processionPolygonForId === (`${landTypeId}${props.rowData.landId}`)}
-        accept=".geojson,.shp"
+        accept=".geojson"
         chooseLabel=""
         chooseOptions={{
           label: (processionPolygonForId === (`${landTypeId}${props.rowData.landId}`))

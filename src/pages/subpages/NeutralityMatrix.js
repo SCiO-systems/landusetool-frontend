@@ -11,11 +11,26 @@ import { getScenarios } from '../../services/scenarios';
 import { getProjectWocatTechnologies } from '../../services/projects';
 import { UserContext, ToastContext } from '../../store';
 import { findImpactForTransition } from '../../utilities/ld-calculations';
+import { DEFAULT_LU_CLASSES } from '../../utilities/schema-generators';
 import { handleError } from '../../utilities/errors';
 
 const simplifyValue = (val) => {
   if (val === 0) return 0;
   return val > 0 ? 1 : -1;
+}
+
+const findNameForLuClass = (key, luClasses) => {
+  if (luClasses === null) {
+    return DEFAULT_LU_CLASSES[key];
+  }
+
+  const foundLuClass = luClasses.find((luc) => `${luc.value}` === key);
+
+  if (!foundLuClass) {
+    return 'Unknown';
+  }
+
+  return foundLuClass.key;
 }
 
 const NeutralityMatrix = () => {
@@ -207,7 +222,8 @@ const NeutralityMatrix = () => {
                 header={t('WOCAT_TECHNOLOGIES')}
               >
                 <Column header={t('FOCUS_AREA')} body={(rowData) => (
-                  <>{ rowData.focus_area.name } (LU Class: { rowData.lu_class })</>
+                  <>{ rowData.focus_area.name } ({ findNameForLuClass(rowData.lu_class,
+                    currentProject.lu_classes) })</>
                 )} />
                 <Column header={t('WOCAT_TECHNOLOGY')} body={(rowData) => (
                   <a

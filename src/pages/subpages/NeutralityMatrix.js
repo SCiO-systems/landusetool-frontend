@@ -10,7 +10,13 @@ import LandDegradationWaterfall from '../../components/charts/LandDegradationWat
 import { getScenarios } from '../../services/scenarios';
 import { getProjectWocatTechnologies } from '../../services/projects';
 import { UserContext, ToastContext } from '../../store';
+import { findImpactForTransition } from '../../utilities/ld-calculations';
 import { handleError } from '../../utilities/errors';
+
+const simplifyValue = (val) => {
+  if (val === 0) return 0;
+  return val > 0 ? 1 : -1;
+}
 
 const NeutralityMatrix = () => {
   const { t } = useTranslation();
@@ -18,6 +24,7 @@ const NeutralityMatrix = () => {
   const { setError } = useContext(ToastContext);
   const [isLoading, setIsLoading] = useState(true);
   const [scenarios, setScenarios] = useState([]);
+  const [polygonsList, setPolygonsList] = useState([]);
   const [technologies, setTechnologies] = useState([]);
   const [waterfallData, setWaterfallData] = useState([]);
 
@@ -125,6 +132,33 @@ const NeutralityMatrix = () => {
     fetchProjectTechnologies();
   }, []); // eslint-disable-line
 
+
+  useEffect(() => {
+    if (scenarios.length === 0 || !currentProject?.transition_impact_matrix_data) return;
+    const list = [];
+    scenarios.forEach((sc) => {
+      for (let i = 0; i < sc.landTypes.length; i += 1) {
+        const transition = sc.landTypes[i];
+        for (let j = 0; j < transition.breakDown.length; j += 1) {
+          const breakDownEntry = transition.breakDown[j];
+          if (breakDownEntry.landCoverage.file_id) {
+            const ld_impact = findImpactForTransition(
+              transition.landId,
+              breakDownEntry.landCoverage.value,
+              breakDownEntry.landId,
+              currentProject.transition_impact_matrix_data
+            );
+            list.push({
+              value: simplifyValue(ld_impact),
+              file_id: breakDownEntry.landCoverage.file_id,
+            });
+          }
+        }
+      }
+    });
+    setPolygonsList(list);
+  }, [scenarios]); // eslint-disable-line
+
   useEffect(() => {
     if (scenarios.length > 0) {
       prepareWaterfallData();
@@ -146,34 +180,44 @@ const NeutralityMatrix = () => {
       ))}
       {waterfallData.length > 0 && (
         <div className="p-grid p-mt-4">
-          <div className="p-col-6">
-            <LDNMap
-              projectId={currentProject?.id}
-              scenarios={scenarios}
-              impactMatrix={currentProject?.transition_impact_matrix_data}
-            />
-          </div>
-          <div className="p-col-6">
-            <h4>Land Degradation Evolution in ROI</h4>
-            <LandDegradationWaterfall data={waterfallData} />
-          </div>
+          {(polygonsList.length > 0) ? (
+            <>
+              <div className="p-col-6">
+                <LDNMap
+                  projectId={currentProject?.id}
+                  polygonsList={polygonsList}
+                />
+              </div>
+              <div className="p-col-6">
+                <h4>Land Degradation Evolution in ROI</h4>
+                <LandDegradationWaterfall data={waterfallData} />
+              </div>
+            </>
+          ) : (
+            <div className="p-col-12 p-grid p-jc-center">
+              <h4>Land Degradation Evolution in ROI</h4>
+              <LandDegradationWaterfall data={waterfallData} />
+            </div>
+          )}
           <div className="p-col-12">
-            <DataTable
-              value={technologies}
-              emptyMessage={t(`NO_WOCAT_TECHNOLOGIES_FOR_THIS_PROJECT:`)}
-              header={t('WOCAT_TECHNOLOGIES')}
-            >
-              <Column header={t('FOCUS_AREA')} body={(rowData) => (
-                <>{ rowData.focus_area.name } (LU Class: { rowData.lu_class })</>
-              )} />
-              <Column header={t('WOCAT_TECHNOLOGY')} body={(rowData) => (
-                <a
-                  href={`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >{`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}</a>
-              )} />
-            </DataTable>
+            {technologies.length > 0 && (
+              <DataTable
+                value={technologies}
+                emptyMessage={t(`NO_WOCAT_TECHNOLOGIES_FOR_THIS_PROJECT:`)}
+                header={t('WOCAT_TECHNOLOGIES')}
+              >
+                <Column header={t('FOCUS_AREA')} body={(rowData) => (
+                  <>{ rowData.focus_area.name } (LU Class: { rowData.lu_class })</>
+                )} />
+                <Column header={t('WOCAT_TECHNOLOGY')} body={(rowData) => (
+                  <a
+                    href={`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >{`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}</a>
+                )} />
+              </DataTable>
+            )}
           </div>
         </div>
       )}

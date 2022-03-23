@@ -161,7 +161,8 @@ const AppMenu = ({ onMenuClick }) => {
                       <span className="layout-menuitem-text">{t('CURRENT_STATE')}</span>
                     </NavLink>
                   </li>
-                  {currentProject.step === PROJECT_STEPS.PLANNING && (
+                  {(currentProject.step === PROJECT_STEPS.PLANNING ||
+                    currentProject.land_management_sustainability_method === 1 || currentProject.land_use_suitability_method === 1) && (
                     <li className="p-mb-1" role="menuitem">
                       <NavLink to="/land-use-planning" activeClassName="p-button" exact>
                         <i className="layout-menuitem-icon fad fa-abacus" />

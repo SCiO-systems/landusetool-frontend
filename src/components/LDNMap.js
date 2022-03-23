@@ -78,7 +78,7 @@ const LDNMap = ({ scenarios, impactMatrix, projectId }) => {
         {
           link: ldnMap,
           label: `LDN Map`,
-          paletteType: '',
+          paletteType: 'LandDegradationPalette',
         },
       ]}
     />

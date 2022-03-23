@@ -110,7 +110,7 @@ const DefineFocusAreas = ({ onForward }) => {
                   disabled={fileId !== null || isUploading}
                   id="file"
                   ref={fileUploadRef}
-                  accept=".geojson,.shp"
+                  accept=".geojson"
                   chooseLabel={t('SELECT_FILE')}
                   mode="basic"
                   multiple={false}

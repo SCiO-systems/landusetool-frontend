@@ -50,13 +50,13 @@ const Map = ({
 
     // a single map
     return {
-      layers: {
+      layers: [{
         layer: {
           type: 'geotiff',
           data: maps[0].link,
           palette: constructPaletteOptions(maps[0].paletteType, maps[0].label),
         },
-      },
+      }],
       options: {
         mode: 'view',
         mask: false,

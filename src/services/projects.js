@@ -106,3 +106,6 @@ export const deleteProjectFocusArea = async (id, focus_area_id) =>
 
 export const findIntersectingArea = async (id, polygonFileId) =>
   apiClient.post(`/projects/${id}/polygons/intersecting_area`, { polygon_file_id: polygonFileId });
+
+export const prepareLDNMap = async (id, polygonsList) =>
+  apiClient.post(`/projects/${id}/prepare_ldn_map`, { polygons_list: polygonsList });

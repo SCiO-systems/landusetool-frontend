@@ -113,7 +113,7 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
             <input
               className="hidden"
               type="file"
-              accept=".geojson,.shp"
+              accept=".geojson"
               multiple={false}
               ref={roiFileRef}
               onChange={(e) => uploadRoiFile(e.target.files[0])}

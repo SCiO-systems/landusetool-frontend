@@ -274,8 +274,8 @@ const LandManagement = () => {
       return (
         <div className="p-d-flex p-ai-center">
           {hasFinishedEvaluations
-            ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-            : <i className="p-d-block pi pi-cirle p-mr-2" />
+            ? <i className="p-d-block far fa-check-circle p-mr-2" />
+            : <i className="p-d-block far fa-circle p-mr-2" />
           }
           <span className="p-block">{option.name}</span>
         </div>
@@ -300,8 +300,8 @@ const LandManagement = () => {
     return (
       <div key={option.id} className="p-d-flex p-ai-center">
         {hasFinishedEvaluations
-          ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-          : <i className="p-d-block pi pi-cirle p-mr-2" />
+          ? <i className="p-d-block far fa-check-circle p-mr-2" />
+          : <i className="p-d-block far fa-circle p-mr-2" />
         }
         <span className="p-block">{option.name}</span>
       </div>
@@ -313,8 +313,8 @@ const LandManagement = () => {
       return (
         <div key={option.value} className="p-d-flex p-ai-center">
           {option.hasEvaluation
-            ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-            : <i className="p-d-block pi pi-cirle p-mr-2" />
+            ? <i className="p-d-block far fa-check-circle p-mr-2" />
+            : <i className="p-d-block far fa-circle p-mr-2" />
           }
           <span className="p-block">{option.key || option.value}</span>
         </div>
@@ -331,8 +331,8 @@ const LandManagement = () => {
   const luClassOptionTemplate = (option) => (
     <div key={option.value} className="p-d-flex p-ai-center">
       {option.hasEvaluation
-        ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-        : <i className="p-d-block pi pi-cirle p-mr-2" />
+        ? <i className="p-d-block far fa-check-circle p-mr-2" />
+        : <i className="p-d-block far fa-circle p-mr-2" />
       }
       <span className="p-block">{option.key || option.value}</span>
     </div>

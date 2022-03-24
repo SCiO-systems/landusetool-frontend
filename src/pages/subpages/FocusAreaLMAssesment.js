@@ -146,7 +146,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
         <div className="p-d-flex p-ai-center">
           {hasFinishedEvaluations
             ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-            : <i className="p-d-block pi pi-envelope p-mr-2" />
+            : <i className="p-d-block pi pi-circle p-mr-2" />
           }
           <span className="p-block">{option.name}</span>
         </div>
@@ -172,7 +172,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       <div key={option.id} className="p-d-flex p-ai-center">
         {hasFinishedEvaluations
           ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-          : <i className="p-d-block pi pi-envelope p-mr-2" />
+          : <i className="p-d-block pi pi-cirle p-mr-2" />
         }
         <span className="p-block">{option.name}</span>
       </div>
@@ -185,7 +185,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
         <div key={option.value} className="p-d-flex p-ai-center">
           {option.hasEvaluation
             ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-            : <i className="p-d-block pi pi-envelope p-mr-2" />
+            : <i className="p-d-block pi pi-cirle p-mr-2" />
           }
           <span className="p-block">{option.key || option.value}</span>
         </div>
@@ -203,7 +203,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
     <div key={option.value} className="p-d-flex p-ai-center">
       {option.hasEvaluation
         ? <i className="p-d-block pi pi-check-circle p-mr-2" />
-        : <i className="p-d-block pi pi-envelope p-mr-2" />
+        : <i className="p-d-block pi pi-cirle p-mr-2" />
       }
       <span className="p-block">{option.key || option.value}</span>
     </div>

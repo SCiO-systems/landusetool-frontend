@@ -111,8 +111,8 @@ export const fillInitialLandCoverageValues = (scenario, hectaresPerClass) => {
 
 export const findLuClassesByIds = (classIds, projectLuClasses, usesDefault) => {
   if (usesDefault) {
-    return classIds.map((id) => ({ key: id, value: DEFAULT_LU_CLASSES[id] }));
+    return classIds.map((id) => ({ key: DEFAULT_LU_CLASSES[id], value: id  }));
   }
 
-  return projectLuClasses.filter((plc) => classIds.includes(plc.key));
+  return projectLuClasses.filter((plc) => classIds.includes(plc.value));
 }

@@ -53,7 +53,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
           currentProject.uses_default_lu_classification
         ).map((lc) => ({
           ...lc,
-          hasEvaluation: hasEvaluation(evaluationsResponse, focusArea.id, `${lc.key}`),
+          hasEvaluation: hasEvaluation(evaluationsResponse, focusArea.id, `${lc.value}`),
         })),
       })));
 
@@ -187,7 +187,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
             ? <i className="p-d-block pi pi-check-circle p-mr-2" />
             : <i className="p-d-block pi pi-envelope p-mr-2" />
           }
-          <span className="p-block">{option.value}</span>
+          <span className="p-block">{option.key || option.value}</span>
         </div>
       );
     }
@@ -205,7 +205,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
         ? <i className="p-d-block pi pi-check-circle p-mr-2" />
         : <i className="p-d-block pi pi-envelope p-mr-2" />
       }
-      <span className="p-block">{option.value}</span>
+      <span className="p-block">{option.key || option.value}</span>
     </div>
   );
 
@@ -233,7 +233,7 @@ const FocusAreaLMAssesment = ({ onBack }) => {
               options={selectedFocusArea.luClasses}
               onChange={onLuClassChange}
               optionLabel="value"
-              optionValue="key"
+              optionValue="value"
               placeholder="Select a land use type"
               valueTemplate={selectedLuClassTemplate}
               itemTemplate={luClassOptionTemplate}

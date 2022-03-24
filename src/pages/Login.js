@@ -16,7 +16,7 @@ import { UserContext } from '../store';
 
 const authProviders = [
   { label: 'LUP4LDN', value: 'local' },
-  { label: 'ORCID', value: 'orcid' },
+  // { label: 'ORCID', value: 'orcid' },
 ];
 
 const Login = () => {

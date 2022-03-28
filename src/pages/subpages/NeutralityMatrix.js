@@ -57,7 +57,7 @@ const NeutralityMatrix = () => {
 
   const fetchProjectTechnologies = async () => {
     try {
-      const { data } = await getProjectWocatTechnologies(currentProject?.id);
+      const { data } = await getProjectWocatTechnologies(currentProject?.id, { status: 'final' });
       setTechnologies(data);
     } catch (error) {
       setError(handleError(error));

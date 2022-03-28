@@ -34,9 +34,14 @@ const LandUseSuitability = () => {
   ];
 
   const handleSubmit = async () => {
+    if (currentProject.land_use_suitability_method) {
+      history.push('/land-use-planning');
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const { data} = await editProject(currentProject.id, {
+      const { data } = await editProject(currentProject.id, {
         step: getNextStep(currentProject),
         land_use_suitability_method: true,
       });
@@ -54,10 +59,10 @@ const LandUseSuitability = () => {
       <Card>
         <div className="p-grid p-justify-between p-px-3">
           <div>
-            <h4>{ maps[0].label }</h4>
+            <h4>{maps[0].label}</h4>
           </div>
           <div>
-            <h4>{ maps[1].label }</h4>
+            <h4>{maps[1].label}</h4>
           </div>
         </div>
         <Map
@@ -82,14 +87,16 @@ const LandUseSuitability = () => {
           />
         </div>
         <div className="p-grid p-justify-center p-text-center p-mt-4 p-px-3">
-          <Button
-            label={t('ANTICIPATED_NEW_LAND_DEGRADATION')}
-            icon="fad fa-chart-line-down"
-            type="button"
-            loading={isLoading}
-            className="p-d-block"
-            onClick={() => handleSubmit()}
-          />
+          {(currentProject.role === 'owner' || currentProject.land_use_suitability_method) && (
+            <Button
+              label={t('ANTICIPATED_NEW_LAND_DEGRADATION')}
+              icon="fad fa-chart-line-down"
+              type="button"
+              loading={isLoading}
+              className="p-d-block"
+              onClick={() => handleSubmit()}
+            />
+          )}
         </div>
       </Card>
     </>

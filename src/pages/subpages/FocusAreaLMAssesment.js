@@ -93,6 +93,11 @@ const FocusAreaLMAssesment = ({ onBack }) => {
   };
 
   const handleSubmit = async () => {
+    if (currentProject.land_management_sustainability_method) {
+      history.push('/land-use-planning');
+      return;
+    }
+
     try {
       setIsLoading(true);
       const { data } = await editProject(currentProject.id, {
@@ -241,7 +246,9 @@ const FocusAreaLMAssesment = ({ onBack }) => {
           )}
         </div>
         <div className="p-col-6 p-d-flex p-jc-end p-ai-center">
-          {(evaluations && evaluations.length > 0) && (
+          {((evaluations && evaluations.length > 0) &&
+            (currentProject.role === 'owner' ||
+              currentProject.land_management_sustainability_method)) && (
             <Button
               label={t('ANTICIPATED_NEW_LAND_DEGRADATION')}
               loading={isLoading}

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { UserContext, ToastContext } from '../../store';
-import { generateScenarioSchema, generateLUImpactMatrixSchema, fillInitialLandCoverageValues } from '../../utilities/schema-generators';
+import { generateScenarioSchema, generateLUImpactMatrixSchema, fillInitialLandCoverageValues, getLandCoverageValuesPerClass } from '../../utilities/schema-generators';
 import { handleError } from '../../utilities/errors';
 import { calculateScenarioLdImpact } from '../../utilities/ld-calculations';
 import { createScenario, getScenarios, deleteAllScenarios, editScenario } from '../../services/scenarios';
@@ -19,6 +19,7 @@ const LandUse = () => {
   const [scenarios, setScenarios] = useState([]);
   const [canAddNewScenarios, setCanAddNewScenarios] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [canSave, setCanSave] = useState(false);
   const [scenarioModalVisible, setScenarioModalVisible] = useState(false);
   const [minYear, setMinYear] = useState(new Date().getFullYear());
 
@@ -53,6 +54,11 @@ const LandUse = () => {
   };
 
   const prepareScenario = async (startYear, endYear) => {
+    let landCoverHectaresPerClass = currentProject.preprocessing_data.land_cover_hectares_per_class;
+    if (scenarios.length > 0) {
+      landCoverHectaresPerClass = getLandCoverageValuesPerClass(scenarios.at(-1));
+    }
+
     const scenario = fillInitialLandCoverageValues({
       ...generateScenarioSchema(currentProject.lu_classes, currentProject.uses_default_lu_classification),
       scenarioName: `${startYear} - ${endYear}`,
@@ -60,7 +66,7 @@ const LandUse = () => {
         scenarioStart: startYear,
         scenarioEnd: endYear,
       },
-    }, currentProject.preprocessing_data.land_cover_hectares_per_class);
+    }, landCoverHectaresPerClass);
 
     try {
       const { data } = await createScenario(currentProject.id, scenario);
@@ -158,6 +164,8 @@ const LandUse = () => {
               inputScenario={s}
               projectId={currentProject.id}
               isUpdating={isUpdating}
+              canEdit={(scenarios.length === 1) || (index === scenarios.length - 1)}
+              onCanSave={(cs) => setCanSave(cs)}
               onSave={(sc) => {
                 updateScenario(sc);
               }}
@@ -169,6 +177,7 @@ const LandUse = () => {
         dialogOpen={scenarioModalVisible}
         setDialogOpen={setScenarioModalVisible}
         hasScenarios={scenarios.length > 0}
+        hasUnsavedChanges={canSave}
         minYear={minYear}
         maxYear={2030}
         prepareScenario={prepareScenario}

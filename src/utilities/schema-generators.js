@@ -41,8 +41,8 @@ export const generateLUImpactMatrixSchema = (luClasses, usesDefault) => {
 };
 
 export const generateScenarioSchema = (luClasses, usesDefault) => {
-  if (usesDefault) return {...InitialScenario};
-  if (!luClasses || luClasses.length === 0) return {...InitialScenario};
+  if (usesDefault) return JSON.parse(JSON.stringify(InitialScenario));
+  if (!luClasses || luClasses.length === 0)return JSON.parse(JSON.stringify(InitialScenario));
   const scenario = {
     scenarioName: 'Untitled',
     scenarioPeriod: {
@@ -91,6 +91,14 @@ export const generateScenarioSchema = (luClasses, usesDefault) => {
   scenario.landTypes = landTypes;
 
   return scenario;
+};
+
+export const getLandCoverageValuesPerClass = (scenario) => {
+  const landCoverageValues = {};
+  scenario.landTypes.forEach((landType) => {
+    landCoverageValues[landType.landId] = landType.endLandCoverage.value;
+  });
+  return landCoverageValues;
 };
 
 export const fillInitialLandCoverageValues = (scenario, hectaresPerClass) => {

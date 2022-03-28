@@ -1,11 +1,12 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
+import { Message } from 'primereact/message';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputMask } from 'primereact/inputmask';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const NewScenarioDialog = ({ minYear, maxYear, prepareScenario, dialogOpen, setDialogOpen }) => {
+const NewScenarioDialog = ({ minYear, maxYear, prepareScenario, dialogOpen, hasUnsavedChanges, setDialogOpen }) => {
   const { t } = useTranslation();
   const [startYear, setStartYear] = useState(minYear);
   const [endYear, setEndYear] = useState(maxYear);
@@ -21,6 +22,10 @@ const NewScenarioDialog = ({ minYear, maxYear, prepareScenario, dialogOpen, setD
       style={{ width: '500px' }}
       onHide={() => setDialogOpen(false)}
     >
+      {hasUnsavedChanges && (
+        <Message severity="error" text="You have unsaved changes on your last scenario. Save
+          them before adding a new one." className="p-mb-2" />
+      )}
       <div className="p-fluid">
         <div className="p-formgrid p-grid">
           <div className="p-col-12">
@@ -61,6 +66,7 @@ const NewScenarioDialog = ({ minYear, maxYear, prepareScenario, dialogOpen, setD
             <div className="p-d-inline-flex p-col-6 p-ai-center p-jc-center">
               <Button
                 label={t('CREATE_NEW')}
+                disabled={hasUnsavedChanges}
                 icon="fad fa-calendar-plus"
                 onClick={() => {
                   prepareScenario(startYear, endYear);

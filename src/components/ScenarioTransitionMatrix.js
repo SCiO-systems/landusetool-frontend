@@ -12,7 +12,7 @@ import { uploadProjectFile, deleteFile } from '../services/files';
 import { ToastContext } from '../store';
 import { handleError } from '../utilities/errors';
 
-const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating }) => {
+const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating, canEdit, onCanSave }) => {
   const { t } = useTranslation();
   const [expandedRows, setExpandedRows] = useState([]);
   const [scenarioStart, setScenarioStart] = useState(null);
@@ -35,6 +35,12 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
       setScenarioEnd(inputScenario.scenarioPeriod.scenarioEnd);
     }
   }, [inputScenario]);
+
+  useEffect(() => {
+    if (onCanSave) {
+      onCanSave(canSave);
+    }
+  }, [canSave, onCanSave]);
 
   const format = (num, decimals) => num.toFixed(decimals).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 
@@ -177,7 +183,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
       )}
       <FileUpload
         ref={(ref) => { fileUploadRefs.current[`${landTypeId}${props.rowData.landId}`] = ref; }}
-        disabled={isUploading || processionPolygonForId === (`${landTypeId}${props.rowData.landId}`)}
+        disabled={!canEdit || isUploading || processionPolygonForId === (`${landTypeId}${props.rowData.landId}`)}
         accept=".geojson"
         chooseLabel=""
         chooseOptions={{
@@ -230,6 +236,7 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
   );
 
   const saveStatus = (e) => {
+    if (!canEdit) return;
     onSave(
       { ...inputScenario, landTypes: scenario }
     );
@@ -245,20 +252,22 @@ const ScenarioTransitionMatrix = ({ inputScenario, onSave, projectId, isUpdating
       <div>
         <Button
           icon={`pi ${isCollapsed ? 'pi-angle-right' : 'pi-angle-down'}`}
-          className="p-togglebutton p-mr-2"
+          className="p-togglebutton"
           label={isCollapsed ? t('EXPAND') : t('COLLAPSE')}
           onClick={() => setIsCollapsed((v) => !v)}
         />
-        <ToggleButton
-          onLabel={t('SAVED')}
-          offLabel={t('SAVE_CHANGES')}
-          onIcon="fad fa-check"
-          offIcon="fad fa-save"
-          className="g-save"
-          checked={onChecked}
-          tabIndex="false"
-          disabled={!canSave}
-          onChange={(e) => saveStatus(e.value)} />
+        {canEdit && (
+          <ToggleButton
+            onLabel={t('SAVED')}
+            offLabel={t('SAVE_CHANGES')}
+            onIcon="fad fa-check"
+            offIcon="fad fa-save"
+            className="g-save p-ml-2"
+            checked={onChecked}
+            tabIndex="false"
+            disabled={!canSave}
+            onChange={(e) => saveStatus(e.value)} />
+        )}
       </div>
     </div>
   );

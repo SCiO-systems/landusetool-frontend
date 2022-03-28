@@ -41,7 +41,7 @@ const ScenarioToolbar = ({ scenarios, canAddNew, setScenarioModalVisible, onRese
 
     return (
       <Tag
-        value={`${format(rowData.ld_impact, 2)} ha`}
+        value={`${format(Math.abs(rowData.ld_impact), 2)} ha`}
         severity={rowData.ld_impact > 0 ? 'success' : 'error'}
         icon={rowData.ld_impact > 0 ? 'pi pi-plus' : 'pi pi-minus'}
       />

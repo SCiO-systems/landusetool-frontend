@@ -56,7 +56,7 @@ const ScenarioImpactTable = ({ scenario }) => {
       footer={footerRow()}
     >
       {!isCollapsed && (<Column field="landType" header="Land Type" />)}
-      {!isCollapsed && (<Column style={{ textAlign: 'right' }} header="Land Degradation Impact" body={landDegradationImpactBody} />)}
+      {!isCollapsed && (<Column style={{ textAlign: 'right' }} header="Land Type Change" body={landDegradationImpactBody} />)}
       {!isCollapsed && (<Column style={{ textAlign: 'right' }} header="Land Coverage" body={landCoverageBody} />)}
     </DataTable>
   )

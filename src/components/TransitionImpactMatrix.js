@@ -153,7 +153,7 @@ const TransitionImpactMatrix = ({ initialData, title, hasDefaultData, onSave }) 
     <DataTable
       value={landCoverItem}
       className="p-datatable-gridlines p-datatable-striped p-datatable-sm p-datatable-customers"
-      rows={10}
+      rows={(landCoverItem && landCoverItem.length) ? landCoverItem.length : 0}
       dataKey="id"
       rowHover
       selection={selectedlandCoverItem}

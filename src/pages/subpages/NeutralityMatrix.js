@@ -201,6 +201,7 @@ const NeutralityMatrix = () => {
                 <LDNMap
                   projectId={currentProject?.id}
                   polygonsList={polygonsList}
+                  downloadable
                 />
               </div>
               <div className="p-col-6">

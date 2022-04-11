@@ -10,6 +10,7 @@ const LandDegradationWaterfall = ({ data }) => {
     const chart = am4core.create('land-degradation-waterfall', am4charts.XYChart);
     chart.hiddenState.properties.opacity = 0; // this makes initial fade in effect
     chart.data = data;
+    chart.exporting.menu = new am4core.ExportMenu();
 
     const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.dataFields.category = 'category';

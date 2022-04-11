@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from 'primereact/button';
 
 import Map from './glowglobe/Map';
 import { handleError } from '../utilities/errors';
 import { ToastContext } from '../store';
 import { prepareLDNMap } from '../services/projects';
 
-const LDNMap = ({ polygonsList, projectId }) => {
+const LDNMap = ({ polygonsList, projectId, downloadable = false }) => {
+  const { t } = useTranslation();
   const [ldnMap, setLdnMap] = useState(null);
   const { setError } = useContext(ToastContext);
 
@@ -39,16 +42,27 @@ const LDNMap = ({ polygonsList, projectId }) => {
   }
 
   return (
-    <Map
-      type="single"
-      maps={[
-        {
-          link: ldnMap,
-          label: `LDN Map`,
-          paletteType: 'LandDegradationPalette',
-        },
-      ]}
-    />
+    <>
+      <Map
+        type="single"
+        maps={[
+          {
+            link: ldnMap,
+            label: `LDN Map`,
+            paletteType: 'LandDegradationPalette',
+          },
+        ]}
+      />
+      {downloadable && (
+        <Button
+          label={t('DOWNLOAD_MAP')}
+          icon="pi pi-cloud-download"
+          type="button"
+          className="p-d-block p-button-secondary p-mt-2"
+          onClick={() => window.open(ldnMap, '_blank')}
+        />
+      )}
+    </>
   )
 };
 

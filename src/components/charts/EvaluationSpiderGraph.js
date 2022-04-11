@@ -3,7 +3,7 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
-const EvaluationSpiderGraph = ({ data }) => {
+const EvaluationSpiderGraph = ({ domId = 'spider-graph', data }) => {
   const chart = useRef();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const EvaluationSpiderGraph = ({ data }) => {
     // Themes end
 
     /* Create chart instance */
-    chart.current = am4core.create('spider-graph', am4charts.RadarChart);
+    chart.current = am4core.create(domId, am4charts.RadarChart);
 
     if (data !== undefined) {
       chart.current.data = data;
@@ -61,7 +61,7 @@ const EvaluationSpiderGraph = ({ data }) => {
   };
 
   return (
-    <div id="spider-graph" style={styles} />
+    <div id={domId} style={styles} />
   );
 
 }

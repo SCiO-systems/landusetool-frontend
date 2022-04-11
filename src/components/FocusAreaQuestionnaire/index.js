@@ -5,11 +5,10 @@ import { Button } from 'primereact/button';
 import { useTranslation } from 'react-i18next';
 
 import EvaluationSpiderGraph from '../charts/EvaluationSpiderGraph';
-import CurvedGraph from '../charts/CurvedGraph';
 import QuestionPanel from './QuestionPanel';
 import questions from './data';
 
-const buildInitialSpiderGraphData = (data, evaluation) => {
+export const buildInitialSpiderGraphData = (data, evaluation) => {
   const spiderGraphData = [];
 
   if (data.length === 0) return spiderGraphData;
@@ -77,10 +76,10 @@ const getEvaluationValues = (evaluation) => {
   return defaults;
 }
 
-const FocusAreaQuestionnaire = ({ evaluation, onSave }) => {
+const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForProposal }) => {
   const { t } = useTranslation();
   const [spiderData, setSpiderData] = useState([]);
-  const [curvedData, setCurvedData] = useState([]);
+  // const [curvedData, setCurvedData] = useState([]);
   const [evaluationValues, setEvaluationValues] = useState();
 
   const handleChangeEvaluation = ({ id, numericValue }) => {
@@ -111,7 +110,7 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave }) => {
 
   useEffect(() => {
     setSpiderData(buildInitialSpiderGraphData(questions, evaluationValues));
-    setCurvedData(buildInitialCurvedGraphData(evaluationValues));
+    // setCurvedData(buildInitialCurvedGraphData(evaluationValues));
   }, [evaluationValues]);
 
   useEffect(() => {
@@ -188,76 +187,84 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave }) => {
           )}
         </div>
         <div className="p-col-6">
-          {curvedData.length > 0 && (
-            <CurvedGraph data={curvedData} />
+          {/* {curvedData.length > 0 && ( */}
+          {/*   <CurvedGraph data={curvedData} /> */}
+          {/* )} */}
+          {showFinalQuestion && (
+          <div className="p-mt-6">
+            <h5>
+              What is the anticipated LD impact for this LU Type?
+            </h5>
+            <div className="p-field-radiobutton p-mt-4">
+              <RadioButton
+                id="improved_ld_impact"
+                name="anticipated_ld_impact"
+                value="improved"
+                onChange={(e) => handleLdImpactChange(e.value)}
+                checked={evaluationValues?.anticipated_ld_impact === 'improved'}
+              />
+              <label htmlFor="improved_ld_impact">Improved</label>
+            </div>
+            <div className="p-field-radiobutton">
+              <RadioButton
+                id="slightly_improved_ld_impact"
+                name="anticipated_ld_impact"
+                value="slightly_improved"
+                onChange={(e) => handleLdImpactChange(e.value)}
+                checked={evaluationValues?.anticipated_ld_impact === 'slightly_improved'}
+              />
+              <label htmlFor="slightly_improved_ld_impact">Slightly Improved</label>
+            </div>
+            <div className="p-field-radiobutton">
+              <RadioButton
+                id="neutral_ld_impact"
+                name="anticipated_ld_impact"
+                value="neutral"
+                onChange={(e) => handleLdImpactChange(e.value)}
+                checked={evaluationValues?.anticipated_ld_impact === 'neutral'}
+              />
+              <label htmlFor="neutral_ld_impact">Neutral</label>
+            </div>
+            <div className="p-field-radiobutton">
+              <RadioButton
+                id="slightly_reduced_ld_impact"
+                name="anticipated_ld_impact"
+                value="slightly_reduced"
+                onChange={(e) => handleLdImpactChange(e.value)}
+                checked={evaluationValues?.anticipated_ld_impact === 'slightly_reduced'}
+              />
+              <label htmlFor="slightly_reduced_ld_impact">Slightly Reduced</label>
+            </div>
+            <div className="p-field-radiobutton">
+              <RadioButton
+                id="reduced_ld_impact"
+                name="anticipated_ld_impact"
+                value="reduced"
+                onChange={(e) => handleLdImpactChange(e.value)}
+                checked={evaluationValues?.anticipated_ld_impact === 'reduced'}
+              />
+              <label htmlFor="reduced_ld_impact">Reduced</label>
+            </div>
+          </div>
           )}
+          <div className="p-mt-6">
+            <Button
+              onClick={() => handleSave()}
+              className="p-button-primary"
+              icon="fad fa-save"
+              iconPos="right"
+              label={isForProposal ? t('SAVE_ASSESSMENT_AND_PROPOSE') : t('SAVE_ASSESSMENT')}
+            />
+          </div>
         </div>
       </div>
       <div className="p-grid p-my-2">
         <div className="p-col-6 p-offset-6">
-          <h5>
-            What is the anticipated LD impact for this LU Type?
-          </h5>
-          <div className="p-field-radiobutton p-mt-4">
-            <RadioButton
-              id="improved_ld_impact"
-              name="anticipated_ld_impact"
-              value="improved"
-              onChange={(e) => handleLdImpactChange(e.value)}
-              checked={evaluationValues?.anticipated_ld_impact === 'improved'}
-            />
-            <label htmlFor="improved_ld_impact">Improved</label>
-          </div>
-          <div className="p-field-radiobutton">
-            <RadioButton
-              id="slightly_improved_ld_impact"
-              name="anticipated_ld_impact"
-              value="slightly_improved"
-              onChange={(e) => handleLdImpactChange(e.value)}
-              checked={evaluationValues?.anticipated_ld_impact === 'slightly_improved'}
-            />
-            <label htmlFor="slightly_improved_ld_impact">Slightly Improved</label>
-          </div>
-          <div className="p-field-radiobutton">
-            <RadioButton
-              id="neutral_ld_impact"
-              name="anticipated_ld_impact"
-              value="neutral"
-              onChange={(e) => handleLdImpactChange(e.value)}
-              checked={evaluationValues?.anticipated_ld_impact === 'neutral'}
-            />
-            <label htmlFor="neutral_ld_impact">Neutral</label>
-          </div>
-          <div className="p-field-radiobutton">
-            <RadioButton
-              id="slightly_reduced_ld_impact"
-              name="anticipated_ld_impact"
-              value="slightly_reduced"
-              onChange={(e) => handleLdImpactChange(e.value)}
-              checked={evaluationValues?.anticipated_ld_impact === 'slightly_reduced'}
-            />
-            <label htmlFor="slightly_reduced_ld_impact">Slightly Reduced</label>
-          </div>
-          <div className="p-field-radiobutton">
-            <RadioButton
-              id="reduced_ld_impact"
-              name="anticipated_ld_impact"
-              value="reduced"
-              onChange={(e) => handleLdImpactChange(e.value)}
-              checked={evaluationValues?.anticipated_ld_impact === 'reduced'}
-            />
-            <label htmlFor="reduced_ld_impact">Reduced</label>
-          </div>
+          {/* Final question could go here if we decide to show the curved graph */}
         </div>
       </div>
       <div className="p-d-flex p-jc-end p-my-4">
-        <Button
-          onClick={() => handleSave()}
-          className="p-button-primary"
-          icon="fad fa-save"
-          iconPos="right"
-          label={t('SAVE_ASSESSMENT')}
-        />
+        {/* Save button could go here if we decide to show the curved graph */}
       </div>
     </>
   )

@@ -262,8 +262,9 @@ const FocusAreaLMAssesment = ({ onBack }) => {
       {(selectedFocusArea && selectedLuClass) && (
         <FocusAreaQuestionnaire
           evaluation={selectedEvaluation}
-          canProceedToPlanning={evaluations && evaluations.length > 0}
           onSave={saveEvaluation}
+          isForProposal={false}
+          showFinalQuestion
         />
       )}
     </div>

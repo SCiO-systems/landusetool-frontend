@@ -125,6 +125,7 @@ const t = {
     FOCUS_AREAS: 'Focus Areas',
     FOCUS_AREA_LM_ASSESMENT: 'Focus Area LM Assessment',
     SAVE_ASSESSMENT: 'Save Assessment',
+    SAVE_ASSESSMENT_AND_PROPOSE: 'Save Assessment & Propose',
     NO_FOCUS_AREAS_WARNING: 'You need to define at least one focus area to continue',
     ASSESSMENT_CRITERIA: 'Assessment Criteria',
     SETUP_LU_CLASSES: 'Setup LU Classes',

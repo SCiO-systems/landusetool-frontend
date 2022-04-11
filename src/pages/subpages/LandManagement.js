@@ -12,25 +12,26 @@ import {
   proposeProjectWocatTechnology,
   voteProjectWocatTechnology,
   getProjectWocatTechnologies,
+  rejectProjectWocatTechnology,
 } from '../../services/projects';
 import { getEvaluations } from '../../services/focus-area-evaluations';
 import { ToastContext, UserContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 import { findLuClassesByIds } from '../../utilities/schema-generators';
 import SingleWocatTechnology from '../../components/SingleWocatTechnology';
+import FocusAreaQuestionnaire from '../../components/FocusAreaQuestionnaire';
 
-const hasEvaluation = (evaluations, focusAreaId, luClass) => {
-  if (!evaluations || evaluations.length === 0) return false;
+const findEvaluation = (evaluations, focusAreaId, luClass) => {
+  if (!evaluations || evaluations.length === 0) return null;
 
   for (let i = 0; i < evaluations.length; i += 1) {
     if (evaluations[i].project_focus_area_id === focusAreaId && evaluations[i].lu_class === luClass) {
-      return true;
+      return evaluations[i];
     }
   }
 
-  return false;
+  return null;
 }
-
 
 const LandManagement = () => {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ const LandManagement = () => {
   const [selectedLuClass, setSelectedLuClass] = useState(null);
   const [options, setOptions] = useState([]);
   const [selectionEvaluated, setSelectionEvaluated] = useState(false);
+  const [selectionEvaluation, setSelectionEvaluation] = useState(null);
 
   // Chunk size for each search.
   const ITEMS_CHUNK_SIZE = 10;
@@ -58,6 +60,7 @@ const LandManagement = () => {
   // Data.
   const [technologies, setTechnologies] = useState([]);
   const [chosenTechnology, setChosenTechnology] = useState(null);
+  const [selectedTechnology, setSelectedTechnology] = useState(null);
 
   const onSearch = async (e) => {
     e?.preventDefault();
@@ -76,19 +79,31 @@ const LandManagement = () => {
     setIsLoading(false);
   };
 
-  const onPropose = async (techId) => {
+  const resetState = () => {
+    setSelectedFocusArea(null);
+    setSelectedLuClass(null);
+    setSelectedTechnology(null);
+    setSelectionEvaluation(null);
+    setSelectionEvaluated(false);
+  };
+
+  const onPropose = async (_evaluationId, evaluationValues) => {
+    if (selectedTechnology === null) {
+      // How does he get here?
+      resetState();
+      return;
+    }
     try {
       setIsLoading(true);
       await proposeProjectWocatTechnology(
         currentProject.id,
-        techId,
+        selectedTechnology?.techId,
         selectedFocusArea.id,
-        selectedLuClass
+        selectedLuClass,
+        evaluationValues
       );
       setSuccess('Done', 'Your proposal has been saved for this focus area and land use.');
-      setSelectedFocusArea(null);
-      setSelectedLuClass(null);
-      setSelectionEvaluated(false);
+      resetState();
     } catch (error) {
       setError(handleError(error));
     } finally {
@@ -102,9 +117,21 @@ const LandManagement = () => {
       setIsLoading(true);
       await voteProjectWocatTechnology(currentProject.id, chosenTechnology.id);
       setSuccess('Done', 'Your vote has been saved for this focus area and land use.');
-      setSelectedFocusArea(null);
-      setSelectedLuClass(null);
-      setSelectionEvaluated(false);
+      resetState();
+    } catch (error) {
+      setError(handleError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const onReject = async () => {
+    if (!chosenTechnology) return;
+    try {
+      setIsLoading(true);
+      await rejectProjectWocatTechnology(currentProject.id, chosenTechnology.id);
+      setSuccess('Done', 'This proposal has been rejected.');
+      resetState();
     } catch (error) {
       setError(handleError(error));
     } finally {
@@ -124,7 +151,7 @@ const LandManagement = () => {
           currentProject.uses_default_lu_classification
         ).map((lc) => ({
           ...lc,
-          hasEvaluation: hasEvaluation(evaluationsResponse, focusArea.id, `${lc.value}`),
+          evaluation: findEvaluation(evaluationsResponse, focusArea.id, `${lc.value}`),
         })),
       })));
     } catch (error) {
@@ -165,12 +192,13 @@ const LandManagement = () => {
     if (selectedFocusArea) {
       const luClass = selectedFocusArea.luClasses.find((lu) => lu.value === selectedLuClass);
       if (luClass) {
-        setSelectionEvaluated(luClass.hasEvaluation);
-        if (luClass.hasEvaluation) {
+        setSelectionEvaluated(luClass.evaluation !== null);
+        if (luClass.evaluation) {
           getProjectTechnologies({
             project_focus_area_id: selectedFocusArea.id,
             lu_class: luClass.value,
           })
+          setSelectionEvaluation(luClass.evaluation);
         }
       }
     }
@@ -242,8 +270,8 @@ const LandManagement = () => {
         </div>
         <div className="p-col-2">
           <Button
-            label="Propose"
-            onClick={() => onPropose(tech?.id)}
+            label="Select"
+            onClick={() => setSelectedTechnology({ techId: tech?.id, label: tech?.name })}
             className="p-my-2 p-d-block"
             icon="pi pi-check"
           />
@@ -266,7 +294,7 @@ const LandManagement = () => {
     if (option) {
       let hasFinishedEvaluations = true;
       for (let i = 0; i < option.luClasses.length; i += 1) {
-        if (!option.luClasses[i].hasEvaluation) {
+        if (!option.luClasses[i].evaluation) {
           hasFinishedEvaluations = false;
           break;
         }
@@ -292,7 +320,7 @@ const LandManagement = () => {
   const focusAreaOptionTemplate = (option) => {
     let hasFinishedEvaluations = true;
     for (let i = 0; i < option.luClasses.length; i += 1) {
-      if (!option.luClasses[i].hasEvaluation) {
+      if (!option.luClasses[i].evaluation) {
         hasFinishedEvaluations = false;
         break;
       }
@@ -312,7 +340,7 @@ const LandManagement = () => {
     if (option) {
       return (
         <div key={option.value} className="p-d-flex p-ai-center">
-          {option.hasEvaluation
+          {option.evaluation !== null
             ? <i className="p-d-block far fa-check-circle p-mr-2" />
             : <i className="p-d-block far fa-circle p-mr-2" />
           }
@@ -330,7 +358,7 @@ const LandManagement = () => {
 
   const luClassOptionTemplate = (option) => (
     <div key={option.value} className="p-d-flex p-ai-center">
-      {option.hasEvaluation
+      {option.evaluation !== null
         ? <i className="p-d-block far fa-check-circle p-mr-2" />
         : <i className="p-d-block far fa-circle p-mr-2" />
       }
@@ -369,6 +397,19 @@ const LandManagement = () => {
             />
           )}
         </div>
+        {selectedTechnology !== null && (
+          <div className="p-col-6 p-text-right">
+            <strong className="p-d-block p-mb-2">
+              { selectedTechnology?.label }.
+            </strong>
+            <Button
+              icon="pi pi-arrow-circle-left"
+              className="p-mb-2 p-button-secondary"
+              onClick={() => setSelectedTechnology(null)}
+              label='Search for a different technology'
+            />
+          </div>
+        )}
       </div>
       {(selectedFocusArea && selectedLuClass && !selectionEvaluated) && (
         <Message
@@ -378,7 +419,21 @@ const LandManagement = () => {
           className="p-mt-2"
         />
       )}
-      {(selectedFocusArea && selectedLuClass && selectionEvaluated && chosenTechnology === null && !isLoadingTechnology) && (
+      {(
+        selectedFocusArea && selectedLuClass && selectionEvaluated && 
+        chosenTechnology === null && selectedTechnology !== null && !isLoadingTechnology
+      ) && (
+        <FocusAreaQuestionnaire
+          evaluation={null}
+          onSave={onPropose}
+          showFinalQuestion={false}
+          isForProposal
+        />        
+      )}
+      {(
+        selectedFocusArea && selectedLuClass && selectionEvaluated && 
+        chosenTechnology === null && selectedTechnology === null && !isLoadingTechnology
+      ) && (
           <DataView
             paginator
             rows={ITEMS_CHUNK_SIZE}
@@ -398,7 +453,10 @@ const LandManagement = () => {
           <SingleWocatTechnology
             techId={chosenTechnology?.technology_id}
             isOwnProposal={chosenTechnology?.user?.id === userId}
+            proposerEvaluation={chosenTechnology?.evaluation}
+            selfEvaluation={selectionEvaluation}
             isFinal={chosenTechnology?.status === 'final'}
+            onReject={onReject}
             onVote={onVote}
           />
         )}

@@ -5,11 +5,16 @@ import { Tag } from 'primereact/tag';
 import { getWocatTechnology } from '../services/landuse';
 import { ToastContext } from '../store';
 import { handleError } from '../utilities/errors';
+import EvaluationSpiderGraph from './charts/EvaluationSpiderGraph';
+import { buildInitialSpiderGraphData } from './FocusAreaQuestionnaire';
+import questions from './FocusAreaQuestionnaire/data';
 
-const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote }) => {
+const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onReject, proposerEvaluation, selfEvaluation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { setError } = useContext(ToastContext);
   const [tech, setTech] = useState(null);
+  const [selfGraphData, setSelfGraphData] = useState([]);
+  const [proposerGraphData, setProposerGraphData] = useState([]);
 
   useEffect(() => {
     const fetchTech = async () => {
@@ -26,6 +31,11 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote }) => {
       fetchTech();
     }
   }, [techId]); // eslint-disable-line
+
+  useEffect(() => {
+    setSelfGraphData(buildInitialSpiderGraphData(questions, selfEvaluation));
+    setProposerGraphData(buildInitialSpiderGraphData(questions, proposerEvaluation));
+  }, [selfEvaluation, proposerEvaluation]);
 
   if (isLoading || (tech === null)) {
     return (
@@ -74,12 +84,22 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote }) => {
               {isOwnProposal ? (
                 <Tag value="Pending Approval" severity="info" icon="pi pi-spinner pi-spin" />
               ) : (
-                <Button
-                  label="Vote"
-                  onClick={() => onVote()}
-                  className="p-my-2 p-d-block"
-                  icon="pi pi-check"
-                />
+                <>
+                  <Button
+                    label="Accept"
+                    style={{ width: '160px' }}
+                    onClick={() => onVote()}
+                    className="p-my-2 p-d-block"
+                    icon="pi pi-check"
+                  />
+                  <Button
+                    label="Reject"
+                    style={{ width: '160px' }}
+                    onClick={() => onReject()}
+                    className="p-my-2 p-d-block p-button-danger"
+                    icon="pi pi-times"
+                  />
+                </>
               )}
             </>
           )}
@@ -88,6 +108,32 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote }) => {
           )}
         </div>
       </div>
+      {(!isFinal && !isOwnProposal) && (
+        <div className="p-grid p-mt-4">
+          <div className="p-col-6 p-text-center">
+            <h4>Your Evaluation</h4>
+            <div className="p-d-flex p-jc-center p-ai-center">
+              {selfGraphData.length > 0 && (
+                <EvaluationSpiderGraph
+                  domId="self-evaluation-spider-graph"
+                  data={selfGraphData} 
+                />
+              )}
+            </div>
+          </div>
+          <div className="p-col-6 p-text-center">
+            <h4>New Evaluation</h4>
+            <div className="p-d-flex p-jc-center p-ai-center">
+              {proposerGraphData.length > 0 && (
+                <EvaluationSpiderGraph
+                  domId="new-evaluation-spider-graph"
+                  data={proposerGraphData} 
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

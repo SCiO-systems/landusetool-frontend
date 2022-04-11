@@ -79,15 +79,21 @@ export const getProjectWocatTechnologies = async (id, filters = {}) => {
   return apiClient.get(`/projects/${id}/wocat_technologies?${qs}`);
 }
 
-export const proposeProjectWocatTechnology = async (id, technologyId, focusAreaId, luClass) =>
+export const proposeProjectWocatTechnology = async (id, technologyId, focusAreaId, luClass, evaluationData) =>
   apiClient.post(`/projects/${id}/propose_wocat_technology`, {
     technology_id: technologyId,
     project_focus_area_id: focusAreaId,
     lu_class: `${luClass}`,
+    ...evaluationData,
   });
 
 export const voteProjectWocatTechnology = async (id, projectWocatSlmTechnologyId) =>
   apiClient.post(`/projects/${id}/vote_wocat_technology`, {
+    project_wocat_slm_technology_id: projectWocatSlmTechnologyId,
+  });
+
+export const rejectProjectWocatTechnology = async (id, projectWocatSlmTechnologyId) =>
+  apiClient.post(`/projects/${id}/reject_wocat_technology`, {
     project_wocat_slm_technology_id: projectWocatSlmTechnologyId,
   });
 

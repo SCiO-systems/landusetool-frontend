@@ -427,6 +427,7 @@ const LandManagement = () => {
           evaluation={null}
           onSave={onPropose}
           showFinalQuestion={false}
+          comparingEvaluation={selectionEvaluation}
           isForProposal
         />        
       )}

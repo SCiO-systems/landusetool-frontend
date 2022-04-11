@@ -76,9 +76,10 @@ const getEvaluationValues = (evaluation) => {
   return defaults;
 }
 
-const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForProposal }) => {
+const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForProposal, comparingEvaluation = null }) => {
   const { t } = useTranslation();
   const [spiderData, setSpiderData] = useState([]);
+  const [spiderDataComparing, setSpiderDataComparing] = useState([]);
   // const [curvedData, setCurvedData] = useState([]);
   const [evaluationValues, setEvaluationValues] = useState();
 
@@ -110,8 +111,11 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForPr
 
   useEffect(() => {
     setSpiderData(buildInitialSpiderGraphData(questions, evaluationValues));
+    if (comparingEvaluation !== null) {
+      setSpiderDataComparing(buildInitialSpiderGraphData(questions, comparingEvaluation));
+    }
     // setCurvedData(buildInitialCurvedGraphData(evaluationValues));
-  }, [evaluationValues]);
+  }, [evaluationValues, comparingEvaluation]);
 
   useEffect(() => {
     setEvaluationValues(getEvaluationValues(evaluation));
@@ -181,81 +185,90 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForPr
         }
       </div>
       <div className="p-grid p-my-2">
-        <div className="p-col-6 p-d-flex p-jc-center p-ai-center">
-          {spiderData.length > 0 && (
-            <EvaluationSpiderGraph data={spiderData} />
+        <div className="p-col-6">
+          {(comparingEvaluation === null && spiderData.length > 0) && (
+            <div className='p-d-flex p-jc-center p-ai-center'>
+              <EvaluationSpiderGraph data={spiderData} />
+            </div>
+          )}
+          {(comparingEvaluation !== null && spiderDataComparing.length > 0) && (
+            <div className="p-text-center">
+              <h4>Assessment of current SLM</h4>
+              <div className='p-d-flex p-jc-center p-ai-center'>
+                <EvaluationSpiderGraph domId="current-slm-evaluation-graph" data={spiderDataComparing} />
+              </div>
+            </div>
           )}
         </div>
         <div className="p-col-6">
           {/* {curvedData.length > 0 && ( */}
           {/*   <CurvedGraph data={curvedData} /> */}
           {/* )} */}
-          {showFinalQuestion && (
-          <div className="p-mt-6">
-            <h5>
-              What is the anticipated LD impact for this LU Type?
-            </h5>
-            <div className="p-field-radiobutton p-mt-4">
-              <RadioButton
-                id="improved_ld_impact"
-                name="anticipated_ld_impact"
-                value="improved"
-                onChange={(e) => handleLdImpactChange(e.value)}
-                checked={evaluationValues?.anticipated_ld_impact === 'improved'}
-              />
-              <label htmlFor="improved_ld_impact">Improved</label>
+          {(comparingEvaluation !== null && spiderData.length > 0) && (
+            <div className="p-text-center">
+              <h4>Selected SLM assessment</h4>
+              <div className='p-d-flex p-jc-center p-ai-center'>
+                <EvaluationSpiderGraph domId="selected-slm-evaluation-graph" data={spiderData} />
+              </div>
             </div>
-            <div className="p-field-radiobutton">
-              <RadioButton
-                id="slightly_improved_ld_impact"
-                name="anticipated_ld_impact"
-                value="slightly_improved"
-                onChange={(e) => handleLdImpactChange(e.value)}
-                checked={evaluationValues?.anticipated_ld_impact === 'slightly_improved'}
-              />
-              <label htmlFor="slightly_improved_ld_impact">Slightly Improved</label>
-            </div>
-            <div className="p-field-radiobutton">
-              <RadioButton
-                id="neutral_ld_impact"
-                name="anticipated_ld_impact"
-                value="neutral"
-                onChange={(e) => handleLdImpactChange(e.value)}
-                checked={evaluationValues?.anticipated_ld_impact === 'neutral'}
-              />
-              <label htmlFor="neutral_ld_impact">Neutral</label>
-            </div>
-            <div className="p-field-radiobutton">
-              <RadioButton
-                id="slightly_reduced_ld_impact"
-                name="anticipated_ld_impact"
-                value="slightly_reduced"
-                onChange={(e) => handleLdImpactChange(e.value)}
-                checked={evaluationValues?.anticipated_ld_impact === 'slightly_reduced'}
-              />
-              <label htmlFor="slightly_reduced_ld_impact">Slightly Reduced</label>
-            </div>
-            <div className="p-field-radiobutton">
-              <RadioButton
-                id="reduced_ld_impact"
-                name="anticipated_ld_impact"
-                value="reduced"
-                onChange={(e) => handleLdImpactChange(e.value)}
-                checked={evaluationValues?.anticipated_ld_impact === 'reduced'}
-              />
-              <label htmlFor="reduced_ld_impact">Reduced</label>
-            </div>
-          </div>
           )}
-          <div className="p-mt-6">
-            <Button
-              onClick={() => handleSave()}
-              className="p-button-primary"
-              icon="fad fa-save"
-              iconPos="right"
-              label={isForProposal ? t('SAVE_ASSESSMENT_AND_PROPOSE') : t('SAVE_ASSESSMENT')}
-            />
-          </div>
+          {showFinalQuestion && (
+            <div className="p-mt-6">
+              <h5>
+                What is the anticipated LD impact for this LU Type?
+              </h5>
+              <div className="p-field-radiobutton p-mt-4">
+                <RadioButton
+                  id="improved_ld_impact"
+                  name="anticipated_ld_impact"
+                  value="improved"
+                  onChange={(e) => handleLdImpactChange(e.value)}
+                  checked={evaluationValues?.anticipated_ld_impact === 'improved'}
+                />
+                <label htmlFor="improved_ld_impact">Improved</label>
+              </div>
+              <div className="p-field-radiobutton">
+                <RadioButton
+                  id="slightly_improved_ld_impact"
+                  name="anticipated_ld_impact"
+                  value="slightly_improved"
+                  onChange={(e) => handleLdImpactChange(e.value)}
+                  checked={evaluationValues?.anticipated_ld_impact === 'slightly_improved'}
+                />
+                <label htmlFor="slightly_improved_ld_impact">Slightly Improved</label>
+              </div>
+              <div className="p-field-radiobutton">
+                <RadioButton
+                  id="neutral_ld_impact"
+                  name="anticipated_ld_impact"
+                  value="neutral"
+                  onChange={(e) => handleLdImpactChange(e.value)}
+                  checked={evaluationValues?.anticipated_ld_impact === 'neutral'}
+                />
+                <label htmlFor="neutral_ld_impact">Neutral</label>
+              </div>
+              <div className="p-field-radiobutton">
+                <RadioButton
+                  id="slightly_reduced_ld_impact"
+                  name="anticipated_ld_impact"
+                  value="slightly_reduced"
+                  onChange={(e) => handleLdImpactChange(e.value)}
+                  checked={evaluationValues?.anticipated_ld_impact === 'slightly_reduced'}
+                />
+                <label htmlFor="slightly_reduced_ld_impact">Slightly Reduced</label>
+              </div>
+              <div className="p-field-radiobutton">
+                <RadioButton
+                  id="reduced_ld_impact"
+                  name="anticipated_ld_impact"
+                  value="reduced"
+                  onChange={(e) => handleLdImpactChange(e.value)}
+                  checked={evaluationValues?.anticipated_ld_impact === 'reduced'}
+                />
+                <label htmlFor="reduced_ld_impact">Reduced</label>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="p-grid p-my-2">
@@ -263,8 +276,14 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForPr
           {/* Final question could go here if we decide to show the curved graph */}
         </div>
       </div>
-      <div className="p-d-flex p-jc-end p-my-4">
-        {/* Save button could go here if we decide to show the curved graph */}
+      <div className="p-d-flex p-jc-center p-my-4">
+        <Button
+          onClick={() => handleSave()}
+          className="p-button-primary p-button-lg"
+          icon="fad fa-save"
+          iconPos="right"
+          label={isForProposal ? t('SAVE_ASSESSMENT_AND_PROPOSE') : t('SAVE_ASSESSMENT')}
+        />
       </div>
     </>
   )

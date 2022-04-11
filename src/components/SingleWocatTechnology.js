@@ -111,7 +111,7 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onRejec
       {(!isFinal && !isOwnProposal) && (
         <div className="p-grid p-mt-4">
           <div className="p-col-6 p-text-center">
-            <h4>Your Evaluation</h4>
+            <h4>Assessment of current SLM</h4>
             <div className="p-d-flex p-jc-center p-ai-center">
               {selfGraphData.length > 0 && (
                 <EvaluationSpiderGraph
@@ -122,7 +122,7 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onRejec
             </div>
           </div>
           <div className="p-col-6 p-text-center">
-            <h4>New Evaluation</h4>
+            <h4>Proposed SLM assessment</h4>
             <div className="p-d-flex p-jc-center p-ai-center">
               {proposerGraphData.length > 0 && (
                 <EvaluationSpiderGraph

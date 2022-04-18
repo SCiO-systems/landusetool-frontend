@@ -99,10 +99,11 @@ const ProjectDatasets = () => {
     const fetchProject = async () => {
       try {
         const { data } = await getProject(id);
-        setProject(data);
-        if (data.step === null) {
-          history.push(getUrlForStep(id, getNextStep(data)));
+        if (data.step === null || ![PROJECT_STEPS.DATASETS_LAND_USE, PROJECT_STEPS.DATASETS_LAND_DEGRADATION].includes(data.step)) {
+          history.push(getUrlForStep(id, data.step));
+          return;
         }
+        setProject(data);
         setUser({ currentProject: data });
       } catch (e) {
         setError(handleError(e));

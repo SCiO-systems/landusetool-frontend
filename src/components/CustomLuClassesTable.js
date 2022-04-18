@@ -33,8 +33,9 @@ const CustomLuClassesTable = ({
     setEntry({ key: '', value: '' });
   };
 
-  const onDelete = (e) => {
-    onDeleteItem(e);
+  const onDelete = (e, item) => {
+    e.preventDefault();
+    onDeleteItem(item);
   };
 
   const uploadFile = async (e, files) => {
@@ -135,7 +136,8 @@ const CustomLuClassesTable = ({
               <Button
                 className="p-button-danger"
                 icon="pi pi-trash"
-                onClick={() => onDelete(e)}
+                type="button"
+                onClick={(event) => onDelete(event, e)}
               />
             </div>
           )}

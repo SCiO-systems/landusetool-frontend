@@ -108,32 +108,30 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onRejec
           )}
         </div>
       </div>
-      {(!isFinal && !isOwnProposal) && (
-        <div className="p-grid p-mt-4">
-          <div className="p-col-6 p-text-center">
-            <h4>Assessment of current SLM</h4>
-            <div className="p-d-flex p-jc-center p-ai-center">
-              {selfGraphData.length > 0 && (
-                <EvaluationSpiderGraph
-                  domId="self-evaluation-spider-graph"
-                  data={selfGraphData} 
-                />
-              )}
-            </div>
-          </div>
-          <div className="p-col-6 p-text-center">
-            <h4>Proposed SLM assessment</h4>
-            <div className="p-d-flex p-jc-center p-ai-center">
-              {proposerGraphData.length > 0 && (
-                <EvaluationSpiderGraph
-                  domId="new-evaluation-spider-graph"
-                  data={proposerGraphData} 
-                />
-              )}
-            </div>
+      <div className="p-grid p-mt-4">
+        <div className="p-col-6 p-text-center">
+          <h4>Assessment of current SLM</h4>
+          <div className="p-d-flex p-jc-center p-ai-center">
+            {selfGraphData.length > 0 && (
+              <EvaluationSpiderGraph
+                domId="self-evaluation-spider-graph"
+                data={selfGraphData} 
+              />
+            )}
           </div>
         </div>
-      )}
+        <div className="p-col-6 p-text-center">
+          <h4>Proposed SLM assessment</h4>
+          <div className="p-d-flex p-jc-center p-ai-center">
+            {proposerGraphData.length > 0 && (
+              <EvaluationSpiderGraph
+                domId="new-evaluation-spider-graph"
+                data={proposerGraphData} 
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

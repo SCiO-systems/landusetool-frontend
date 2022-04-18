@@ -7,6 +7,7 @@ import Loading from '../../components/Loading';
 import LDNMap from '../../components/LDNMap';
 import ScenarioImpactTable from '../../components/tables/ScenarioImpactTable';
 import LandDegradationWaterfall from '../../components/charts/LandDegradationWaterfall';
+import ComputedEvaluationSpiderGraph from '../../components/charts/ComputedEvaluationSpiderGraph';
 import { getScenarios } from '../../services/scenarios';
 import { getProjectWocatTechnologies } from '../../services/projects';
 import { UserContext, ToastContext } from '../../store';
@@ -222,16 +223,25 @@ const NeutralityMatrix = () => {
                 emptyMessage={t(`NO_WOCAT_TECHNOLOGIES_FOR_THIS_PROJECT:`)}
                 header={t('WOCAT_TECHNOLOGIES')}
               >
-                <Column header={t('FOCUS_AREA')} body={(rowData) => (
-                  <>{ rowData.focus_area.name } ({ findNameForLuClass(rowData.lu_class,
-                    currentProject.lu_classes) })</>
+                <Column header={`${t('FOCUS_AREA')} & ${t('WOCAT_TECHNOLOGY')}`} body={(rowData) => (
+                  <>
+                    <h4>
+                      { rowData.focus_area.name } ({ findNameForLuClass(rowData.lu_class,
+                      currentProject.lu_classes) })
+                    </h4>
+                    <a
+                      href={`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >{`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}</a>
+                    <p className="p-d-block p-mt-2">Proposed by: {rowData.user.firstname} {rowData.user.lastname}</p>
+                  </>
                 )} />
-                <Column header={t('WOCAT_TECHNOLOGY')} body={(rowData) => (
-                  <a
-                    href={`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >{`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}</a>
+                <Column header='Evaluation' body={(rowData) => (
+                  <ComputedEvaluationSpiderGraph 
+                    domId={`${rowData.id}-evaluation-graph`}
+                    evaluation={rowData?.evaluation}
+                  />
                 )} />
               </DataTable>
             )}

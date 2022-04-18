@@ -12,7 +12,6 @@ import { uploadProjectFile } from '../services/files';
 import {
   editProject,
   finaliseProject,
-  getNextStep,
   getProject,
   getUrlForStep,
   PROJECT_STEPS,

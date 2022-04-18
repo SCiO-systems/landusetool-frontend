@@ -27,28 +27,29 @@ export const buildInitialSpiderGraphData = (data, evaluation) => {
   return spiderGraphData;
 };
 
-const buildInitialCurvedGraphData = (evaluation) => {
-  const data = [
-    {
-      'indicator': 'LU Cover Change',
-      'value': 0,
-    }, {
-      'indicator': 'Productivity',
-      'value': 0,
-    }, {
-      'indicator': 'Soil Organic Carbon',
-      'value': 0,
-    },
-  ];
-
-  if (evaluation) {
-    data[0].value = (evaluation.water_value + evaluation.climate_change_resilience_value) / 2;
-    data[1].value = evaluation.biodiversity_value;
-    data[2].value = evaluation.soil_value;
-  }
-
-  return data;
-}
+// TODO: The following remains commented out until further notice (CurvedGraph is unused)
+// const buildInitialCurvedGraphData = (evaluation) => {
+//   const data = [
+//     {
+//       'indicator': 'LU Cover Change',
+//       'value': 0,
+//     }, {
+//       'indicator': 'Productivity',
+//       'value': 0,
+//     }, {
+//       'indicator': 'Soil Organic Carbon',
+//       'value': 0,
+//     },
+//   ];
+//
+//   if (evaluation) {
+//     data[0].value = (evaluation.water_value + evaluation.climate_change_resilience_value) / 2;
+//     data[1].value = evaluation.biodiversity_value;
+//     data[2].value = evaluation.soil_value;
+//   }
+//
+//   return data;
+// }
 
 const getEvaluationValues = (evaluation) => {
   const defaults = {

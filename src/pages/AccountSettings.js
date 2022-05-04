@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import Loading from '../components/Loading';
 import UserPassword from '../components/UserPassword';
 import UserProfile from '../components/UserProfile';
-import { getUserProfile } from '../services/users';
+import { getUserProfile, IDENTITY_PROVIDER_LOCAL } from '../services/users';
 import { UserContext } from '../store';
 
 const AccountSettings = () => {
@@ -32,19 +32,14 @@ const AccountSettings = () => {
 
   return (
     <>
-      <div className="account-settings-page">
-        <div className="layout-content">
-          {/* User profile */}
-          <UserProfile
-            identityProvider={identityProvider}
-            userId={id}
-            dialogOpen={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          />
-          {/* UI Preferences */}
-          {/* <UserInterfacePreferences /> */}
-          {identityProvider === 'scribe' && <UserPassword userId={id} />}
-        </div>
+      <div className="layout-dashboard">
+        <UserProfile
+          identityProvider={identityProvider}
+          userId={id}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+        />
+        {identityProvider === IDENTITY_PROVIDER_LOCAL && <UserPassword userId={id} />}
       </div>
       <Footer />
     </>

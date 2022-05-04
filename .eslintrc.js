@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ['plugin:react/recommended', 'airbnb', 'react-app'],
+  extends: ['plugin:react/recommended', 'airbnb', 'react-app', 'prettier'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
+    'no-param-reassign': ['error', { props: false }],
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
     quotes: ['error', 'single', { allowTemplateLiterals: true }],
     'jsx-a11y/label-has-associated-control': [
@@ -22,11 +23,7 @@ module.exports = {
         depth: 3,
       },
     ],
-    'operator-linebreak': [
-      'error',
-      'after',
-      { overrides: { '?': 'before', ':': 'before' } },
-    ],
+    'operator-linebreak': ['error', 'after', { overrides: { '?': 'before', ':': 'before' } }],
     'comma-dangle': [
       'error',
       {
@@ -37,6 +34,8 @@ module.exports = {
         functions: 'never',
       },
     ],
+    camelcase: 0,
+    'react/jsx-props-no-spreading': 0,
     'function-paren-newline': 0,
     'object-curly-newline': 0,
     'react/jsx-curly-newline': 0,
@@ -44,5 +43,6 @@ module.exports = {
     'jsx-a11y/click-events-have-key-events': 0,
     'implicit-arrow-linebreak': 0,
     'react/jsx-one-expression-per-line': 0,
+    'react/jsx-wrap-multilines': 'off',
   },
 };

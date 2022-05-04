@@ -27,6 +27,8 @@ To install the dependencies:
 
     npm install
 
+**NOTE:** In order to use Fortawesome icons please create an `.npmrc` file and add your TOKEN. See [the instructions](https://fontawesome.com/v5.15/how-to-use/on-the-web/setup/using-package-managers).
+
 ### Configuration
 
 Copy the `.env.example`:

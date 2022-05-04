@@ -94,7 +94,7 @@ const UserProfile = ({
                   required
                 />
               </div>
-              {identityProvider === 'scribe' && (
+              {identityProvider === 'local' && (
                 <div className="p-field p-col-12 p-md-6">
                   <label htmlFor="email">{t('EMAIL')}</label>
                   <InputText

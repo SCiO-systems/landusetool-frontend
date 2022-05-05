@@ -1,4 +1,4 @@
-# SCiO - LUP4LDN
+# SCiO - LUP4LDN Frontend
 
 This dashboard has been developed using [Diamond-React](https://www.primefaces.org/layouts/diamond-react) application framework.
 

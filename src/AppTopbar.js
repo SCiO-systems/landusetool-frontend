@@ -9,12 +9,13 @@ import { UserContext, ToastContext } from './store';
 import { handleError } from './utilities/errors';
 
 const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [notificationMenuVisible, setNotificationMenuVisible] = useState(false);
+  const [languageMenuVisible, setLanguageMenuVisible] = useState(false);
   const [invitations, setInvitations] = useState([]);
   const [loadingInvitation, setLoadingInvitation] = useState(0);
   const { setError } = useContext(ToastContext);
-  const { avatar_url: avatarUrl } = useContext(UserContext);
+  const { avatar_url: avatarUrl, language, setUser } = useContext(UserContext);
 
   const acceptInvite = async (invitationId) => {
     setLoadingInvitation(invitationId);
@@ -38,6 +39,15 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
     }
   };
 
+  const changeLanguageTo = (newLang) => {
+    // Update our local storage first
+    setUser({
+      language: { ...newLang },
+    });
+    // Change the language then
+    i18n.changeLanguage(newLang.code);
+  };
+
   const fetchInvites = async () => {
     try {
       const { data } = await getInvites();
@@ -45,7 +55,9 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
       if (data.length === 0) {
         setNotificationMenuVisible(false);
       }
-    } catch (e) { /* sh! fail silently */ }
+    } catch (e) {
+      /* sh! fail silently */
+    }
   };
 
   useEffect(() => {
@@ -131,6 +143,37 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
                       </div>
                     </li>
                   ))}
+              </ul>
+            )}
+          </li>
+          <li className="language-picker active-menuitem">
+            <button
+              type="button"
+              className="p-link"
+              onClick={() => setLanguageMenuVisible(!languageMenuVisible)}
+            >
+              <span style={{ fontSize: '2rem' }}>{ language?.icon }</span>
+            </button>
+            {languageMenuVisible && (
+              <ul className="language-picker-menu fade-in-up p-pt-2" style={{ zIndex: '9999' }}>
+                <li role="menuitem" className="p-mb-2">
+                  <button type="button" className="p-link" style={{ fontSize: '1.2rem' }} onClick={() => changeLanguageTo({
+                    icon: '🇬🇧',
+                    label: 'English',
+                    code: 'en',
+                  })}>
+                    <span style={{ fontSize: '1.5rem', marginRight: '1rem' }}>🇬🇧</span> English
+                  </button>
+                </li>
+                <li role="menuitem" className="p-mb-2" style={{ fontSize: '1.2rem' }}>
+                  <button type="button" className="p-link" style={{ fontSize: '1.2rem' }} onClick={() => changeLanguageTo({
+                    icon: '🇫🇷',
+                    label: 'Français',
+                    code: 'fr',
+                  })}>
+                    <span style={{ fontSize: '1.5rem', marginRight: '1rem' }}>🇫🇷</span> Français
+                  </button>
+                </li>
               </ul>
             )}
           </li>

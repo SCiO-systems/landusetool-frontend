@@ -1,6 +1,6 @@
 const questionsData = [
   {
-    label: 'Ecological impacts',
+    label: 'Impacts on Ecosystem Services',
     id: 'ecological_impacts',
     questions: [
       {
@@ -10,7 +10,7 @@ const questionsData = [
         explanationList: [],
       },
       {
-        label: 'Biodiversity',
+        label: 'Biological Resources',
         id: 'biodiversity_value',
         sublabel: [],
         explanationList: [],
@@ -31,7 +31,7 @@ const questionsData = [
     ],
   },
   {
-    label: 'Socio-economic Impacts',
+    label: 'Economic Impacts',
     id: 'socio_economic_impacts',
     questions: [
       {

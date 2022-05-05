@@ -14,13 +14,18 @@ const initialState = {
   currentProject: null,
   availableProjects: [],
   countryLevelLinks: null,
+  language: {
+    icon: '🇬🇧',
+    label: 'English',
+    code: 'en',
+  },
 };
 
 export const UserContext = createContext(initialState);
 
 export const UserProvider = ({ children }) => {
-  // md5sum: scio-lup4ldn-v1.1.1
-  const localStorageKey = 'user-b39a003c4f46514a5fa4c7e3983271c5';
+  // md5sum: scio-lup4ldn-v1.2.0
+  const localStorageKey = 'user-8f01ca34af0d9ffa4978b992c92abe71';
   const [userData, setUserData] = useLocalStorage(
     localStorageKey,
     initialState

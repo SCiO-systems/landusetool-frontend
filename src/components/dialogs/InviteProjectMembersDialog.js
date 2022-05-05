@@ -28,6 +28,7 @@ const InviteProjectMembersDialog = ({ project, dialogOpen, setDialogOpen }) => {
   }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (!dialogOpen || !project) return;
     const fetchProject = async () => {
       try {
         const { data } = await getProject(project.id);
@@ -40,7 +41,7 @@ const InviteProjectMembersDialog = ({ project, dialogOpen, setDialogOpen }) => {
       }
     };
     fetchProject();
-  }, [project]); // eslint-disable-line
+  }, [project, dialogOpen]); // eslint-disable-line
 
   const onSearch = ({ query }) => setSearch(query);
 
@@ -105,14 +106,14 @@ const InviteProjectMembersDialog = ({ project, dialogOpen, setDialogOpen }) => {
                   ) : (
                       <div style={{ maxHeight: '100px', overflowY: 'auto' }} className="p-d-flex p-ai-center p-flex-wrap">
                       { existingMembers.map((u) => (
-                        <Chip 
-                          key={u.id} 
-                          className="p-mr-2 p-mb-2" 
+                        <Chip
+                          key={u.id}
+                          className="p-mr-2 p-mb-2"
                           label={`${u.firstname} ${u.lastname} ${u.email ? `(${u.email})` : ''}`}
                         />
                       )) }
                     </div>
-                  ) } 
+                  ) }
                 </div>
               </div>
             </div>

@@ -46,6 +46,8 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
     });
     // Change the language then
     i18n.changeLanguage(newLang.code);
+    // hide the menu
+    setLanguageMenuVisible(false);
   };
 
   const fetchInvites = async () => {

@@ -114,6 +114,7 @@ const t = {
     LAND_USE_SUITABILITY: 'Land Use Suitability',
     LAND_MANAGEMENT_SUSTAINABILITY: 'Land Management Sustainability',
     USE_DEFAULT_DATA: 'Use default data',
+    USE_DEFAULT_SDG_DATA: 'Use default SDG15.3.1 data',
     USE_CUSTOM_DATA: 'Use custom data',
     LU_TYPE_IN_ROI: 'LU Type in ROI',
     SUITABLE: 'Suitable',

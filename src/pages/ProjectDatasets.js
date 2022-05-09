@@ -264,7 +264,7 @@ const ProjectDatasets = () => {
                   checked={useDefaultLandDegradationMap}
                 />
                 <label htmlFor="defaultLandDegradationMap">
-                  {t('USE_DEFAULT_DATA')}(
+                  {t('USE_DEFAULT_SDG_DATA')}(
                   <a
                     href="https://github.com/ConservationInternational/trends.earth"
                     target="_blank"

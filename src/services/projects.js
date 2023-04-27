@@ -28,9 +28,9 @@ export const getNextStep = (project) => {
     return PROJECT_STEPS.DATASETS_LAND_USE;
   }
 
-  if (project.step === PROJECT_STEPS.DATASETS_LAND_USE) {
-    return PROJECT_STEPS.DATASETS_LAND_DEGRADATION;
-  }
+  // if (project.step === PROJECT_STEPS.DATASETS_LAND_USE) {
+  //   return PROJECT_STEPS.DATASETS_LAND_DEGRADATION;
+  // }
 
   return PROJECT_STEPS.COMPLETED;
 };
@@ -42,8 +42,8 @@ export const getUrlForStep = (id, step) => {
       return `/setup-project/${id}/region-of-interest`;
     case PROJECT_STEPS.DATASETS_LAND_USE:
       return `/setup-project/${id}/datasets/0`;
-    case PROJECT_STEPS.DATASETS_LAND_DEGRADATION:
-      return `/setup-project/${id}/datasets/1`;
+    // case PROJECT_STEPS.DATASETS_LAND_DEGRADATION:
+    //   return `/setup-project/${id}/datasets/1`;
     case PROJECT_STEPS.COMPLETED:
       return `/current-state`;
     case PROJECT_STEPS.PLANNING:

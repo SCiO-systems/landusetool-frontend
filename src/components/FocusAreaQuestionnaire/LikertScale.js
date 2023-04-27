@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import styles from './LikertScale.css'
 
-const LikertScale = ({ id, initialScale, onChange }) => {
+const LikertScale = ({ id, initialScale, onChange, readOnly = false }) => {
   const [value, setValue] = useState(null);
 
   const likertRange = {
@@ -29,6 +29,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
   }, [initialScale]); // eslint-disable-line
 
   const selectValue = (e) => {
+    if (readOnly) return;
     setValue(e.value);
     if (onChange !== undefined) {
 
@@ -69,6 +70,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="strongly_disagree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'strongly_disagree'}
       />
       <RadioButton
@@ -76,6 +78,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="disagree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'disagree'}
       />
       <RadioButton
@@ -83,6 +86,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="somewhat_disagree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'somewhat_disagree'}
       />
       <RadioButton
@@ -90,6 +94,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="neither_agree_or_disagree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'neither_agree_or_disagree'}
       />
       <RadioButton
@@ -97,6 +102,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="somewhat_agree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'somewhat_agree'}
       />
       <RadioButton
@@ -104,6 +110,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="agree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'agree'}
       />
       <RadioButton
@@ -111,6 +118,7 @@ const LikertScale = ({ id, initialScale, onChange }) => {
         value="strongly_agree"
         name={`likert_scale_${id}`}
         onChange={(e) => selectValue(e)}
+        disabled={readOnly}
         checked={value === 'strongly_agree'}
       />
     </div>

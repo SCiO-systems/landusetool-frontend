@@ -1,37 +1,41 @@
 import { Button } from 'primereact/button';
 import { DataView } from 'primereact/dataview';
-import { Message } from 'primereact/message';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
+import { Message } from 'primereact/message';
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import EconWocatDialog from '../../components/dialogs/EconWocatDialog';
 
-import { getWocatTechnologies } from '../../services/landuse';
+import FocusAreaQuestionnaire from '../../components/FocusAreaQuestionnaire';
+import SingleWocatTechnology from '../../components/SingleWocatTechnology';
+import { getEvaluations } from '../../services/focus-area-evaluations';
+import { getEconWocatTechnology, getWocatTechnologies } from '../../services/landuse';
 import {
   getProjectFocusAreas,
-  proposeProjectWocatTechnology,
-  voteProjectWocatTechnology,
   getProjectWocatTechnologies,
+  proposeProjectWocatTechnology,
   rejectProjectWocatTechnology,
+  voteProjectWocatTechnology,
 } from '../../services/projects';
-import { getEvaluations } from '../../services/focus-area-evaluations';
 import { ToastContext, UserContext } from '../../store';
 import { handleError } from '../../utilities/errors';
 import { findLuClassesByIds } from '../../utilities/schema-generators';
-import SingleWocatTechnology from '../../components/SingleWocatTechnology';
-import FocusAreaQuestionnaire from '../../components/FocusAreaQuestionnaire';
 
 const findEvaluation = (evaluations, focusAreaId, luClass) => {
   if (!evaluations || evaluations.length === 0) return null;
 
   for (let i = 0; i < evaluations.length; i += 1) {
-    if (evaluations[i].project_focus_area_id === focusAreaId && evaluations[i].lu_class === luClass) {
+    if (
+      evaluations[i].project_focus_area_id === focusAreaId &&
+      evaluations[i].lu_class === luClass
+    ) {
       return evaluations[i];
     }
   }
 
   return null;
-}
+};
 
 const LandManagement = () => {
   const { t } = useTranslation();
@@ -61,6 +65,16 @@ const LandManagement = () => {
   const [technologies, setTechnologies] = useState([]);
   const [chosenTechnology, setChosenTechnology] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
+
+  // Economical data for Wocat.
+  const [econTechData, setEconTechData] = useState(null);
+  const [econDialogOpen, setEconDialogOpen] = useState(false);
+
+  const showEconInfoDialog = async (techId) => {
+    const id = techId.toString().replace('technologies_', '');
+    setEconDialogOpen(true);
+    getEconWocatTechnology(id).then(({ data }) => setEconTechData(data));
+  };
 
   const onSearch = async (e) => {
     e?.preventDefault();
@@ -109,7 +123,7 @@ const LandManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const onVote = async () => {
     if (!chosenTechnology) return;
@@ -123,7 +137,7 @@ const LandManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const onReject = async () => {
     if (!chosenTechnology) return;
@@ -137,23 +151,25 @@ const LandManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const fetchFocusAreaAndEvaludationsData = async () => {
     try {
       const { data: focusAreasResponse } = await getProjectFocusAreas(currentProject.id);
       const { data: evaluationsResponse } = await getEvaluations(currentProject.id);
-      setOptions(focusAreasResponse.map((focusArea) => ({
-        ...focusArea,
-        luClasses: findLuClassesByIds(
-          focusArea.extracted_classes,
-          currentProject.lu_classes,
-          currentProject.uses_default_lu_classification
-        ).map((lc) => ({
-          ...lc,
-          evaluation: findEvaluation(evaluationsResponse, focusArea.id, `${lc.value}`),
-        })),
-      })));
+      setOptions(
+        focusAreasResponse.map((focusArea) => ({
+          ...focusArea,
+          luClasses: findLuClassesByIds(
+            focusArea.extracted_classes,
+            currentProject.lu_classes,
+            currentProject.uses_default_lu_classification
+          ).map((lc) => ({
+            ...lc,
+            evaluation: findEvaluation(evaluationsResponse, focusArea.id, `${lc.value}`),
+          })),
+        }))
+      );
     } catch (error) {
       setError(handleError(error));
     }
@@ -197,7 +213,7 @@ const LandManagement = () => {
           getProjectTechnologies({
             project_focus_area_id: selectedFocusArea.id,
             lu_class: luClass.value,
-          })
+          });
           setSelectionEvaluation(luClass.evaluation);
         }
       }
@@ -272,9 +288,17 @@ const LandManagement = () => {
           <Button
             label="Select"
             onClick={() => setSelectedTechnology({ techId: tech?.id, label: tech?.name })}
-            className="p-my-2 p-d-block"
             icon="pi pi-check"
           />
+          {tech.econ_wocat && (
+            <Button
+              tooltip="Costs and Benefits of SLM Technologies"
+              className="p-button-success p-ml-2"
+              onClick={() => showEconInfoDialog(tech.id)}
+              icon="fa fa-duotone fa-calculator"
+              tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -284,11 +308,11 @@ const LandManagement = () => {
     setSelectedFocusArea(e.value);
     setSelectedLuClass(null);
     setChosenTechnology(null);
-  }
+  };
 
   const onLuClassChange = (e) => {
     setSelectedLuClass(e.value);
-  }
+  };
 
   const selectedFocusAreaTemplate = (option, props) => {
     if (option) {
@@ -301,21 +325,18 @@ const LandManagement = () => {
       }
       return (
         <div className="p-d-flex p-ai-center">
-          {hasFinishedEvaluations
-            ? <i className="p-d-block far fa-check-circle p-mr-2" />
-            : <i className="p-d-block far fa-circle p-mr-2" />
-          }
+          {hasFinishedEvaluations ? (
+            <i className="p-d-block far fa-check-circle p-mr-2" />
+          ) : (
+            <i className="p-d-block far fa-circle p-mr-2" />
+          )}
           <span className="p-block">{option.name}</span>
         </div>
       );
     }
 
-    return (
-      <span>
-        {props.placeholder}
-      </span>
-    );
-  }
+    return <span>{props.placeholder}</span>;
+  };
 
   const focusAreaOptionTemplate = (option) => {
     let hasFinishedEvaluations = true;
@@ -327,10 +348,11 @@ const LandManagement = () => {
     }
     return (
       <div key={option.id} className="p-d-flex p-ai-center">
-        {hasFinishedEvaluations
-          ? <i className="p-d-block far fa-check-circle p-mr-2" />
-          : <i className="p-d-block far fa-circle p-mr-2" />
-        }
+        {hasFinishedEvaluations ? (
+          <i className="p-d-block far fa-check-circle p-mr-2" />
+        ) : (
+          <i className="p-d-block far fa-circle p-mr-2" />
+        )}
         <span className="p-block">{option.name}</span>
       </div>
     );
@@ -340,28 +362,26 @@ const LandManagement = () => {
     if (option) {
       return (
         <div key={option.value} className="p-d-flex p-ai-center">
-          {option.evaluation !== null
-            ? <i className="p-d-block far fa-check-circle p-mr-2" />
-            : <i className="p-d-block far fa-circle p-mr-2" />
-          }
+          {option.evaluation !== null ? (
+            <i className="p-d-block far fa-check-circle p-mr-2" />
+          ) : (
+            <i className="p-d-block far fa-circle p-mr-2" />
+          )}
           <span className="p-block">{option.key || option.value}</span>
         </div>
       );
     }
 
-    return (
-      <span>
-        {props.placeholder}
-      </span>
-    );
-  }
+    return <span>{props.placeholder}</span>;
+  };
 
   const luClassOptionTemplate = (option) => (
     <div key={option.value} className="p-d-flex p-ai-center">
-      {option.evaluation !== null
-        ? <i className="p-d-block far fa-check-circle p-mr-2" />
-        : <i className="p-d-block far fa-circle p-mr-2" />
-      }
+      {option.evaluation !== null ? (
+        <i className="p-d-block far fa-check-circle p-mr-2" />
+      ) : (
+        <i className="p-d-block far fa-circle p-mr-2" />
+      )}
       <span className="p-block">{option.key || option.value}</span>
     </div>
   );
@@ -399,19 +419,17 @@ const LandManagement = () => {
         </div>
         {selectedTechnology !== null && (
           <div className="p-col-6 p-text-right">
-            <strong className="p-d-block p-mb-2">
-              { selectedTechnology?.label }.
-            </strong>
+            <strong className="p-d-block p-mb-2">{selectedTechnology?.label}.</strong>
             <Button
               icon="pi pi-arrow-circle-left"
               className="p-mb-2 p-button-secondary"
               onClick={() => setSelectedTechnology(null)}
-              label='Search for a different technology'
+              label="Search for a different technology"
             />
           </div>
         )}
       </div>
-      {(selectedFocusArea && selectedLuClass && !selectionEvaluated) && (
+      {selectedFocusArea && selectedLuClass && !selectionEvaluated && (
         <Message
           severity="warn"
           text="The selected land use hasn't been evaluated from you yet. Please evaluate it first in the
@@ -419,22 +437,26 @@ const LandManagement = () => {
           className="p-mt-2"
         />
       )}
-      {(
-        selectedFocusArea && selectedLuClass && selectionEvaluated && 
-        chosenTechnology === null && selectedTechnology !== null && !isLoadingTechnology
-      ) && (
-        <FocusAreaQuestionnaire
-          evaluation={null}
-          onSave={onPropose}
-          showFinalQuestion={false}
-          comparingEvaluation={selectionEvaluation}
-          isForProposal
-        />        
-      )}
-      {(
-        selectedFocusArea && selectedLuClass && selectionEvaluated && 
-        chosenTechnology === null && selectedTechnology === null && !isLoadingTechnology
-      ) && (
+      {selectedFocusArea &&
+        selectedLuClass &&
+        selectionEvaluated &&
+        chosenTechnology === null &&
+        selectedTechnology !== null &&
+        !isLoadingTechnology && (
+          <FocusAreaQuestionnaire
+            evaluation={null}
+            onSave={onPropose}
+            showFinalQuestion={false}
+            comparingEvaluation={selectionEvaluation}
+            isForProposal
+          />
+        )}
+      {selectedFocusArea &&
+        selectedLuClass &&
+        selectionEvaluated &&
+        chosenTechnology === null &&
+        selectedTechnology === null &&
+        !isLoadingTechnology && (
           <DataView
             paginator
             rows={ITEMS_CHUNK_SIZE}
@@ -450,17 +472,23 @@ const LandManagement = () => {
             emptyMessage={t('NO_WOCAT_TECHNOLOGIES_FOUND')}
           />
         )}
-      {(selectedFocusArea && selectedLuClass && selectionEvaluated && chosenTechnology) && (
-          <SingleWocatTechnology
-            techId={chosenTechnology?.technology_id}
-            isOwnProposal={chosenTechnology?.user?.id === userId}
-            proposerEvaluation={chosenTechnology?.evaluation}
-            selfEvaluation={selectionEvaluation}
-            isFinal={chosenTechnology?.status === 'final'}
-            onReject={onReject}
-            onVote={onVote}
-          />
-        )}
+      {selectedFocusArea && selectedLuClass && selectionEvaluated && chosenTechnology && (
+        <SingleWocatTechnology
+          techId={chosenTechnology?.technology_id}
+          isOwnProposal={chosenTechnology?.user?.id === userId}
+          proposerEvaluation={chosenTechnology?.evaluation}
+          selfEvaluation={selectionEvaluation}
+          isFinal={chosenTechnology?.status === 'final'}
+          onReject={onReject}
+          onVote={onVote}
+        />
+      )}
+      <EconWocatDialog
+        techData={econTechData}
+        setTechData={setEconTechData}
+        visible={econDialogOpen}
+        setVisible={setEconDialogOpen}
+      />
     </>
   );
 };

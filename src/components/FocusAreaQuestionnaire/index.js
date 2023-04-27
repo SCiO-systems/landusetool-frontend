@@ -186,33 +186,25 @@ const FocusAreaQuestionnaire = ({ evaluation, onSave, showFinalQuestion, isForPr
         }
       </div>
       <div className="p-grid p-my-2">
+        {(comparingEvaluation !== null && spiderDataComparing.length && spiderData.length) && (
+          <div className="p-col-12">
+            <div className='p-d-flex p-jc-center p-ai-center'>
+              <EvaluationSpiderGraph 
+                domId="compare-slms-evaluation-graph"
+                data={spiderDataComparing} 
+                compareWith={spiderData}
+              />
+            </div>
+          </div>
+        )}
         <div className="p-col-6">
           {(comparingEvaluation === null && spiderData.length > 0) && (
             <div className='p-d-flex p-jc-center p-ai-center'>
               <EvaluationSpiderGraph data={spiderData} />
             </div>
           )}
-          {(comparingEvaluation !== null && spiderDataComparing.length > 0) && (
-            <div className="p-text-center">
-              <h4>Assessment of current SLM</h4>
-              <div className='p-d-flex p-jc-center p-ai-center'>
-                <EvaluationSpiderGraph domId="current-slm-evaluation-graph" data={spiderDataComparing} />
-              </div>
-            </div>
-          )}
         </div>
         <div className="p-col-6">
-          {/* {curvedData.length > 0 && ( */}
-          {/*   <CurvedGraph data={curvedData} /> */}
-          {/* )} */}
-          {(comparingEvaluation !== null && spiderData.length > 0) && (
-            <div className="p-text-center">
-              <h4>Selected SLM assessment</h4>
-              <div className='p-d-flex p-jc-center p-ai-center'>
-                <EvaluationSpiderGraph domId="selected-slm-evaluation-graph" data={spiderData} />
-              </div>
-            </div>
-          )}
           {showFinalQuestion && (
             <div className="p-mt-6">
               <h5>

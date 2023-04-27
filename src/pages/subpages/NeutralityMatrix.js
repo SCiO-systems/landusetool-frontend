@@ -79,7 +79,7 @@ const NeutralityMatrix = () => {
     }
 
     const initialColumn = {
-      category: `${new Date().getFullYear()}`,
+      category: 'UNCCD Baseline',
       value: initialDegradation,
       open: 0,
       stepValue: initialDegradation,
@@ -234,7 +234,6 @@ const NeutralityMatrix = () => {
                       target="_blank"
                       rel="noreferrer"
                     >{`https://qcat.wocat.net/en/wocat/technologies/view/${rowData.technology_id}`}</a>
-                    <p className="p-d-block p-mt-2">Proposed by: {rowData.user.firstname} {rowData.user.lastname}</p>
                   </>
                 )} />
                 <Column header='Evaluation' body={(rowData) => (

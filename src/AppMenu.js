@@ -35,12 +35,12 @@ const AppMenu = ({ onMenuClick }) => {
         <ul className="layout-menu" role="menu">
           {availableProjects?.length > 0 && currentProject && (
             <>
-              <li className="layout-root-menuitem" role="menuitem">
+              <li className="layout-root-menuitem p-pb-0" role="menuitem">
                 <div className="layout-root-menuitem">
-                  <div className="layout-menuitem-root-text">
+                  <div className="layout-menuitem-root-text p-py-0">
                     {t('ACTIVE_PROJECT')}:&nbsp;
                     <Tag
-                      className="p-px-1 p-py-0 p-block"
+                      className="p-px-1 p-mt-2 p-py-0 p-block"
                       style={{ wordBreak: 'break-all' }}
                       value={currentProject ? currentProject.acronym : '-'}
                     />
@@ -156,13 +156,20 @@ const AppMenu = ({ onMenuClick }) => {
                 </div>
                 <ul className="layout-menu" role="menu">
                   <li className="p-mb-1" role="menuitem">
+                    <NavLink to="/unccd-baseline" activeClassName="p-button" exact>
+                      <i className="layout-menuitem-icon fad fa-chart-bar" />
+                      <span className="layout-menuitem-text">{t('UNCCD_BASELINE')}</span>
+                    </NavLink>
+                  </li>
+                  <li className="p-mb-1" role="menuitem">
                     <NavLink to="/current-state" activeClassName="p-button" exact>
                       <i className="layout-menuitem-icon fad fa-check-double" />
                       <span className="layout-menuitem-text">{t('CURRENT_STATE')}</span>
                     </NavLink>
                   </li>
                   {(currentProject.step === PROJECT_STEPS.PLANNING ||
-                    currentProject.land_management_sustainability_method === 1 || currentProject.land_use_suitability_method === 1) && (
+                    currentProject.land_management_sustainability_method === 1 ||
+                    currentProject.land_use_suitability_method === 1) && (
                     <li className="p-mb-1" role="menuitem">
                       <NavLink to="/land-use-planning" activeClassName="p-button" exact>
                         <i className="layout-menuitem-icon fad fa-abacus" />

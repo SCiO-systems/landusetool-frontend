@@ -48,5 +48,17 @@
         </div>
       </div>
     </div>
+    <script
+      id="kompassious"
+      src="https://player.kompassify.com/kompassifyPlayer.js?uuid=%REACT_APP_KOMPASSIFY_ID%"
+      type="text/javascript"
+    ></script>
+    <script>
+      window.addEventListener('message', function (event) {
+        if (event.data.TYPE === "KOMPASSIFY_EXECUTE_JS_CODE") {
+          eval(event.data.jsCode)
+        } 
+      });
+    </script>
   </body>
 </html>

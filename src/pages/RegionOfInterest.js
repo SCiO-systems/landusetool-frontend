@@ -53,7 +53,7 @@ const RegionOfInterest = () => {
         <Card>
           <RegionOfInterestSelector projectId={id} register={register} setValue={setValue} />
         </Card>
-        <div className="p-d-flex p-jc-start p-mt-4 p-mb-6">
+        <div className="p-mt-4 p-mb-6">
           <Button
             className="p-button-lg"
             loading={loading}
@@ -62,6 +62,35 @@ const RegionOfInterest = () => {
             label={t('SAVE_CHANGES')}
             icon="pi pi-save"
           />
+          <div className="p-mt-4">
+            <p>
+              <strong>
+                <u>Attributions</u>:
+              </strong>
+            </p>
+            <p>
+              The{' '}
+              <a href="https://gadm.org/" target="_blank" rel="noreferrer">
+                Database of Global Administrative Areas (GADM)
+              </a>{' '}
+              has been used as the source of the boundaries and names shown.
+            </p>
+            <p>
+              Geophysical maps are powered by{' '}
+              <a href="https://www.esri.com/" target="_blank" rel="noreferrer">
+                ESRI.
+              </a>
+            </p>
+            <p>
+              <strong>
+                <u>Disclaimer</u>:
+              </strong>
+            </p>
+            <p>
+              The boundaries and names shown and the designations used on this map do not imply
+              official endorsement or acceptance by LUP4LDN.
+            </p>
+          </div>
         </div>
       </form>
     </div>

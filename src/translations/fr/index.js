@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const t = {
   translation: {
     LOGIN_WITH: 'Login with',
@@ -106,11 +107,11 @@ const t = {
     SEARCH: 'Search',
     WOCAT_TECHNOLOGIES: 'WOCAT SLM Technologies',
     WOCAT_TECHNOLOGY: 'WOCAT Technology',
-    NO_WOCAT_TECHNOLOGIES_FOUND:
-      'Please search using keywords.',
+    NO_WOCAT_TECHNOLOGIES_FOUND: 'Please search using keywords.',
     NO_WOCAT_TECHNOLOGIES_FOR_THIS_PROJECT:
       'No WOCAT Technologies have been selected for this project.',
     CURRENT_STATE: 'Current State',
+    UNCCD_BASELINE: 'UNCCD Baseline',
     LAND_USE_SUITABILITY: 'Land Use Suitability',
     LAND_MANAGEMENT_SUSTAINABILITY: 'Land Management Sustainability',
     USE_DEFAULT_DATA: 'Use default data',
@@ -154,7 +155,8 @@ const t = {
     UPLOAD_LAND_SUITABILITY_MAP: 'Upload Land Suitability Map',
     HAS_SUITABILITY_MAP: 'Has Suitability Map',
     UPLOAD_LAND_DEGRADATION_MAP: 'Upload Land Degradation Map',
-    CUSTOM_LU_CLASSES_MESSAGE: 'You should upload a “Land Use Map” and at least one “Suitability Map”',
+    CUSTOM_LU_CLASSES_MESSAGE:
+      'You should upload a “Land Use Map” and at least one “Suitability Map”',
     UPLOAD_POLYGON: 'Upload polygon',
     PROCESSING_POLYGON: 'Processing polygon',
     CONTINUE_SETUP: 'Continue Setup',
@@ -162,7 +164,10 @@ const t = {
     PROJECT_UNDER_PREPARATION: 'Project is still under preparation.',
     OR_UPLOAD_CUSTOM_POLYGON: 'Or upload custom polygon',
     SCENARIO_LD_IMPACT: 'LD Impact',
-    NOT_ENOUGH_SCENARIOS: 'You don\'t have enough scenarios to display the Neutrality Matrix.',
+    NOT_ENOUGH_SCENARIOS: "You don't have enough scenarios to display the Neutrality Matrix.",
+    VIEW_PROJECT_FILES: 'Afficher les fichiers du projet',
+    PROJECT_FILES: 'Project files for "{{ project.title }}"',
+    COSTS_AND_BENEFITS_OF_SLM_TECHNOLOGIES: 'Costs and benefits',
   },
 };
 

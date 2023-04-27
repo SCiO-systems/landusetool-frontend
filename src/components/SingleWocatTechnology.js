@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { getWocatTechnology } from '../services/landuse';
 import { ToastContext } from '../store';
@@ -9,7 +9,15 @@ import EvaluationSpiderGraph from './charts/EvaluationSpiderGraph';
 import { buildInitialSpiderGraphData } from './FocusAreaQuestionnaire';
 import questions from './FocusAreaQuestionnaire/data';
 
-const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onReject, proposerEvaluation, selfEvaluation }) => {
+const SingleWocatTechnology = ({
+  techId,
+  isOwnProposal,
+  isFinal,
+  onVote,
+  onReject,
+  proposerEvaluation,
+  selfEvaluation,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const { setError } = useContext(ToastContext);
   const [tech, setTech] = useState(null);
@@ -37,10 +45,8 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onRejec
     setProposerGraphData(buildInitialSpiderGraphData(questions, proposerEvaluation));
   }, [selfEvaluation, proposerEvaluation]);
 
-  if (isLoading || (tech === null)) {
-    return (
-      <i className="pi pi-spin pi-spinner" style={{ fontSize: '2em' }} />
-    );
+  if (isLoading || tech === null) {
+    return <i className="pi pi-spin pi-spinner" style={{ fontSize: '2em' }} />;
   }
 
   return (
@@ -79,7 +85,7 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onRejec
           </div>
         </div>
         <div className="p-col-2">
-          {(!isFinal) && (
+          {!isFinal && (
             <>
               {isOwnProposal ? (
                 <Tag value="Pending Approval" severity="info" icon="pi pi-spinner pi-spin" />
@@ -103,30 +109,18 @@ const SingleWocatTechnology = ({ techId, isOwnProposal, isFinal, onVote, onRejec
               )}
             </>
           )}
-          {(isFinal) && (
-            <Tag value="Final Accepted Proposal" severity="success" icon="pi pi-check" />
-          )}
+          {isFinal && <Tag value="Final Accepted Proposal" severity="success" icon="pi pi-check" />}
         </div>
       </div>
       <div className="p-grid p-mt-4">
-        <div className="p-col-6 p-text-center">
-          <h4>Assessment of current SLM</h4>
+        <div className="p-col-12 p-text-center">
+          <h4>Current SLM vs Selected SLM</h4>
           <div className="p-d-flex p-jc-center p-ai-center">
-            {selfGraphData.length > 0 && (
-              <EvaluationSpiderGraph
-                domId="self-evaluation-spider-graph"
+            {(selfGraphData.length && proposerGraphData.length) && (
+              <EvaluationSpiderGraph 
+                domId="evaluation-spider-graph" 
                 data={selfGraphData} 
-              />
-            )}
-          </div>
-        </div>
-        <div className="p-col-6 p-text-center">
-          <h4>Proposed SLM assessment</h4>
-          <div className="p-d-flex p-jc-center p-ai-center">
-            {proposerGraphData.length > 0 && (
-              <EvaluationSpiderGraph
-                domId="new-evaluation-spider-graph"
-                data={proposerGraphData} 
+                compareWith={proposerGraphData}
               />
             )}
           </div>

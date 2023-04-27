@@ -203,12 +203,16 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                         return '#398e3b';
                         // eslint-disable-next-line
                       } else if (pixelValues[0] === 2) {
-                        return '#fcdd90';
+                        return '#79A037';
                       } else if (pixelValues[0] === 3) {
-                        return '#ed8f2f';
+                        return '#BAB032';
                       } else if (pixelValues[0] === 4) {
-                        return '#e05f2f';
+                        return '#fcdd90';
                       } else if (pixelValues[0] === 5) {
+                        return '#ed8f2f';
+                      } else if (pixelValues[0] === 6) {
+                        return '#e05f2f';
+                      } else if (pixelValues[0] === 7) {
                         return '#d43333';
                       }
                     }
@@ -433,18 +437,22 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                     return '#d43333';
                   }
                 } else if (left_layer.layer.palette.type === 'FutureLandDegradation') {
-                  if (pixelValues[0] === 1) {
-                    return '#398e3b';
-                    // eslint-disable-next-line
-                  } else if (pixelValues[0] === 2) {
-                    return '#fcdd90';
-                  } else if (pixelValues[0] === 3) {
-                    return '#ed8f2f';
-                  } else if (pixelValues[0] === 4) {
-                    return '#e05f2f';
-                  } else if (pixelValues[0] === 5) {
-                    return '#d43333';
-                  }
+                    if (pixelValues[0] === 1) {
+                      return '#398e3b';
+                      // eslint-disable-next-line
+                    } else if (pixelValues[0] === 2) {
+                      return '#79A037';
+                    } else if (pixelValues[0] === 3) {
+                      return '#BAB032';
+                    } else if (pixelValues[0] === 4) {
+                      return '#fcdd90';
+                    } else if (pixelValues[0] === 5) {
+                      return '#ed8f2f';
+                    } else if (pixelValues[0] === 6) {
+                      return '#e05f2f';
+                    } else if (pixelValues[0] === 7) {
+                      return '#d43333';
+                    }
                 }
                 else if (left_layer.layer.palette.type === 'LandUsePalette') {
                   if ((pixelValues[0] >= 1) && (pixelValues[0] <= 2)) {
@@ -653,12 +661,16 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
                           return '#398e3b';
                           // eslint-disable-next-line
                         } else if (pixelValues[0] === 2) {
-                          return '#fcdd90';
+                          return '#79A037';
                         } else if (pixelValues[0] === 3) {
-                          return '#ed8f2f';
+                          return '#BAB032';
                         } else if (pixelValues[0] === 4) {
-                          return '#e05f2f';
+                          return '#fcdd90';
                         } else if (pixelValues[0] === 5) {
+                          return '#ed8f2f';
+                        } else if (pixelValues[0] === 6) {
+                          return '#e05f2f';
+                        } else if (pixelValues[0] === 7) {
                           return '#d43333';
                         }
                       }
@@ -1059,7 +1071,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
             layer,
             opacity: 1,
             elements: [{
-              label: 'Not degraded. Stable to improvement',
+              label: 'Not degraded, stable to improvement',
               html: '',
               style: {
                 'text-align': 'left',
@@ -1071,7 +1083,31 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
               },
             },
             {
-              label: 'Avoid: Not degraded. Likely becoming degraded',
+              label: 'Not degraded, likely remaining stable',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#79A037',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Degraded, stable to recovering',
+              html: '',
+              style: {
+                'text-align': 'left',
+                'background-color': '#BAB032',
+                'width': '20px',
+                'height': '20px',
+                'position': 'relative',
+                'margin': '3.75px 0',
+              },
+            },
+            {
+              label: 'Not degraded, likely becoming degraded',
               html: '',
               style: {
                 'text-align': 'left',
@@ -1083,7 +1119,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
               },
             },
             {
-              label: 'Avoid: Not degraded. New LD expected',
+              label: 'Not degraded. New LD expected',
               html: '',
               style: {
                 'text-align': 'left',
@@ -1095,7 +1131,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
               },
             },
             {
-              label: 'Reverse: Degraded. Stable to recovering*',
+              label: 'Degraded, Likely remaining degraded',
               html: '',
               style: {
                 'text-align': 'left',
@@ -1107,7 +1143,7 @@ const Glowglobe = ({ options, output, layers, setAdminLevel }) => {
               },
             },
             {
-              label: 'Reverse & Reduce: Degraded. Further degradation is expected',
+              label: 'Degraded. Further degradation is expected',
               html: '',
               style: {
                 'text-align': 'left',

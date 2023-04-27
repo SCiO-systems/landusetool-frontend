@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { Steps } from 'primereact/steps';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Glowglobe from './glowglobe';
-import CountrySelector from './CountrySelector';
-import { handleError } from '../utilities/errors';
-import { ToastContext } from '../store';
-import { getCountryAdminLevelArea, getByCoordinates } from '../services/polygons';
 import { uploadProjectFile } from '../services/files';
+import { getByCoordinates, getCountryAdminLevelArea } from '../services/polygons';
+import { ToastContext } from '../store';
+import { handleError } from '../utilities/errors';
+import CountrySelector from './CountrySelector';
+import Glowglobe from './glowglobe';
 
 const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
   const { t } = useTranslation();
@@ -28,16 +28,17 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
     setValue('country', country);
     setValue('adminLevel', adminLevel);
     if (country) {
-      getCountryAdminLevelArea(country, adminLevel)
-        .then((res) => {
-          setLayers([{
+      getCountryAdminLevelArea(country, adminLevel).then((res) => {
+        setLayers([
+          {
             layer: {
               type: 'geojson',
               data: res.polygon,
             },
-          }]);
-          setActiveIndex(1);
-        });
+          },
+        ]);
+        setActiveIndex(1);
+      });
     }
   }, [country, adminLevel, setValue]);
 
@@ -56,12 +57,14 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
   const handleOutput = (pin) => {
     if (!pin.point) return;
     getByCoordinates(pin.point, adminLevel).then((res) => {
-      setLayers([{
-        layer: {
-          type: 'geojson',
-          data: res.polygon,
+      setLayers([
+        {
+          layer: {
+            type: 'geojson',
+            data: res.polygon,
+          },
         },
-      }]);
+      ]);
       setValue('polygon', res.polygon);
       setValue('roi_file_id', null);
     });
@@ -98,12 +101,7 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
 
   return (
     <>
-      <Steps
-        model={steps}
-        activeIndex={activeIndex}
-        readOnly
-        className="p-mb-4"
-      />
+      <Steps model={steps} activeIndex={activeIndex} readOnly className="p-mb-4" />
       {activeIndex === 0 && (
         <>
           <CountrySelector setCountry={setCountry} />
@@ -127,6 +125,11 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
                 roiFileRef.current.click();
               }}
             />
+            <div className="p-mt-3">
+              <a href="https://gadm.org/download_country.html" target="_blank" rel="noreferrer">
+                Download GADM country-level (Admin 0) polygons
+              </a>
+            </div>
           </p>
         </>
       )}
@@ -148,11 +151,13 @@ const RegionOfInterestSelector = ({ projectId, register, setValue }) => {
           icon="pi pi-angle-left"
         />
         <Button
-          className={`p-button-secondary ${(activeIndex === 1 || country === undefined) ? ' hidden' : ''}`}
+          className={`p-button-secondary ${
+            activeIndex === 1 || country === undefined ? ' hidden' : ''
+          }`}
           type="button"
           disabled={activeIndex === 1 || country === undefined}
           label={t('NEXT')}
-          onClick={(_e) => setActiveIndex((oldIndex) => (oldIndex + 1))}
+          onClick={(_e) => setActiveIndex((oldIndex) => oldIndex + 1)}
           icon="pi pi-angle-right"
           iconPos="right"
         />

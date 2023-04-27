@@ -1,5 +1,6 @@
 import { Button } from 'primereact/button';
 import React, { useContext, useEffect, useState } from 'react';
+import ReactCountryFlag from 'react-country-flag';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import AppBreadcrumb from './AppBreadcrumb';
@@ -154,26 +155,26 @@ const AppTopbar = ({ onMenuButtonClick, routers, displayName, signOut }) => {
               className="p-link"
               onClick={() => setLanguageMenuVisible(!languageMenuVisible)}
             >
-              <span style={{ fontSize: '2rem' }}>{ language?.icon }</span>
+              <ReactCountryFlag countryCode={ language?.icon } svg />
             </button>
             {languageMenuVisible && (
               <ul className="language-picker-menu fade-in-up p-pt-2" style={{ zIndex: '9999' }}>
                 <li role="menuitem" className="p-mb-2">
                   <button type="button" className="p-link" style={{ fontSize: '1.2rem' }} onClick={() => changeLanguageTo({
-                    icon: '🇬🇧',
+                    icon: 'US',
                     label: 'English',
                     code: 'en',
                   })}>
-                    <span style={{ fontSize: '1.5rem', marginRight: '1rem' }}>🇬🇧</span> English
+                    <ReactCountryFlag className='p-mr-2' countryCode='US' svg /> English
                   </button>
                 </li>
                 <li role="menuitem" className="p-mb-2" style={{ fontSize: '1.2rem' }}>
                   <button type="button" className="p-link" style={{ fontSize: '1.2rem' }} onClick={() => changeLanguageTo({
-                    icon: '🇫🇷',
+                    icon: 'FR',
                     label: 'Français',
                     code: 'fr',
                   })}>
-                    <span style={{ fontSize: '1.5rem', marginRight: '1rem' }}>🇫🇷</span> Français
+                    <ReactCountryFlag className='p-mr-2' countryCode='FR' svg /> Français
                   </button>
                 </li>
               </ul>

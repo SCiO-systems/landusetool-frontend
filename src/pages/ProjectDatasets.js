@@ -21,16 +21,18 @@ import { handleError } from '../utilities/errors';
 
 const ProjectDatasets = () => {
   const { t } = useTranslation();
-  const { id, step } = useParams();
+  // const { id, step } = useParams();
+  const { id } = useParams();
   const history = useHistory();
   const { register, handleSubmit, setValue, getValues } = useForm();
-  const customLandDegradationMap = useRef(null);
+  // const customLandDegradationMap = useRef(null);
   const customLandUseMap = useRef(null);
   const [project, setProject] = useState(null);
-  const [topTabIndex, setTopTabIndex] = useState(parseInt(step, 10));
+  // const [topTabIndex, setTopTabIndex] = useState(parseInt(step, 10));
+  // const [topTabIndex, setTopTabIndex] = useState(0);
   const [luClasses, setLuClasses] = useState([]);
   const [useDefaultLuClasses, setUseDefaultLuClasses] = useState(true);
-  const [useDefaultLandDegradationMap, setUseDefaultLandDegradationMap] = useState(true);
+  // const [useDefaultLandDegradationMap, setUseDefaultLandDegradationMap] = useState(true);
   const { setError, setSuccess } = useContext(ToastContext);
   const { setUser } = useContext(UserContext);
 
@@ -43,13 +45,19 @@ const ProjectDatasets = () => {
     try {
       if (dataset === 'land_use') {
         await editProject(id, {
-          step: PROJECT_STEPS.DATASETS_LAND_DEGRADATION,
+          // step: PROJECT_STEPS.DATASETS_LAND_DEGRADATION,
+          step: PROJECT_STEPS.COMPLETED,
           uses_default_lu_classification: data.defaultLuClasses,
           land_use_map_file_id: data.customLandUseMap,
           lu_classes: (!data.defaultLuClasses) ? data.luClasses : [],
+          // The following is explicitely set here because we hide step 1
+          custom_land_degradation_map_file_id: null,
         });
         // Move to next tab if this step is completed
-        setTopTabIndex(1);
+        // setTopTabIndex(1);
+        // it's done, let's finalise it
+        await finaliseProject(id);
+        history.push(`/`);
       } else if (dataset === 'land_degradation') {
         await editProject(id, {
           custom_land_degradation_map_file_id: data.customLandDegradationMap,
@@ -57,8 +65,7 @@ const ProjectDatasets = () => {
         });
         // it's done, let's finalise it
         await finaliseProject(id);
-        setUser({ currentProject: null });
-        setTimeout(() => history.push(`/`), 500);
+        history.push(`/`);
       }
       setSuccess('Success', 'Project details have been updated.');
     } catch (e) {
@@ -66,17 +73,17 @@ const ProjectDatasets = () => {
     }
   };
 
-  const uploadLandDegradationMap = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    try {
-      const { data } = await uploadProjectFile(id, formData);
-      setValue('customLandDegradationMap', data.id);
-      setSuccess('Done', 'Your file has been uploaded.');
-    } catch (error) {
-      setError(setError(handleError(error)));
-    }
-  };
+  // const uploadLandDegradationMap = async (file) => {
+  //   const formData = new FormData();
+  //   formData.append('file', file);
+  //   try {
+  //     const { data } = await uploadProjectFile(id, formData);
+  //     setValue('customLandDegradationMap', data.id);
+  //     setSuccess('Done', 'Your file has been uploaded.');
+  //   } catch (error) {
+  //     setError(setError(handleError(error)));
+  //   }
+  // };
 
   const uploadLandUseMap = async (file) => {
     const formData = new FormData();
@@ -143,9 +150,8 @@ const ProjectDatasets = () => {
   return (
     <div className="layout-dashboard">
       <Card>
-        <TabView activeIndex={topTabIndex} onTabChange={(e) => setTopTabIndex(e.index)}>
+        <TabView>
           <TabPanel
-            disabled={project.step === PROJECT_STEPS.DATASETS_LAND_DEGRADATION && topTabIndex !== 0}
             header={
               <span>
                 <i className="fad fa-th p-mr-2" />
@@ -237,87 +243,6 @@ const ProjectDatasets = () => {
                 className="p-button-lg p-mt-4"
                 type="submit"
                 disabled={isDisabled()}
-                label={t('SAVE_CHANGES')}
-                icon="pi pi-save"
-              />
-            </form>
-          </TabPanel>
-          <TabPanel
-            disabled={project.step === PROJECT_STEPS.DATASETS_LAND_USE && topTabIndex !== 1}
-            header={
-              <span>
-                <i className="fad fa-recycle p-mr-2" />
-                {t('LAND_DEGRADATION')}
-              </span>
-            }
-          >
-            <form onSubmit={handleSubmit((data) => onSubmit('land_degradation', data))}>
-              <div className="p-field-radiobutton">
-                <RadioButton
-                  inputId="defaultLandDegradationMap"
-                  value="true"
-                  name="defaultLandDegradationMap"
-                  onChange={() => {
-                    setUseDefaultLandDegradationMap(true);
-                    setValue('defaultLandDegradationMap', true);
-                  }}
-                  checked={useDefaultLandDegradationMap}
-                />
-                <label htmlFor="defaultLandDegradationMap">
-                  {t('USE_DEFAULT_SDG_DATA')}(
-                  <a
-                    href="https://github.com/ConservationInternational/trends.earth"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Trends.Earth
-                  </a>
-                  )
-                </label>
-              </div>
-              <div className="p-field-radiobutton">
-                <RadioButton
-                  inputId="defaultLandDegradationMap"
-                  value="false"
-                  name="defaultLandDegradationMap"
-                  onChange={() => {
-                    setUseDefaultLandDegradationMap(false);
-                    setValue('defaultLandDegradationMap', false);
-                  }}
-                  checked={!useDefaultLandDegradationMap}
-                />
-                <label htmlFor="defaultLandDegradationMap">
-                  {t('USE_CUSTOM_LAND_DEGRADATION_MAP')}
-                </label>
-              </div>
-              {!useDefaultLandDegradationMap && (
-                <>
-                  <input
-                    className="hidden"
-                    type="file"
-                    multiple={false}
-                    ref={customLandDegradationMap}
-                    onChange={(e) => uploadLandDegradationMap(e.target.files[0])}
-                  />
-                  <Button
-                    label={t('UPLOAD_LAND_DEGRADATION_MAP')}
-                    icon="pi pi-image"
-                    type="button"
-                    className="p-mr-2 p-mb-4 p-d-block"
-                    onClick={() => {
-                      customLandDegradationMap.current.click();
-                    }}
-                  />
-                </>
-              )}
-              <Button
-                className="p-button-lg"
-                type="submit"
-                disabled={
-                  !useDefaultLandDegradationMap
-                    ? getValues('customLandDegradationMap') === null
-                    : false
-                }
                 label={t('SAVE_CHANGES')}
                 icon="pi pi-save"
               />

@@ -1,3 +1,7 @@
+.p-radiobutton {
+  position: relative;
+}
+
 .small.p-radiobutton{
     width: 32px;
     height: 32px;
@@ -24,6 +28,10 @@
     background: transparent;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 
+}
+
+.p-radiobutton.p-component.p-radiobutton-disabled.likert {
+  cursor: default;
 }
 
 .p-highlight{
@@ -67,6 +75,12 @@
     content: "\f00c";
 }
 
+.likert-legend {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: white;
+}
 
 .strongly_disagree{
     background-color:#d43333;

@@ -15,10 +15,11 @@ import CreateProject from './pages/CreateProject';
 import CurrentState from './pages/CurrentState';
 import Dashboard from './pages/Dashboard';
 import EditProject from './pages/EditProject';
-import RegionOfInterest from './pages/RegionOfInterest';
-import ProjectDatasets from './pages/ProjectDatasets';
 import LandUsePlanning from './pages/LandUsePlanning';
+import ProjectDatasets from './pages/ProjectDatasets';
+import RegionOfInterest from './pages/RegionOfInterest';
 import RiskProfiles from './pages/RiskProfiles';
+import UNCCDBaseline from './pages/UnccdBaseline';
 import { logout, verify } from './services/auth';
 import { ToastContext, UserContext } from './store';
 
@@ -115,6 +116,12 @@ const App = () => {
       component: CurrentState,
       exact: true,
       meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('CURRENT_STATE') }] },
+    },
+    {
+      path: '/unccd-baseline',
+      component: UNCCDBaseline,
+      exact: true,
+      meta: { breadcrumb: [{ parent: t('DASHBOARD'), label: t('UNCCD_BASELINE') }] },
     },
   ];
 

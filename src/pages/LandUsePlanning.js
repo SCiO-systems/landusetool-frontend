@@ -6,6 +6,7 @@ import { Card } from 'primereact/card';
 
 import { UserContext } from '../store';
 import Map from '../components/glowglobe/Map';
+import FLDTable from '../components/tables/FLDTable';
 import PlanForLDN from './subpages/PlanForLDN';
 import NeutralityMatrix from './subpages/NeutralityMatrix';
 
@@ -68,6 +69,7 @@ const NewLandDegradationMap = () => {
 const LandUsePlanning = () => {
   const { t } = useTranslation();
   const [topTabIndex, setTopTabIndex] = useState(0);
+  const { currentProject } = useContext(UserContext);
 
   return (
     <div className="layout-dashboard">
@@ -82,6 +84,12 @@ const LandUsePlanning = () => {
             )}
           >
             <NewLandDegradationMap />
+            <div className="p-mt-4">
+              <FLDTable
+                data={currentProject.preprocessing_data} 
+                customLuClasses={currentProject.lu_classes}
+              />
+            </div>
           </TabPanel>
           <TabPanel
             header={(

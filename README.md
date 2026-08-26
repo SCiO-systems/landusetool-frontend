@@ -1,6 +1,7 @@
-# SCiO - LUP4LDN Frontend
+![License](https://img.shields.io/github/license/SCiO-systems/landusetool-backend)
+# LUP4LDN Frontend dashboard
 
-This dashboard has been developed using [Diamond-React](https://www.primefaces.org/layouts/diamond-react) application framework.
+Frontend dashboard for LUP4LDN — Land Use Planning for Land Degradation Neutrality. Winner, GEO-LDN International Technology Innovation Competition (2021). This dashboard has been developed using [Diamond-React](https://www.primefaces.org/layouts/diamond-react) application framework.
 
 ## Requirements
 

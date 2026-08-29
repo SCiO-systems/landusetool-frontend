@@ -144,7 +144,7 @@ To report a vulnerability, please follow the process in
 
 ## Support
 
-For help using the tool, contact SCiO at **info@scio.systems**.
+For help using the tool, contact SCiO at **lup4ldn@scio.systems**.
 
 ---
 
